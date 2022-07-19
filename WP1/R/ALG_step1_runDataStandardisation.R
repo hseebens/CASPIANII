@@ -86,7 +86,7 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
     if (any(sheet_names[i]%in%pathway_datasets)){
       
       ## get translation table
-      path_translate <- read.xlsx(file.path("WP1","Data","VektorenÜbersetzung.xlsx"),sheet=1)
+      path_translate <- read.xlsx(file.path("WP1","Data","VektorenUebersetzung.xlsx"),sheet=1)
       
       if (sheet_names[i]=="EASIN_Germany"){
         

@@ -68,7 +68,7 @@ get_pathways <- function(){
   ## standardise  pathway names ###################################################
   
   ## get translation table
-  path_translate <- read.xlsx(file.path("WP1","Data","VektorenÜbersetzung.xlsx"),sheet=1)
+  path_translate <- read.xlsx(file.path("WP1","Data","VektorenUebersetzung.xlsx"),sheet=1)
   
   ## replace CBD pathway names
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
