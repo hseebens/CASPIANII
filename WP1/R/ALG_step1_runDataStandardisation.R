@@ -16,7 +16,7 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
   ## load data sets and standardise taxon names #################################################
   
   ## get names of individual sheets
-  sheet_names <- getSheetNames(file.path("Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"))
+  sheet_names <- getSheetNames(file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"))
 
   ## Create Workbook object and add worksheets
   wb <- createWorkbook()
@@ -26,9 +26,9 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
     
     ## load data from single sheet
     # cat("\n")
-    print(paste0("Working on data set '",sheet_names[i],"'"))
+    cat(paste0("\nWorking on data set '",sheet_names[i],"'\n"))
     
-    dat <- read.xlsx(file.path("Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"),sheet=i)
+    dat <- read.xlsx(file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"),sheet=i)
     
     ## standardise column names ########################################################
     
@@ -57,7 +57,7 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
     if ("firstRecord"%in%colnames(dat)){
       
       dat$firstRecord <- gsub("Um |vor |um ","",dat$firstRecord)
-
+      
       ## calculate mean years for ranges
       ind <- grep("-",dat$firstRecord)
       ind_twoYears <- nchar(gsub("\\D+"," ",dat$firstRecord[ind]))>=8
@@ -65,29 +65,29 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
         list_ranges <- strsplit(dat$firstRecord[ind[ind_twoYears]],"-")
         dat$firstRecord[ind[ind_twoYears]] <- unlist(lapply(list_ranges,function(s) floor(mean(as.numeric(s)))))
       }
-
+      
       ## for others, take the earliest year
       numeric_vals <- gsub("\\D+"," ",dat$firstRecord) # remove all non-numerics and separate by " "
       split_numbers <- strsplit(numeric_vals," ") # split sequences into pieces
       fourdigits <- lapply(split_numbers,function(s) s[grep('.*(\\d{4}).*', s)]) # keep only four digit numbers
-
+      
       ## remove non-numeric entries
       oldw <- getOption("warn")
       options(warn = -1)
       dat$firstRecord <- as.numeric(unlist(lapply(fourdigits,min)))
       options(warn = oldw)
-
+      
       dat <- subset(dat,firstRecord>1500 | is.na(firstRecord))
     }
     
     ## standardise pathway names #################################################################
-
+    
     
     if (any(sheet_names[i]%in%pathway_datasets)){
       
       ## get translation table
-      path_translate <- read.xlsx(file.path("Data","VektorenÜbersetzung.xlsx"),sheet=1)
-
+      path_translate <- read.xlsx(file.path("WP1","Data","VektorenÜbersetzung.xlsx"),sheet=1)
+      
       if (sheet_names[i]=="EASIN_Germany"){
         
         dat$Einbringungsvektoren <- NA
@@ -176,6 +176,6 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
   
   
   ## Final output as xlsx
-  saveWorkbook(wb, file.path("Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 
 }

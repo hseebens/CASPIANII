@@ -135,7 +135,7 @@ CheckGBIFTax <- function(dat){
       }
       next
       
-    } else if (any(db$status=="ACCEPTED" & db$matchType=="FUZZY" & db$confidence==100 & colnames(db)=="canonicalName")) { 
+    } else if (any(db$status=="ACCEPTED" & db$matchType=="FUZZY" & db$confidence>=97 & colnames(db)=="canonicalName")) { 
 
       ## FUZZY MATCHES #################################################################################
       

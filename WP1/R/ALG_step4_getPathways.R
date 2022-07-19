@@ -15,11 +15,11 @@
 
 get_pathways <- function(){
 
-  dat <- read.xlsx(file.path("Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+  dat <- read.xlsx(file.path("WP1","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
 
   ## Prepare pathway data ###################################################################
   ## Pathway data from Saul et al. (2017) JAE 54, 657–669, doi: 10.1111/1365-2664.12819
-  pathways <- read.table(file.path("Data","INTRODUCTION_PATHWAYS.csv"),sep=";",stringsAsFactors = F,header=T)
+  pathways <- read.table(file.path("WP1","Data","INTRODUCTION_PATHWAYS.csv"),sep=";",stringsAsFactors = F,header=T)
   colnames(pathways)[4] <- c("PathwayMain")
   colnames(pathways)[5] <- c("PathwaySub")
   colnames(pathways)[6] <- c("PathwayIntential")
@@ -68,7 +68,7 @@ get_pathways <- function(){
   ## standardise  pathway names ###################################################
   
   ## get translation table
-  path_translate <- read.xlsx(file.path("Data","VektorenÜbersetzung.xlsx"),sheet=1)
+  path_translate <- read.xlsx(file.path("WP1","Data","VektorenÜbersetzung.xlsx"),sheet=1)
   
   ## replace CBD pathway names
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
@@ -76,14 +76,16 @@ get_pathways <- function(){
   for (i in 1:length(all_paths_CBD)){
     
     ## find CBD pathway in species table
-    spec_ind <- grep(all_paths_CBD[i],dat_path$PathwaySub)
-    # dat_path[spec_ind,]
+    spec_ind <- grep(all_paths_CBD[i],dat_path$PathwaySub,fixed=T)
+    # dat_path[spec_ind,]$pathway
     
-    ind_new_name <- grep(all_paths_CBD[i],path_translate[,which(colnames(path_translate)=="CBD_Sub")]) # position of translated pathway name
+    ind_new_name <- grep(all_paths_CBD[i],path_translate[,which(colnames(path_translate)=="CBD_Sub")],fixed=T) # position of translated pathway name
+    if (length(ind_new_name)>1) print(i)
     if (length(ind_new_name)>0){
-      dat_path$pathway[spec_ind] <- gsub(all_paths_CBD[i],path_translate[,1][ind_new_name],dat_path$pathway[spec_ind])
+      dat_path$pathway[spec_ind] <- gsub(all_paths_CBD[i],path_translate[,1][ind_new_name],dat_path$pathway[spec_ind],fixed=T)
     }
   }
+  table(unlist(strsplit(dat_path$pathway,"; ")))
   
   ## remove duplicates
   dat_path$pathway <- unlist(lapply(strsplit(dat_path$pathway,"; "),function(s) paste(unique(s),collapse = "; ")))
@@ -94,9 +96,10 @@ get_pathways <- function(){
   dat_path$pathway <- gsub("; Unbekannt","",dat_path$pathway)
   dat_path$pathway <- gsub("Unbekannt; ","",dat_path$pathway)
   
+  ## generate output ######################################################################
   dat_path <- dat_path[order(dat_path$taxonGroup,dat_path$scientificName),] # sort output
-
-  dat_path <- dat_path[,c("Taxon","scientificName","taxonGroup","status","firstRecord","pathway","genus","family","order","class","phylum","kingdom","database")]
+  
+  dat_path <- dat_path[,c("Taxon","scientificName","taxonGroup","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","database")]
   
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")
   # ind <- grep("Unbekannt",dat_path$pathway)
@@ -110,5 +113,5 @@ get_pathways <- function(){
   writeData(wb,"GesamtListeGebietsfremdeArten",dat_path, headerStyle = hs2)
   
   ## export file (overrides existing file!) ##########################
-  saveWorkbook(wb, file.path("Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("WP1","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }

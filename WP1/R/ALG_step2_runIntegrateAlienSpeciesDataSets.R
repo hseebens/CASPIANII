@@ -9,12 +9,12 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   
   ## Integrate all data into one file ##########################################################
   
-  sheet_names <- getSheetNames(file.path("Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"))
+  sheet_names <- getSheetNames(file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"))
   
   all_dat_sub <- list()
   for (i in 1:length(sheet_names)){
     
-    dat <- read.xlsx(file.path("Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"),sheet=i)
+    dat <- read.xlsx(file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"),sheet=i)
 
     ## add column of invasion status
     if (!"status"%in%colnames(dat)){
@@ -117,7 +117,7 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   final_dataset <- final_dataset[order(final_dataset$taxonGroup,final_dataset$scientificName),]
   final_dataset <- final_dataset[,c("Taxon","scientificName","taxonGroup","status","firstRecord","pathway","genus","family","order","class","phylum","kingdom","database")]
   
-  ## Create Workbook object and add worksheets
+  ## Create Workbook object and add worksheets #######################################################
   wb <- createWorkbook()
   hs2 <- createStyle(halign = "center", valign = "center", textDecoration = "bold",border = "Bottom")
   
@@ -125,5 +125,5 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   writeData(wb,"GesamtListeGebietsfremdeArten",final_dataset, headerStyle = hs2)
   
   ## export file ##########################
-  saveWorkbook(wb, file.path("Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("WP1","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }
