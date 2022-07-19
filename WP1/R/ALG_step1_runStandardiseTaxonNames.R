@@ -4,7 +4,7 @@
 ## Standardisation of taxon names
 ## check and replace species names using 'rgibf' GBIF taxonomy
 ##
-## Hanno Seebens, Frankfurt, 27.06.2022
+# Hanno Seebens, 18.07.22
 #########################################################################################
 
 CheckGBIFTax <- function(dat){

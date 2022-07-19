@@ -11,13 +11,9 @@
 #
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 29.06.22
+# Hanno Seebens, 18.07.22
 ###############################################################################################################
 
-# database <- c("GBIF","sMon","OBIS","iNat")
-# taxon_name <- "Abies alba"
-# 
-# taxon_name <- "Salmo trutta"
 
 get_occurrence_records <- function(taxon_name=taxon_name,
                                    own_records=NA,

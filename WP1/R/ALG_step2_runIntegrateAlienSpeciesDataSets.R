@@ -1,7 +1,7 @@
 #####################################################################################
 # Integrate standardised taxon names into one file
 # 
-# Hanno Seebens, 27.06.2022, Frankfurt
+# Hanno Seebens, 18.07.22
 #####################################################################################
 
 run_IntegrateAlienSpeciesDataSets <- function(){
