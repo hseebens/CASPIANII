@@ -102,7 +102,8 @@ get_occurrence_records <- function(taxon_name=taxon_name,
     cat("\n** Working on GBIF ******************\n")
     
     xx <- name_backbone(name=taxon_name)$usageKey
-    nrecords <- occ_count(xx) # number of available records
+    nrecords <- occ_count(xx,georeferenced=T,country="DE") # number of available records
+    
     if (nrecords>max_limit){
       warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
     }
@@ -187,7 +188,12 @@ get_occurrence_records <- function(taxon_name=taxon_name,
       cat(paste(nrow(occ_dat),"records of",taxon_name,"found in OBIS\n"))
       
       ## prepare output #############
-      occ_dat <- occ_dat[,c("name","longitude","latitude","date")]
+      if ("date"%in%colnames(occ_dat)){
+        occ_dat <- occ_dat[,c("name","longitude","latitude","date")]
+      } else {
+        occ_dat <- occ_dat[,c("name","longitude","latitude")]
+        occ_dat$date <- NA
+      }
       occ_dat$database <- "OBIS"
       occ_dat$date <- as.character(occ_dat$date)
       

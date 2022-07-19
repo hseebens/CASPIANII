@@ -42,16 +42,16 @@ source(file.path("WP1","R","CASPIANII_loadScripts.R"))
 ## Parameters to specify search ###############################
 
 # sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
-database <- c("OBIS","GBIF","iNat")# "sMon",
+database <- c("OBIS","GBIF","iNat")# 
 # max_limit <- 10^4
-# bounding_box <- c(5,45,15,58) # lower left and upper right corner (long-lat)
+bounding_box <- c(5,45,15,58) # lower left and upper right corner (long-lat)
 
 
 ## get occurrence records from suggested databases ###########
 
-records <- get_occurrence_records(taxon_name="Corbicula fluminea",database=database)
-# records <- get_occurrence_records(taxon_name="Acartia tonsa", database=database, bounding_box = bounding_box)
-# records <- get_occurrence_records(taxon_name="Acer negundo",database=database,sMon_folder=sMon_folder)
+# records <- get_occurrence_records(taxon_name="Corbicula fluminea",database=c("OBIS","GBIF","iNat"))
+# records <- get_occurrence_records(taxon_name="Crassostrea gigas", database=c("OBIS","GBIF","iNat"), bounding_box = bounding_box)
+records <- get_occurrence_records(taxon_name="Acer negundo",database=c("sMon","GBIF","iNat"),sMon_folder=sMon_folder)
 
 
 
