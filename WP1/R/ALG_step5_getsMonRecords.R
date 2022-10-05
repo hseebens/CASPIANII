@@ -90,18 +90,18 @@ get_nRecords_sMon <- function(sMon_folder=sMon_folder){
   
   ## data availability
   alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<500] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<500],"geringe GBIF Datendichte",sep="; ")
-  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<10000 & alienspecies_nRecords$nRecords_GBIF_DE>1000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<10000 & alienspecies_nRecords$nRecords_GBIF_DE>1000],"mittlere GBIF Datenverfügbarkeit",sep=";")
-  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE>10000 & alienspecies_nRecords$nRecords_GBIF_All>10000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE>10000 & alienspecies_nRecords$nRecords_GBIF_All>10000],"gute GBIF Datenverfügbarkeit",sep=";")
+  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<10000 & alienspecies_nRecords$nRecords_GBIF_DE>500] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE<10000 & alienspecies_nRecords$nRecords_GBIF_DE>1000],"mittlere GBIF Datendichte",sep=";")
+  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE>10000 & alienspecies_nRecords$nRecords_GBIF_All>10000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE>10000 & alienspecies_nRecords$nRecords_GBIF_All>10000],"gute GBIF Datendichte",sep=";")
   
   alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 10000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 10000],"gute sMon Datendichte",sep="; ")
   alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon < 1000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon < 1000],"geringe sMon Datendichte",sep="; ")
-  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 1000 & alienspecies_nRecords$nRecords_sMon < 10000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 1000 & alienspecies_nRecords$nRecords_sMon < 10000],"geringe sMon Datendichte",sep="; ")
-  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE > 10000 & alienspecies_nRecords$nRecords_sMon > 10000 & alienspecies_nRecords$nRecords_GBIF_All > 10000] <- "sehr gute Datendichte in GBIF und sMon"
+  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 1000 & alienspecies_nRecords$nRecords_sMon < 10000] <- paste(alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_sMon > 1000 & alienspecies_nRecords$nRecords_sMon < 10000],"mittlere sMon Datendichte",sep="; ")
+  alienspecies_nRecords$comment[alienspecies_nRecords$nRecords_GBIF_DE > 10000 & alienspecies_nRecords$nRecords_sMon > 10000] <- "sehr gute Datendichte in GBIF und sMon"
 
   alienspecies_nRecords$comment <- gsub("^; ","",alienspecies_nRecords$comment)
   alienspecies_nRecords$comment <- gsub("^;","",alienspecies_nRecords$comment)
   
-  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","scientificName","taxonGroup","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","nRecords_sMon","comment","database")]
+  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","scientificName","taxonGroup","EU_concern","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","nRecords_sMon","comment","database")]
   
   
   ## Create Workbook object and add worksheets for output ##############################################

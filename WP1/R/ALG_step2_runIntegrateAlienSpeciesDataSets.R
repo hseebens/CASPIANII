@@ -82,7 +82,21 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   final_dataset$pathway <- unlist(lapply(strsplit(final_dataset$pathway,"; "),function(s) paste(unique(s),collapse = "; ")))
   
   
+  ## mark/add species of union concern #####################################
+
+  eu_concern <- read.xlsx(file.path("WP1","Data","List_IAS_union_concern.xlsx"))
+  eu_concern$scientificName <- gsub("\\s*\\([^\\)]+\\)","",eu_concern$scientificName) # remove synonyms provided in brackets
+  
+  ## standardise taxon names 
+  eu_concern_stand <- CheckGBIFTax(eu_concern)
+  eu_taxa <- cbind.data.frame(eu_concern_stand[[1]][,c("Taxon")],"x")
+  colnames(eu_taxa) <- c("Taxon","EU_concern")
+  
+  final_dataset <- merge(final_dataset,eu_taxa,by="Taxon",all=T)
+
+      
   ## Add common names of groups #############################################
+  
   final_dataset$taxonGroup <- NA
   final_dataset$taxonGroup[final_dataset$class=="Mammalia"] <- "Säugetiere"
   final_dataset$taxonGroup[final_dataset$class=="Aves"] <- "Vögel"
@@ -115,7 +129,7 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   final_dataset[is.na(final_dataset$taxonGroup),]
     
   final_dataset <- final_dataset[order(final_dataset$taxonGroup,final_dataset$scientificName),]
-  final_dataset <- final_dataset[,c("Taxon","scientificName","taxonGroup","status","firstRecord","pathway","genus","family","order","class","phylum","kingdom","database")]
+  final_dataset <- final_dataset[,c("Taxon","scientificName","taxonGroup","EU_concern","status","firstRecord","pathway","genus","family","order","class","phylum","kingdom","database")]
   
   ## Create Workbook object and add worksheets #######################################################
   wb <- createWorkbook()

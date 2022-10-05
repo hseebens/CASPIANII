@@ -99,7 +99,7 @@ get_pathways <- function(){
   ## generate output ######################################################################
   dat_path <- dat_path[order(dat_path$taxonGroup,dat_path$scientificName),] # sort output
   
-  dat_path <- dat_path[,c("Taxon","scientificName","taxonGroup","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","database")]
+  dat_path <- dat_path[,c("Taxon","scientificName","taxonGroup","EU_concern","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","database")]
   
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")
   # ind <- grep("Unbekannt",dat_path$pathway)

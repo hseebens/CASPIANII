@@ -59,9 +59,22 @@ for (i in 1:length(uni_data)){
 
 ## Landfahrzeuge
 landfahr <- subset(fulllist,grepl("sehr gute ",fulllist$comment) & grepl("Landfahrzeuge",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All","nRecords_sMon")]
-
 # write.table(landfahr,file.path("WP1","Data","Kandidaten_sehrGuteDaten_Landfahrzeuge.csv"))
 
 ## Ballast
-ballast <- subset(fulllist,grepl("",fulllist$comment) & grepl("Ballast",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All")]
+ballast <- subset(fulllist,grepl("sehr gute",fulllist$comment) & grepl("Ballast",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All")]
 # write.table(ballast,file.path("WP1","Data","Kandidaten_sehrGuteDaten_Ballastwasser.csv"))
+
+## Biofouling
+fouling <- subset(fulllist,grepl("sehr gute",fulllist$comment) & grepl("Anhaftung an Schiffe",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All")]
+# write.table(ballast,file.path("WP1","Data","Kandidaten_sehrGuteDaten_Ballastwasser.csv"))
+
+
+## Biofouling
+fouling <- subset(fulllist,grepl("gute",fulllist$comment) & grepl("Blinder",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All")]
+# write.table(ballast,file.path("WP1","Data","Kandidaten_sehrGuteDaten_Ballastwasser.csv"))
+
+## Personen
+personen <- subset(fulllist,grepl("sehr gute",fulllist$comment) & grepl("Personen",fulllist$pathway))[,c("Taxon","taxonGroup","nRecords_GBIF_DE","nRecords_GBIF_All")]
+# write.table(ballast,file.path("WP1","Data","Kandidaten_sehrGuteDaten_Ballastwasser.csv"))
+
