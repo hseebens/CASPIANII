@@ -49,11 +49,12 @@ sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
 # called either "Wissenschaftlicher_Name", "Taxon" or "scientificName". 
 # File has to be named "ListeGebietsfremderArten_Rohdaten.xlsx" or this should be changed in scripts
 
+
 # 1. step: load data, standardise column names and taxonomic names
 
 cat("\nStep 1: Data standardisation running\n")
-
 run_DataStandardisation(pathway_datasets)
+
 
 ## 2. step: Integrate databases and remove duplicates
 
