@@ -8,7 +8,7 @@
 # 
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 18.07.22
+# Hanno Seebens, 04.11.22
 ###############################################################################################################
 
 
@@ -46,7 +46,7 @@ sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
 ## Generation of alien species list #########################
 
 ## Step 0: Get all data into a spreadsheet (.xlsx) with each data set on one sheet and taxon names in columns 
-# called either "Wissenschaftlicher_Name", "Taxon" or "scientificName". 
+# called either "WissenschaftlicherName", "Taxon" or "scientificName". 
 # File has to be named "ListeGebietsfremderArten_Rohdaten.xlsx" or this should be changed in scripts
 
 

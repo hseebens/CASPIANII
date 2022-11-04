@@ -4,7 +4,7 @@
 # 
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 18.07.22
+# Hanno Seebens, 04.11.22
 ###############################################################################################################
 
 
@@ -15,7 +15,7 @@ get_GBIFrecords <- function(dat=dat){
   # dat <- dat[1:100,]
   
   ## get list of taxon names
-  dat$SpecNames <- dat$scientificName
+  dat$SpecNames <- dat$wissenschaftlicherName
   dat$SpecNames[is.na(dat$SpecNames)] <- dat$Taxon[is.na(dat$SpecNames)]
   SpecNames <- dat$SpecNames
   
@@ -48,8 +48,8 @@ get_GBIFrecords <- function(dat=dat){
   ind <- !duplicated(GBIF_species$speciesKey)
   GBIF_species <- GBIF_species[ind,]
   
-  GBIF_species$nRecords_GBIF_DE <- 0
-  GBIF_species$nRecords_GBIF_All <- 0
+  GBIF_species$Eintraege_GBIF_DE <- 0
+  GBIF_species$Eintraege_GBIF_Global <- 0
   for (i in 1:length(GBIF_species$speciesKey)){
     
     nRecords_All <- try(occ_count(GBIF_species$speciesKey[i]))
@@ -57,18 +57,18 @@ get_GBIFrecords <- function(dat=dat){
     
     if (class(nRecords_DE)=="try-error") next
     
-    GBIF_species$nRecords_GBIF_DE[i] <- nRecords_DE
-    GBIF_species$nRecords_GBIF_All[i] <- nRecords_All
+    GBIF_species$Eintraege_GBIF_DE[i] <- nRecords_DE
+    GBIF_species$Eintraege_GBIF_Global[i] <- nRecords_All
     
     if (i%%1000==0) print(i)
   }
   
   ## merge record numbers with original input file 
-  dat_out <- merge(dat,GBIF_species[,c("Orig_name","nRecords_GBIF_DE","nRecords_GBIF_All")],by.x="SpecNames",by.y="Orig_name",all.x=T)
-  dat_out$nRecords_GBIF_DE[is.na(dat_out$nRecords_GBIF_DE)] <- 0
-  dat_out$nRecords_GBIF_All[is.na(dat_out$nRecords_GBIF_All)] <- 0
+  dat_out <- merge(dat,GBIF_species[,c("Orig_name","Eintraege_GBIF_DE","Eintraege_GBIF_Global")],by.x="SpecNames",by.y="Orig_name",all.x=T)
+  dat_out$Eintraege_GBIF_DE[is.na(dat_out$Eintraege_GBIF_DE)] <- 0
+  dat_out$Eintraege_GBIF_Global[is.na(dat_out$Eintraege_GBIF_Global)] <- 0
   
-  dat_out <- dat_out[order(dat_out$taxonGroup,dat_out$scientificName),] # sort output
+  dat_out <- dat_out[order(dat_out$ArtGruppe,dat_out$wissenschaftlicherName),] # sort output
   
   ## Create Workbook object and add worksheets for output
   wb <- createWorkbook()

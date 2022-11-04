@@ -8,7 +8,7 @@
 # 
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 18.07.22
+# Hanno Seebens, 04.11.22
 ###############################################################################################################
 
 
@@ -97,10 +97,10 @@ get_pathways <- function(){
   dat_path$pathway <- gsub("Unbekannt; ","",dat_path$pathway)
   
   ## generate output ######################################################################
-  dat_path <- dat_path[order(dat_path$taxonGroup,dat_path$scientificName),] # sort output
+  dat_path <- dat_path[order(dat_path$ArtGruppe,dat_path$wissenschaftlicherName),] # sort output
   
-  dat_path <- dat_path[,c("Taxon","scientificName","taxonGroup","EU_concern","status","genus","family","order","class","phylum","kingdom","firstRecord","pathway","nRecords_GBIF_DE","nRecords_GBIF_All","database")]
-  
+  dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Vektoren","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]
+
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")
   # ind <- grep("Unbekannt",dat_path$pathway)
   # dat_path$pathway[ind]

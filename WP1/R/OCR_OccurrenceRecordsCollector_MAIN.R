@@ -11,7 +11,7 @@
 # 
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 18.07.22
+# Hanno Seebens, 04.11.22
 ###############################################################################################################
 
 
@@ -24,6 +24,7 @@ library(rgbif)
 library(robis)
 library(spocc)
 library(leaflet)
+library(data.table)
 
 # setwd("/home/hanno/Bioinvasion/CASPIANII")
 
@@ -41,17 +42,26 @@ source(file.path("WP1","R","CASPIANII_loadScripts.R"))
 
 ## Parameters to specify search ###############################
 
-# sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
+## folder where sMon data are stored
+sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
+
+## folder where own data are stored
+owndata_folder <- ""
+owndata_filename <- ""
+
+## selected databases for occurrence records (possible: OBIS, GBIF, iNat, sMon)
 database <- c("OBIS","GBIF","iNat")# 
-# max_limit <- 10^4
+
+## bounding box of area to search for occurrence records giving in geographic coordinate (long-lat)
 bounding_box <- c(5,45,15,58) # lower left and upper right corner (long-lat)
 
 
 ## get occurrence records from suggested databases ###########
 
 # records <- get_occurrence_records(taxon_name="Corbicula fluminea",database=c("OBIS","GBIF","iNat"))
-# records <- get_occurrence_records(taxon_name="Crassostrea gigas", database=c("OBIS","GBIF","iNat"), bounding_box = bounding_box)
-records <- get_occurrence_records(taxon_name="Acer negundo",database=c("sMon","GBIF","iNat"),sMon_folder=sMon_folder)
+records <- get_occurrence_records(taxon_name="Crassostrea gigas", database=c("OBIS","GBIF","iNat"), bounding_box = bounding_box)
+# records <- get_occurrence_records(taxon_name="Acer negundo",database=c("sMon","GBIF","iNat"),sMon_folder=sMon_folder)
+# records <- get_occurrence_records(taxon_name="Rhaponticum repens",database=c("sMon","GBIF","iNat"),sMon_folder=sMon_folder)
 
 
 
