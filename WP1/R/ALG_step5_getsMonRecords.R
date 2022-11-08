@@ -19,7 +19,8 @@ get_nRecords_sMon <- function(sMon_folder=sMon_folder){
   working_directory <- getwd()
   setwd(sMon_folder)
   
-  cat("Load sMon data sets\n")
+  # cat("Load sMon data sets\n")
+  cat(" Lade sMon Datensätze\n")
   
   specNames_all1 <- fread("1875_9_1875_2_Modelled_OPs_incl_sd_pt_1.csv",select="TaxonName")
   nRecords_sMon1 <- specNames_all1[,.N,by="TaxonName"]
@@ -52,7 +53,8 @@ get_nRecords_sMon <- function(sMon_folder=sMon_folder){
   
   ## standardise sMon species names for comparison ################
   
-  cat("Standardise sMon species names\n")
+  # cat("Standardise sMon species names\n")
+  cat(" Standardisiere sMon Taxonnamen\n")
   
   specNames_sMon_standardised <- CheckGBIFTax(specNames_sMon)[[1]]
   
@@ -101,7 +103,7 @@ get_nRecords_sMon <- function(sMon_folder=sMon_folder){
   alienspecies_nRecords$Kommentar <- gsub("^; ","",alienspecies_nRecords$Kommentar)
   alienspecies_nRecords$Kommentar <- gsub("^;","",alienspecies_nRecords$Kommentar)
   
-  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Vektoren","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Eintraege_sMon","Kommentar","Datenbank")]
+  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Eintraege_sMon","Kommentar","Datenbank")]
 
   ## Create Workbook object and add worksheets for output ##############################################
   wb <- createWorkbook()

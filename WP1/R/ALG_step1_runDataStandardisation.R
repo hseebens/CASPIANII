@@ -10,7 +10,7 @@
 ###############################################################################################################
 
 
-run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
+run_DataStandardisation <- function(Pfad_Datensaetze=Pfad_Datensaetze){
 
   
   ## load data sets and standardise taxon names #################################################
@@ -25,7 +25,8 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
   for (i in 1:length(sheet_names)){#
     
     ## load data from single sheet
-    cat(paste0("\nWorking on data set '",sheet_names[i],"'\n"))
+    # cat(paste0("\nWorking on data set '",sheet_names[i],"'\n"))
+    cat(paste0("\n  Bearbeiten von Datensatz '",sheet_names[i],"'\n"))
     
     dat <- read.xlsx(file.path("WP1","Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"),sheet=i)
     
@@ -76,14 +77,14 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
     
     ## standardise pathway names #################################################################
     
-    if (any(sheet_names[i]%in%pathway_datasets)){
+    if (any(sheet_names[i]%in%Pfad_Datensaetze)){
       
       ## get translation table
-      path_translate <- read.xlsx(file.path("WP1","Data","VektorenUebersetzung.xlsx"),sheet=1)
+      path_translate <- read.xlsx(file.path("WP1","Data","PfadUebersetzung.xlsx"),sheet=1)
       
       if (sheet_names[i]=="EASIN_Germany"){
         
-        dat$Vektoren <- NA
+        dat$Pfad <- NA
         ind_trans <- which(colnames(path_translate)%in%sheet_names[i]) # column number in translation table
         
         all_paths <- colnames(dat)[-(1:2)]
@@ -95,16 +96,16 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
           spec_row_ind <- which(!is.na(dat[,all_paths[j]])) # relevant entries of species with the respective pathway in the species table
           trans_row_ind <- grep(all_paths[j],path_translate[,"EASIN_Germany"],fixed=T) # respective row in translation table 
           
-          dat$Vektoren[spec_row_ind] <- paste(dat$Vektoren[spec_row_ind],path_translate[trans_row_ind,1],sep="; ")
-          dat$Vektoren <- gsub("; $","",dat$Vektoren)
+          dat$Pfad[spec_row_ind] <- paste(dat$Pfad[spec_row_ind],path_translate[trans_row_ind,1],sep="; ")
+          dat$Pfad <- gsub("; $","",dat$Pfad)
         }
-        dat$Vektoren <- gsub("NA; ","",dat$Vektoren)
-        dat$Vektoren[is.na(dat$Vektoren)] <- ""
+        dat$Pfad <- gsub("NA; ","",dat$Pfad)
+        dat$Pfad[is.na(dat$Pfad)] <- ""
       }
       
       if (sheet_names[i]=="Tackenberg_2017"){
         
-        dat$Vektoren <- NA
+        dat$Pfad <- NA
         ind <- which(colnames(path_translate)%in%sheet_names[i])
         
         all_paths <- colnames(dat)[-(1:2)]
@@ -115,18 +116,18 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
           ind <- which(!is.na(dat[,all_paths[j]]))
           row_ind <- grep(all_paths_spaces[j],gsub("\\."," ",path_translate[,"Tackenberg_2017"]),fixed=T)
           
-          dat$Vektoren[ind] <- paste(dat$Vektoren[ind],path_translate[row_ind,1],sep="; ")
-          dat$Vektoren <- gsub("; $","",dat$Vektoren)
+          dat$Pfad[ind] <- paste(dat$Pfad[ind],path_translate[row_ind,1],sep="; ")
+          dat$Pfad <- gsub("; $","",dat$Pfad)
         }
-        dat$Vektoren <- gsub("NA; ","",dat$Vektoren)
-        dat$Vektoren <- gsub("NA$","",dat$Vektoren)
-        dat$Vektoren[is.na(dat$Vektoren)] <- ""
+        dat$Pfad <- gsub("NA; ","",dat$Pfad)
+        dat$Pfad <- gsub("NA$","",dat$Pfad)
+        dat$Pfad[is.na(dat$Pfad)] <- ""
       }
       
       if (sheet_names[i]=="BfN"){
         
-        dat$Vektoren <- dat$Vektoren
-        dat$Vektoren <- gsub(" \\(.*?\\)", "", dat$Vektoren) # remove brackets
+        dat$Pfad <- dat$Pfad
+        dat$Pfad <- gsub(" \\(.*?\\)", "", dat$Pfad) # remove brackets
         
         ind <- which(colnames(path_translate)%in%sheet_names[i])
         
@@ -137,21 +138,21 @@ run_DataStandardisation <- function(pathway_datasets=pathway_datasets){
           row_ind <- grep(all_paths[j],path_translate[,sheet_names[i]],fixed=T)
           new_name <- path_translate[row_ind,1]
           # print(new_name)
-          dat$Vektoren <- gsub(all_paths[j],new_name,dat$Vektoren)
-          dat$Vektoren <- gsub("; $","",dat$Vektoren)
+          dat$Pfad <- gsub(all_paths[j],new_name,dat$Pfad)
+          dat$Pfad <- gsub("; $","",dat$Pfad)
         }
       }
-      dat$Vektoren <- gsub("^ ;","",dat$Vektoren)
+      dat$Pfad <- gsub("^ ;","",dat$Pfad)
       
       ## remove duplicates
-      dat$Vektoren <- unlist(lapply(strsplit(dat$Vektoren,"; "),function(s) paste(unique(s),collapse = "; ")))
+      dat$Pfad <- unlist(lapply(strsplit(dat$Pfad,"; "),function(s) paste(unique(s),collapse = "; ")))
       
       ## replace missing values by NA
-      dat$Vektoren[dat$Vektoren==""] <- NA
+      dat$Pfad[dat$Pfad==""] <- NA
       
     }
-    if (!"Vektoren"%in%colnames(dat) & !"pathway"%in%colnames(dat)){
-      dat$Vektoren <- NA
+    if (!"Pfad"%in%colnames(dat) & !"pathway"%in%colnames(dat)){
+      dat$Pfad <- NA
     }
     
     ## get taxonomic information from GBIF and add to data set #######################################################

@@ -20,13 +20,13 @@ run_IntegrateAlienSpeciesDataSets <- function(){
     if (!"Status"%in%colnames(dat)){
       dat$Status <- NA
     }      
-    if (!"Vektoren"%in%colnames(dat)){
-      dat$Vektoren <- NA
+    if (!"Pfad"%in%colnames(dat)){
+      dat$Pfad <- NA
     }
     if (!"Erstnachweis"%in%colnames(dat)){
       dat$Erstnachweis <- NA
     }      
-    dat_sub <- cbind.data.frame(dat[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich","Status","Erstnachweis","Vektoren")],sheet_names[i])
+    dat_sub <- cbind.data.frame(dat[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich","Status","Erstnachweis","Pfad")],sheet_names[i])
     
     all_dat_sub[[i]] <- dat_sub
   }  
@@ -57,10 +57,10 @@ run_IntegrateAlienSpeciesDataSets <- function(){
       all_sources <- paste(unique(single$Datenbank),collapse = "; ")
       single[1,]$Datenbank <- all_sources
       
-      all_paths <- single$Vektoren[!is.na(single$Vektoren)]
+      all_paths <- single$Pfad[!is.na(single$Pfad)]
       all_paths <- unique(all_paths)
       all_paths <- paste(all_paths,collapse = "; ")
-      single[1,]$Vektoren <- all_paths
+      single[1,]$Pfad <- all_paths
       
       all_status <- paste(unique(single$Status[!is.na(single$Status)]),collapse = "; ")
       single[1,]$Status <- all_status
@@ -84,7 +84,7 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   final_dataset <- rbind(all_data_noDupl,new_rows)
 
   ## remove duplicates among pathways
-  final_dataset$Vektoren <- unlist(lapply(strsplit(final_dataset$Vektoren,"; "),function(s) paste(unique(s),collapse = "; ")))
+  final_dataset$Pfad <- unlist(lapply(strsplit(final_dataset$Pfad,"; "),function(s) paste(unique(s),collapse = "; ")))
   
   
   ## mark/add species of union concern #####################################
@@ -119,7 +119,7 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   nonexisting <- nonexisting[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich")]
   nonexisting$Status <- ""
   nonexisting$Erstnachweis <- ""
-  nonexisting$Vektoren <- ""
+  nonexisting$Pfad <- ""
   nonexisting$Datenbank <- ""
   nonexisting$EU_Anliegen <- "x"
 
@@ -161,7 +161,7 @@ run_IntegrateAlienSpeciesDataSets <- function(){
   # final_dataset[is.na(final_dataset$ArtGruppe),]
     
   final_dataset <- final_dataset[order(final_dataset$ArtGruppe,final_dataset$wissenschaftlicherName),]
-  final_dataset <- final_dataset[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Vektoren","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Datenbank")]
+  final_dataset <- final_dataset[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Datenbank")]
   
   ## Create Workbook object and add worksheets #######################################################
   wb <- createWorkbook()

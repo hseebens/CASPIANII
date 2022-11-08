@@ -326,7 +326,10 @@ CheckGBIFTax <- function(dat){
       db_2 <- db_all_2[["data"]]
       if (db_2$matchType=="EXACT"){
         
-        if (length(unique(db_2[db_2$status=="ACCEPTED" & db_2$matchType=="EXACT",]$family))>1) cat(paste0("\n Warning: Multiple entries of ",dat$scientificName[ind_tax]," found in GBIF! Add author to species name or add kingdom information to original database or check GBIF. \n"))
+        # if (length(unique(db_2[db_2$status=="ACCEPTED" & db_2$matchType=="EXACT",]$family))>1) cat(paste0("\n Warning: Multiple entries of ",dat$scientificName[ind_tax]," found in GBIF! Add author to species name or add kingdom information to original database or check GBIF. \n"))
+        if (length(unique(db_2[db_2$status=="ACCEPTED" & db_2$matchType=="EXACT",]$family))>1){
+          cat(paste0("\n Warnung: Mehrfache Einträge für ",dat$scientificName[ind_tax]," in GBIF gefunden! Ergänze Autor zum Artnamen oder füge Informationen zum Reich der Art in Rohdatensatz oder überprüfe GBIF Eintrag. \n"))
+        } 
         
         dat$scientificName[ind_tax] <- db_2[db_2$status=="ACCEPTED" & db_2$matchType=="EXACT",]$scientificName[1]
         

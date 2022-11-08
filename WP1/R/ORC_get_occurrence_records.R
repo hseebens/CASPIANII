@@ -1,12 +1,12 @@
 ##################### Get occurrence records ########################################################
 # 
 # This scripts returns the occurrence records of the requested taxon available at GBIF, sMon,
-# iNaturalist and OBIS in any combination if specified in option 'database' and in 'own_records'. 
+# iNaturalist and OBIS in any combination if specified in option 'database' and in 'owndata_filename'. 
 # Available records are standardised, merged and returned.
 # 
-# databases: GBIF, iNat, sMon, OBIS, NA (if NA, no records are extracted and only own_records used)
+# databases: GBIF, iNat, sMon, OBIS, NA (if NA, no records are extracted and only owndata_filename used)
 #
-# Minimum required input: taxon_name (name of taxon); database or own_records
+# Minimum required input: taxon_name (name of taxon); database or owndata_filename
 # Function output: List of coordinates and date of record
 #
 # Project: CASPIAN II
@@ -41,7 +41,7 @@ get_occurrence_records <- function(taxon_name=taxon_name,
   
   ## sMon occurrences ###############################################################
 
-  if (all(is.na(database)) & length(own_records)==1){
+  if (all(is.na(database)) & length(owndata_filename)==1){
     # warning("No databases selected and no own records provided.")
     warning("Keine Datenbank ausgewählt oder eigene Daten bereit gestellt.")
   }
@@ -111,7 +111,8 @@ get_occurrence_records <- function(taxon_name=taxon_name,
     nrecords <- occ_count(xx,georeferenced=T,country="DE") # number of available records
     
     if (nrecords>max_limit){
-      warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
+      # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
+      warning(paste0("\nAnzahl der verfügbaren Einträge (n=",nrecords,") überschreitet Limit (",max_limit,")!\n Entweder sollte max_limit erhöht werden (Warnung: iNaturalist erlaubt keine hohen downloads) oder Daten sollten direkt von Webseite geladen werden."))
     }
     
     occ_dat <- occ_data(scientificName = taxon_name,geometry = bounding_box,hasCoordinate=T,limit=max_limit)[[2]]
@@ -121,13 +122,17 @@ get_occurrence_records <- function(taxon_name=taxon_name,
     }
     if (nrow(occ_dat)==max_limit){
       # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
-      cat("Maximum limit von Einträgen für GBIF Anfrage erreicht. Entweder Limit (max_limit) erhöhen oder Daten direkt von der GBIF Webseite laden.")
+      cat("Maximum Limit von Einträgen für GBIF Anfrage erreicht. Entweder Limit (max_limit) erhöhen oder Daten direkt von der GBIF Webseite laden.")
     }
     
     ## prepare output #############
     if (nrow(occ_dat)>0){
         
       cat(paste(nrow(occ_dat),"Eintraege von",taxon_name,"in GBIF gefunden\n"))
+      
+      
+      
+      
       
       occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
       occ_dat$Datenbank <- "GBIF"

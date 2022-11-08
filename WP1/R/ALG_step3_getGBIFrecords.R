@@ -22,7 +22,8 @@ get_GBIFrecords <- function(dat=dat){
   #######################################################################################
   ### get GBIF keys for all species (necessary to apply 'occ_count' #####################
   
-  cat("\n Get GBIF keys for taxa \n")
+  # cat("\n Get GBIF keys for taxa \n")
+  cat("\n Extrahiere GBIF keys für Taxa \n")
   
   GBIF_speclist <- list()
   x <- 0
@@ -34,7 +35,7 @@ get_GBIFrecords <- function(dat=dat){
     x <- x + 1
     GBIF_speclist[[x]] <- c(specname$speciesKey,specname$matchType,SpecNames[i])
     
-    if (x%%1000==0) print(x)
+    if (x%%1000==0) cat(paste(" ",x,"\n"))
   }
   GBIF_species <- as.data.frame(do.call("rbind",GBIF_speclist),stringsAsFactors = F)
   colnames(GBIF_species) <- c("speciesKey","matchType","Orig_name")
@@ -42,7 +43,8 @@ get_GBIFrecords <- function(dat=dat){
   #######################################################################################
   ### Get the number of GBIF records per species ########################################
   
-  cat("\n Get number of records per taxon from GBIF \n")
+  # cat("\n Get number of records per taxon from GBIF \n")
+  cat("\n Ermittle Anzahl Einträge pro Art auf GBIF \n")
   
   # remove entries with duplicated GBIF keys (e.g. synonyms)
   ind <- !duplicated(GBIF_species$speciesKey)
@@ -60,7 +62,7 @@ get_GBIFrecords <- function(dat=dat){
     GBIF_species$Eintraege_GBIF_DE[i] <- nRecords_DE
     GBIF_species$Eintraege_GBIF_Global[i] <- nRecords_All
     
-    if (i%%1000==0) print(i)
+    if (i%%1000==0) cat(paste(" ",i,"\n"))
   }
   
   ## merge record numbers with original input file 

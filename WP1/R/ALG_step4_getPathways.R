@@ -68,7 +68,7 @@ get_pathways <- function(){
   ## standardise  pathway names ###################################################
   
   ## get translation table
-  path_translate <- read.xlsx(file.path("WP1","Data","VektorenUebersetzung.xlsx"),sheet=1)
+  path_translate <- read.xlsx(file.path("WP1","Data","PfadUebersetzung.xlsx"),sheet=1)
   
   ## replace CBD pathway names
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
@@ -85,7 +85,7 @@ get_pathways <- function(){
       dat_path$pathway[spec_ind] <- gsub(all_paths_CBD[i],path_translate[,1][ind_new_name],dat_path$pathway[spec_ind],fixed=T)
     }
   }
-  table(unlist(strsplit(dat_path$pathway,"; ")))
+  # table(unlist(strsplit(dat_path$pathway,"; ")))
   
   ## remove duplicates
   dat_path$pathway <- unlist(lapply(strsplit(dat_path$pathway,"; "),function(s) paste(unique(s),collapse = "; ")))
@@ -99,7 +99,7 @@ get_pathways <- function(){
   ## generate output ######################################################################
   dat_path <- dat_path[order(dat_path$ArtGruppe,dat_path$wissenschaftlicherName),] # sort output
   
-  dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Vektoren","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]
+  dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]
 
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")
   # ind <- grep("Unbekannt",dat_path$pathway)

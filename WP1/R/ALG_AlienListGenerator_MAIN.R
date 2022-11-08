@@ -1,22 +1,29 @@
-##################### Generate a list alien species for Germany ##############################################
+##################### Erstellung einer Liste von Neobiota für Deutschland #####################################
 # 
-# This scripts execute a series of scripts to prepare, standardise and integrate lists of alien species
-# provided in various sources. Standardisation covers the 1. taxonomic information (i.e., taxon names are
-# cross-checked with the GBIF backbone taxonomy to identify and correct spelling errors, synonyms, and
-# to obtain the taxonomic tree for each taxon), 2. year of first record and 3. information about the
-# introduction pathway. Subsequently, the numbers of occurrence records available in GBIF and sMon are added.
+# Dieses Skript führt den workflow "AlienListGenerator" aus, bei dem einzelne Listen von Neobiota 
+# standardisiert und integriert werden. Hierzu wird eine Reihe von Skripten ausgeführt, die in fünf 
+# Arbeitsschritte aufgeteilt sind:
+#
+# 1. Standardisierung der Rohdatensätze: Die Spaltennamen und Einträge der Rohdatensätze werden standardisiert.
+# 2. Integration der standardisierten Datensätze: Die standardisierten Datensätze werden zu einem Datensatz
+#    integriert und Duplikate werden entfernt.
+# 3. GBIF Einträge ermitteln: Für jede Art wird die Anzahl an verfügbaren Einträgen in GBIF ermittelt.
+# 4. Ergänzung der Ausbringungspfadd: Informationen zum Ausbringspfaden werden sofern vorhanden ergänzt.
+# 5. sMon Einträge ermitteln: Für jede Art wird die Anzahl an verfügbaren Einträgen in sMon ermittelt.
 # 
-# Project: CASPIAN II
+# Weitere Informationen befinden sich in der Veröffentlichung...
+#
+# Prokect: CASPIAN II
 # 
-# Hanno Seebens, 04.11.22
+# Senckenberg Gesellschaft für Naturforschung, 04.11.22
 ###############################################################################################################
 
 
-## clear environment ##########################
+## Bereinigung der Arbeitsumgebung ############
 graphics.off()
 rm(list=ls())
 
-## load required packages #####################
+## Laden benötigter Pakete ####################
 library(rgbif)
 library(openxlsx)
 library(data.table)
@@ -25,58 +32,67 @@ library(spocc)
 
 setwd("/home/hanno/Bioinvasion/CASPIANII")
 
-## load required functions ####################
+## Laden weiterer R Skripte ####################
 source(file.path("WP1","R","CASPIANII_loadScripts.R"))
 
 
 ##########################################################################
-## Generate alien species lists ##########################################
+## Generierung der Liste von Neobiota ####################################
 ##########################################################################
 
 
-## Parameters for data extraction #######################################
+## Parameter zur Einstellung #######################################
 
-## names of data set sheets in "ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx" with available pathways information 
-pathway_datasets <- c("Tackenberg_2017","BfN","EASIN_Germany")
+## Namen von Datensätzen in "ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx" mit verfügbaren Informationen zu Ausbringspfaden
+Pfad_Datensaetze <- c("Tackenberg_2017","BfN","EASIN_Germany") # pathway_datasets
 
-## folder where sMon data are stored
+## lokales Verzeichnis der sMon Daten (können hier bezogen werden: https://idata.idiv.de/ddm/Data/ShowData/1875?version=9)
 sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
 
 
-## Generation of alien species list #########################
+## Arbeitsschritte #########################
 
 ## Step 0: Get all data into a spreadsheet (.xlsx) with each data set on one sheet and taxon names in columns 
 # called either "WissenschaftlicherName", "Taxon" or "scientificName". 
 # File has to be named "ListeGebietsfremderArten_Rohdaten.xlsx" or this should be changed in scripts
 
+## Schritt 0 - Vorabeiten: 
+# Vor Durchführung dieses Workflows müssen die zu integrierenden Listen der Neobiota
+# in der Datei "ListeGebietsfremderArten_Rohdaten.xlsx" zusammengeführt werden. Jede Liste
+# muss in ein Tabellenblatt kopiert werden, welches mit dem Kürzel der Quelle beschriftet
+# sein sollte. Jedes Tabellenblatt sollte als Mindestanforderung eine Spalte mit Namen 
+# der Organismen haben, die mit "WissenschaftlicherName", "Taxon" or "scientificName" 
+# überschrieben sein muss.
 
-# 1. step: load data, standardise column names and taxonomic names
+## Schritt 1 - Vorbereiten der Datensätze: Datensätze werden eingelesen, Spaltenname und
+# taxonomische Namen standardisiert.
 
-cat("\nStep 1: Data standardisation running\n")
-run_DataStandardisation(pathway_datasets)
+cat("\nSchritt 1: Standardisierung der Datensätze\n")
+run_DataStandardisation(Pfad_Datensaetze)
 
 
-## 2. step: Integrate databases and remove duplicates
+## Schritt 2 - Integration: Datensätze werden integriert und Duplikate entfernt
 
-cat("\nStep 2: Data integration running\n")
+cat("\nSchritt 2: Integration der Datensätze\n")
 run_IntegrateAlienSpeciesDataSets()
 
 
-## 3. step: Get number of available GBIF records
+## Schritt 3 - GBIF Einträge: Ermittlung der verfügbaren Einträge auf GBIF für jede Art
 
-cat("\nStep 3: obtain GBIF records\n")
+cat("\nSchritt 3: Ermittlung der Anzahl an GBIF Einträgen\n")
 get_GBIFrecords()
 
 
 ## 4. step: Add pathway information from Saul et al. 2017
+## Schritt 4 - Pfade: Ergänzung von Informationen zu Pfade der Einbringung und Ausbreitung
 
-cat("\nStep 4: add CBD pathway information\n")
+cat("\nSchritt 4: Ergänzung von Pfadinformationen\n")
 get_pathways()
 
 
-## 5. step: Add number of available records from sMon
+## Schritt 5 - sMon Einträge: Ermittlung der Einträge von verfügbaren sMon Daten
 
-cat("\nStep 5: add sMon records\n")
+cat("\nSchritt 5: Ermittlung der Anzahl an sMon Einträge\n")
 get_nRecords_sMon(sMon_folder)
 
 
