@@ -1,10 +1,10 @@
 
 ####### Standardisation of taxon names #################################################
-##
-## Standardisation of taxon names
-## check and replace species names using 'rgibf' GBIF taxonomy
-##
-# Hanno Seebens, 04.11.22
+#
+# Standardisation of taxon names
+# check and replace species names using 'rgibf' GBIF taxonomy
+#
+# Senckenberg Gesellschaft für Naturforschung, 04.11.22
 #########################################################################################
 
 CheckGBIFTax <- function(dat){

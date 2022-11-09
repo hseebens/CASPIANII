@@ -11,7 +11,7 @@
 #
 # Project: CASPIAN II
 # 
-# Hanno Seebens, 04.11.22
+# Senckenberg Gesellschaft für Naturforschung, 04.11.22
 ###############################################################################################################
 
 
@@ -129,11 +129,7 @@ get_occurrence_records <- function(taxon_name=taxon_name,
     if (nrow(occ_dat)>0){
         
       cat(paste(nrow(occ_dat),"Eintraege von",taxon_name,"in GBIF gefunden\n"))
-      
-      
-      
-      
-      
+
       occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
       occ_dat$Datenbank <- "GBIF"
       

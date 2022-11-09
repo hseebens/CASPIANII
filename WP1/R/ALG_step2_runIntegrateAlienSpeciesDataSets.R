@@ -1,7 +1,7 @@
 #####################################################################################
 # Integrate standardised taxon names into one file
 # 
-# Hanno Seebens, 04.11.22
+# Senckenberg Gesellschaft für Naturforschung, 04.11.22
 #####################################################################################
 
 run_IntegrateAlienSpeciesDataSets <- function(){
