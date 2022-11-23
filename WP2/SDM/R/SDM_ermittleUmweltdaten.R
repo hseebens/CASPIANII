@@ -29,14 +29,14 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   ## climate data
   if (!is.null(Klima_var)){
     # download the full set of bioclimatic variables from worldclim at 2.5 min resolution, result is a raster stack
-    # fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5)
-    # envstack <- subset(fullenvir, Klima_var) # subset the worldclim data to the environmental data of interest as specified by the user
-    # rm(fullenvir)
+    fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5)
+    envstack <- subset(fullenvir, Klima_var) # subset the worldclim data to the environmental data of interest as specified by the user
+    rm(fullenvir)
     
-    ## get environmental data from disk at high resolution
-    filenames <- paste0("wc2.1_30s_bio_",gsub("bio","",Klima_var),".tif")
-
-    envstack <- stack(file.path("..","..","..","..","DATA","Environmental","WorldClim",filenames))
+    # ## get environmental data from disk at high resolution
+    # filenames <- paste0("wc2.1_30s_bio_",gsub("bio","",Klima_var),".tif")
+    # 
+    # envstack <- stack(file.path("..","..","..","..","DATA","Environmental","WorldClim",filenames))
     
     ## crop to extent
     envstack  <- crop(envstack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
