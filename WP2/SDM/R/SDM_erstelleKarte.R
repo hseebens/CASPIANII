@@ -1,0 +1,52 @@
+###########################################################################################################
+#
+# Function to plot the average predicted environmental suitabilities
+# This function is part of the SDM workflow.
+#
+# Author: Larissa Nowak
+##########################################################################################################
+
+plotHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of main function
+  
+  # print("Note: If the same plot should be plotted and stored again, make sure the pdf-file with the respective name is closed on your computer. Otherwise, R will be unable to overwrite the file and yield an error, when running this step.") # notification for the user
+  
+  GermanShapefile <- NULL
+  if (file.exists(file.path("Data","Input","Shapefiles","gadm41_DEU_1.shp"))){
+    GermanShapefile <- readOGR(dsn=file.path("Data","Input","Shapefiles"),layer="gadm41_DEU_1") # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
+  }
+  
+  ## transform suitability predictions into raster
+  # meanSuit <- HabitatEignung[[length(HabitatEignung)]] # last entry contains mean predictions
+  meanSuit_coords <- HabitatEignung[,c("x", "y", "HabitatEignung_mittel")] # prepare raster file with the mean predictions for plotting
+  coordinates(meanSuit_coords) <- ~ x + y
+  gridded(meanSuit_coords) <- T
+  rastpreds <- raster(meanSuit_coords)
+
+  coordinates(Vorkommen)=~Laengengrad+Breitengrad # prepare occurrence file for plotting, transform it into a shapefile
+  proj4string(Vorkommen)<- CRS("+proj=longlat +datum=WGS84")
+  
+
+  ## make plot #################################
+  
+  # ## instant plot
+  # x11()
+  # plot(rastpreds, col=viridis(100))#, xlim=xlim, ylim=ylim) # plot the predicted probabilities
+  # if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
+  # points(Vorkommen, pch=1, cex=0.5)
+  
+  # store plots on the user computer:
+  pdf(file.path("Grafiken", paste0("HabitatEignung_",TaxonName,"_",identifier,".pdf"))) # plot without occurrences
+  plot(rastpreds, col=viridis(100))
+  if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
+  dev.off()
+ 
+  pdf(file.path("Grafiken", paste0("HabitatEignung_Vorkommen_",TaxonName,"_",identifier,".pdf"))) # plot with occurrences
+  plot(rastpreds, col=viridis(100))
+  if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
+  points(Vorkommen, pch=1, cex=0.5)
+  dev.off()
+  
+  return(rastpreds)
+  
+} ## end of main function
+
