@@ -7,7 +7,7 @@
 # 
 # Project: CASPIAN II
 # 
-# Senckenberg Gesellschaft für Naturforschung, 04.11.22
+# Senckenberg Gesellschaft fuer Naturforschung, 04.11.22
 ###############################################################################################################
 
 

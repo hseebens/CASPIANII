@@ -1,21 +1,21 @@
-##################### Erstellung einer Liste von Neobiota für Deutschland #####################################
+##################### Erstellung einer Liste von Neobiota fuer Deutschland #####################################
 # 
-# Dieses Skript führt den workflow "AlienListGenerator" aus, bei dem einzelne Listen von Neobiota 
-# standardisiert und integriert werden. Hierzu wird eine Reihe von Skripten ausgeführt, die in fünf 
+# Dieses Skript fuehrt den workflow "AlienListGenerator" aus, bei dem einzelne Listen von Neobiota 
+# standardisiert und integriert werden. Hierzu wird eine Reihe von Skripten ausgefuehrt, die in fuenf 
 # Arbeitsschritte aufgeteilt sind:
 #
-# 1. Standardisierung der Rohdatensätze: Die Spaltennamen und Einträge der Rohdatensätze werden standardisiert.
-# 2. Integration der standardisierten Datensätze: Die standardisierten Datensätze werden zu einem Datensatz
+# 1. Standardisierung der Rohdatensaetze: Die Spaltennamen und Eintraege der Rohdatensaetze werden standardisiert.
+# 2. Integration der standardisierten Datensaetze: Die standardisierten Datensaetze werden zu einem Datensatz
 #    integriert und Duplikate werden entfernt.
-# 3. GBIF Einträge ermitteln: Für jede Art wird die Anzahl an verfügbaren Einträgen in GBIF ermittelt.
-# 4. Ergänzung der Ausbringungspfadd: Informationen zum Ausbringspfaden werden sofern vorhanden ergänzt.
-# 5. sMon Einträge ermitteln: Für jede Art wird die Anzahl an verfügbaren Einträgen in sMon ermittelt.
+# 3. GBIF Eintraege ermitteln: Fuer jede Art wird die Anzahl an verfuegbaren Eintraegen in GBIF ermittelt.
+# 4. Ergaenzung der Ausbringungspfadd: Informationen zum Ausbringspfaden werden sofern vorhanden ergaenzt.
+# 5. sMon Eintraege ermitteln: Fuer jede Art wird die Anzahl an verfuegbaren Eintraegen in sMon ermittelt.
 # 
-# Weitere Informationen befinden sich in der Veröffentlichung...
+# Weitere Informationen befinden sich in der Veroeffentlichung...
 #
 # Prokect: CASPIAN II
 # 
-# Senckenberg Gesellschaft für Naturforschung, 04.11.22
+# Senckenberg Gesellschaft fuer Naturforschung, 28.11.22
 ###############################################################################################################
 
 
@@ -23,7 +23,7 @@
 graphics.off()
 rm(list=ls())
 
-## Laden benötigter Pakete ####################
+## Laden benoetigter Pakete ####################
 library(rgbif)
 library(openxlsx)
 library(data.table)
@@ -33,7 +33,7 @@ library(spocc)
 setwd("/home/hanno/Bioinvasion/CASPIANII")
 
 ## Laden weiterer R Skripte ####################
-source(file.path("WP1","R","CASPIANII_loadScripts.R"))
+source(file.path("WP1","R","LadeSkripte.R"))
 
 
 ##########################################################################
@@ -41,59 +41,61 @@ source(file.path("WP1","R","CASPIANII_loadScripts.R"))
 ##########################################################################
 
 
-## Parameter zur Einstellung #######################################
+## Parameter zur Einstellung #############################################
 
-## Namen von Datensätzen in "ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx" mit verfügbaren Informationen zu Ausbringspfaden
-Pfad_Datensaetze <- c("Tackenberg_2017","BfN","EASIN_Germany") # pathway_datasets
+## Namen von Datensaetzen in "ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx" mit verfuegbaren Informationen zu Ausbringspfaden
+Pfad_Datensaetze <- c("Tackenberg_2017","BfN","EASIN_Germany")
 
-## lokales Verzeichnis der sMon Daten (können hier bezogen werden: https://idata.idiv.de/ddm/Data/ShowData/1875?version=9)
-sMon_folder <- "/home/hanno/Storage_large/Species/sMon"
+## lokales Verzeichnis der sMon Daten (koennen hier bezogen werden: https://idata.idiv.de/ddm/Data/ShowData/1875?version=9)
+sMon_Verzeichnis <- "/home/hanno/Storage_large/Species/sMon"
 
 
-## Arbeitsschritte #########################
-
-## Step 0: Get all data into a spreadsheet (.xlsx) with each data set on one sheet and taxon names in columns 
-# called either "WissenschaftlicherName", "Taxon" or "scientificName". 
-# File has to be named "ListeGebietsfremderArten_Rohdaten.xlsx" or this should be changed in scripts
+##########################################################################
+## Arbeitsschritte #######################################################
 
 ## Schritt 0 - Vorabeiten: 
-# Vor Durchführung dieses Workflows müssen die zu integrierenden Listen der Neobiota
-# in der Datei "ListeGebietsfremderArten_Rohdaten.xlsx" zusammengeführt werden. Jede Liste
-# muss in ein Tabellenblatt kopiert werden, welches mit dem Kürzel der Quelle beschriftet
+# Vor Durchfuehrung dieses Workflows muessen die zu integrierenden Listen der Neobiota
+# in der Datei "ListeGebietsfremderArten_Rohdaten.xlsx" zusammengefuehrt werden. Jede Liste
+# muss in ein Tabellenblatt kopiert werden, welches mit dem Kuerzel der Quelle beschriftet
 # sein sollte. Jedes Tabellenblatt sollte als Mindestanforderung eine Spalte mit Namen 
 # der Organismen haben, die mit "WissenschaftlicherName", "Taxon" or "scientificName" 
-# überschrieben sein muss.
+# ueberschrieben sein muss.
 
-## Schritt 1 - Vorbereiten der Datensätze: Datensätze werden eingelesen, Spaltenname und
-# taxonomische Namen standardisiert.
+##########################################################################
+## Schritt 1 - Vorbereiten der Datensaetze: Datensaetze werden eingelesen, Spaltenname und
+## taxonomische Namen standardisiert.
 
-cat("\nSchritt 1: Standardisierung der Datensätze\n")
-run_DataStandardisation(Pfad_Datensaetze)
-
-
-## Schritt 2 - Integration: Datensätze werden integriert und Duplikate entfernt
-
-cat("\nSchritt 2: Integration der Datensätze\n")
-run_IntegrateAlienSpeciesDataSets()
+cat("\nSchritt 1: Standardisierung der Datensaetze\n")
+standardisiereDaten(Pfad_Datensaetze)
 
 
-## Schritt 3 - GBIF Einträge: Ermittlung der verfügbaren Einträge auf GBIF für jede Art
+##########################################################################
+## Schritt 2 - Integration: Datensaetze werden integriert und Duplikate entfernt
 
-cat("\nSchritt 3: Ermittlung der Anzahl an GBIF Einträgen\n")
-get_GBIFrecords()
+cat("\nSchritt 2: Integration der Datensaetze\n")
+integriereDatensaetze()
 
 
+##########################################################################
+## Schritt 3 - GBIF Eintraege: Ermittlung der verfuegbaren Eintraege auf GBIF fuer jede Art
+
+cat("\nSchritt 3: Ermittlung der Anzahl an GBIF Eintraegen\n")
+bezieheGBIFDaten()
+
+
+##########################################################################
 ## 4. step: Add pathway information from Saul et al. 2017
-## Schritt 4 - Pfade: Ergänzung von Informationen zu Pfade der Einbringung und Ausbreitung
+## Schritt 4 - Pfade: Ergaenzung von Informationen zu Pfade der Einbringung und Ausbreitung
 
-cat("\nSchritt 4: Ergänzung von Pfadinformationen\n")
-get_pathways()
+cat("\nSchritt 4: Ergaenzung von Pfadinformationen\n")
+beziehePfadDaten()
 
 
-## Schritt 5 - sMon Einträge: Ermittlung der Einträge von verfügbaren sMon Daten
+##########################################################################
+## Schritt 5 - sMon Eintraege: Ermittlung der Eintraege von verfuegbaren sMon Daten
 
-cat("\nSchritt 5: Ermittlung der Anzahl an sMon Einträge\n")
-get_nRecords_sMon(sMon_folder)
+cat("\nSchritt 5: Ermittlung der Anzahl an sMon Eintraege\n")
+ermittlesMonDaten(sMon_Verzeichnis)
 
 
 

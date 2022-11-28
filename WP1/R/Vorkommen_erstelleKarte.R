@@ -4,12 +4,12 @@
 #
 # Project: CASPIAN II
 # 
-# Senckenberg Gesellschaft für Naturforschung, 09.11.22
+# Senckenberg Gesellschaft fuer Naturforschung, 28.11.22
 ###############################################################################################################
 
 
 
-map_records <- function(records){
+Vorkommen_erstelleKarte <- function(records){
 
   records$col <- as.numeric(as.factor(records$Datenbank))
   all_cols <- c('red', 'orange','black', 'blue')

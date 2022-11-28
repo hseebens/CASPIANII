@@ -1,21 +1,21 @@
-##################### Ermittlung von Vorkommensdaten für einzelne Arten ######################################
+##################### Ermittlung von Vorkommensdaten fuer einzelne Arten ######################################
 # 
-# Das Skript bündelt Vorkommensdaten von einzelnen Arten aus verschiedenen Datenquellen (GBIF, iNaturalist,
-# sMon und OBIS). Alternativ können eigene Datensätze eingelesen werden.
-# Die Vorkommen können als Karte nach Datenquellen unterschieden dargestellt werden.
+# Das Skript buendelt Vorkommensdaten von einzelnen Arten aus verschiedenen Datenquellen (GBIF, iNaturalist,
+# sMon und OBIS). Alternativ koennen eigene Datensaetze eingelesen werden.
+# Die Vorkommen koennen als Karte nach Datenquellen unterschieden dargestellt werden.
 #
 # 
 # Projekt: CASPIAN II
 # 
-# Senckenberg Gesellschaft für Naturforschung, 08.11.22
+# Senckenberg Gesellschaft fuer Naturforschung, 28.11.22
 ###############################################################################################################
 
 
-## Bereinige Arbeitsumgebung ##########################
+## Bereinige Arbeitsumgebung #############################################
 graphics.off()
 rm(list=ls())
 
-## Laden notwendiger Pakete #####################
+## Laden notwendiger Pakete ##############################################
 library(rgbif)
 library(robis)
 library(spocc)
@@ -24,8 +24,8 @@ library(data.table)
 
 
 
-## Laden notwendiger Funktionen ####################
-source(file.path("WP1","R","CASPIANII_loadScripts.R"))
+## Laden notwendiger Funktionen ##########################################
+source(file.path("WP1","R","LadeSkripte.R"))
 
 
 
@@ -34,17 +34,20 @@ source(file.path("WP1","R","CASPIANII_loadScripts.R"))
 ##########################################################################
 
 
-## Parameter zur Spezifizierung der Suche ###############################
+##########################################################################
+## Parameter zur Spezifizierung der Suche ################################
 
-## Verzeichnis der sMon Datensätze (optional)
+TaxonName <- "Crassostrea gigas"
+
+## Verzeichnis der sMon Datensaetze (optional)
 sMon_Verzeichnis <- "/home/hanno/Storage_large/Species/sMon"
 
 ## Verzeichnis und Dateiname des eigenen Datensatzes (optional)
 EigeneDaten_Verzeichnis <- "" # Name des Verzeichnis
 EigeneDaten_Dateiname <- "" # Name der Datei
 
-## Ausgewählte Datenbank zur Ermittlung von Vorkommensdaten 
-## (mögliche Auswahl: OBIS, GBIF, iNat, sMon)
+## Ausgewaehlte Datenbank zur Ermittlung von Vorkommensdaten 
+## (moegliche Auswahl: OBIS, GBIF, iNat, sMon)
 Datenbank <- c("OBIS","GBIF","iNat")# 
 
 ## Auswahl des geographischen Bereichs, in dem nach Vorkommensdaten gesucht
@@ -52,14 +55,17 @@ Datenbank <- c("OBIS","GBIF","iNat")#
 ## Rechecks) (xmin,ymin,xmax,ymax)
 Ausschnitt <- c(5,45,15,58) # lower left and upper right corner (long-lat)
 
-## Ermittle Vorkommen in den ausgewählten Datenquellen ###########
-
-# Vorkommen <- get_occurrence_records(TaxonName="Rhaponticum repens",Datenbank=Datenbank,sMon_Verzeichnis=sMon_Verzeichnis,Ausschnitt=Ausschnitt)
-Vorkommen <- get_occurrence_records(TaxonName="Crassostrea gigas",Datenbank=Datenbank,sMon_Verzeichnis=sMon_Verzeichnis,Ausschnitt=Ausschnitt)
 
 
+##########################################################################
+## Ermittle Vorkommen in den ausgewaehlten Datenquellen ##################
 
-## Darstellung der Vorkommen auf einer Karte ###################################
+Vorkommen <- Vorkommen_bezieheDaten(TaxonName=TaxonName,Datenbank=Datenbank,sMon_Verzeichnis=sMon_Verzeichnis,Ausschnitt=Ausschnitt)
 
-map_records(Vorkommen)
+
+
+##########################################################################
+## Darstellung der Vorkommen auf einer Karte #############################
+
+Vorkommen_erstelleKarte(Vorkommen)
 

@@ -11,11 +11,11 @@
 #
 # Project: CASPIAN II
 # 
-# Senckenberg Gesellschaft für Naturforschung, 04.11.22
+# Senckenberg Gesellschaft fuer Naturforschung, 28.11.22
 ###############################################################################################################
 
 
-get_occurrence_records <- function(TaxonName=TaxonName,
+Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
                                    EigeneDaten_Verzeichnis=NA,
                                    EigeneDaten_Dateiname=NA,
                                    Datenbank=NA,
@@ -43,7 +43,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
 
   if (all(is.na(Datenbank)) & length(EigeneDaten_Dateiname)==1){
     # warning("No databases selected and no own records provided.")
-    warning("Keine Datenbank ausgewählt oder eigene Daten bereit gestellt.")
+    warning("Keine Datenbank ausgewaehlt oder eigene Daten bereit gestellt.")
   }
   
   if ("sMon"%in%Datenbank){
@@ -52,7 +52,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
 
     if (is.na(sMon_Verzeichnis)){
       # warning("No folder provided for sMon data. Please provide variable 'sMon_folder'.")
-      warning("Kein Verzeichnis für sMon Daten angegeben. Bitte als Variable 'sMon_Verzeichnis' angeben.")
+      warning("Kein Verzeichnis fuer sMon Daten angegeben. Bitte als Variable 'sMon_Verzeichnis' angeben.")
     } else {
         
       sMon_taxa <- fread(file.path("WP1","Data","AlienSpecies_in_sMon.csv"))
@@ -96,7 +96,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
 
       if (x==0){
         # cat(paste("No records found in sMon for",TaxonName,"\n"))
-        cat(paste("Keine Einträge in sMon für",TaxonName,"\n"))
+        cat(paste("Keine Eintraege in sMon fuer",TaxonName,"\n"))
       }
     }
   } 
@@ -112,7 +112,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
     
     if (nrecords>max_limit){
       # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
-      warning(paste0("\nAnzahl der verfügbaren Einträge (n=",nrecords,") überschreitet Limit (",max_limit,")!\n Entweder sollte max_limit erhöht werden (Warnung: iNaturalist erlaubt keine hohen downloads) oder Daten sollten direkt von Webseite geladen werden."))
+      warning(paste0("\nAnzahl der verfuegbaren Eintraege (n=",nrecords,") ueberschreitet Limit (",max_limit,")!\n Entweder sollte max_limit erhoeht werden (Warnung: iNaturalist erlaubt keine hohen downloads) oder Daten sollten direkt von Webseite geladen werden."))
     }
     
     occ_dat <- occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=T,limit=max_limit)[[2]]
@@ -122,7 +122,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
     }
     if (nrow(occ_dat)==max_limit){
       # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
-      cat("Maximum Limit von Einträgen für GBIF Anfrage erreicht. Entweder Limit (max_limit) erhöhen oder Daten direkt von der GBIF Webseite laden.")
+      cat("Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.")
     }
     
     ## prepare output #############
@@ -145,7 +145,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
       
     } else { ## no output
       # cat(paste("No records found for",TaxonName,"in GBIF\n"))
-      cat(paste("Keine Einträge in GBIF für",TaxonName,"\n"))
+      cat(paste("Keine Eintraege in GBIF fuer",TaxonName,"\n"))
     }
   } 
   
@@ -166,7 +166,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
     
     if (nrow(occ_dat)>0){
       
-      cat(paste(nrow(occ_dat),"Einträge von",TaxonName,"in iNaturalist gefunden\n"))
+      cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in iNaturalist gefunden\n"))
       
       ## prepare output #############
       occ_dat <- occ_dat[,c("name","longitude","latitude","date")]
@@ -180,7 +180,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
       
     } else {
       # cat(paste("No records found in iNaturalist for",TaxonName,"\n"))
-      cat(paste("Keine Einträge in iNaturalist für",TaxonName,"\n"))
+      cat(paste("Keine Eintraege in iNaturalist fuer",TaxonName,"\n"))
     }
   }
   
@@ -204,7 +204,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
       if (nrow(occ_dat)>0){
         
         # cat(paste(nrow(occ_dat),"records of",TaxonName,"found in OBIS\n"))
-        cat(paste(nrow(occ_dat),"Einträge von",TaxonName,"in OBIS gefunden\n"))
+        cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden\n"))
         
         ## prepare output #############
         if ("date"%in%colnames(occ_dat)){
@@ -223,7 +223,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
         
       } else {
         # cat(paste("No records found in OBIS for",TaxonName,"\n"))
-        cat(paste("Keine Einträge in OBIS für",TaxonName,"\n"))
+        cat(paste("Keine Eintraege in OBIS fuer",TaxonName,"\n"))
       }
     }
   }
@@ -238,7 +238,7 @@ get_occurrence_records <- function(TaxonName=TaxonName,
       
       if (any(!c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")%in%colnames(own_records))){
         # stop("Column names in 'own_records' not correct. Please change to Taxon, Longitude, Latitude, Period and Database.")
-        stop("Spaltennamen in 'own_records' nicht korrekt. Bitte ändern in Taxon, Laengengrad, Breitengrad und Zeitpunkt.")
+        stop("Spaltennamen in 'own_records' nicht korrekt. Bitte aendern in Taxon, Laengengrad, Breitengrad und Zeitpunkt.")
       }
       
       own_records$Datenbank <- "Eigene Daten"
