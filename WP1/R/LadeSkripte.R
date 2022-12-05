@@ -29,9 +29,6 @@ source(file.path("WP1","R","ListeNeobiota_Schritt5_ermittle_sMonDaten.R"))
 ## function to extract occurrence records from various sources
 source(file.path("WP1","R","Vorkommen_bezieheDaten.R"))
 
-## function to obtain occurrence records from online repositories
-source(file.path("WP1","R","Vorkommen_sammeleDatenOnline.R"))
-
 ## function to extract occurrence recrods from sMon
 source(file.path("WP1","R","Vorkommen_beziehe_sMonVorkommen.R"))
 
