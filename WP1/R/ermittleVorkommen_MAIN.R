@@ -21,7 +21,7 @@ library(robis)
 library(spocc)
 library(leaflet)
 library(data.table)
-
+library(CoordinateCleaner)
 
 
 ## Laden notwendiger Funktionen ##########################################
@@ -37,7 +37,8 @@ source(file.path("WP1","R","LadeSkripte.R"))
 ##########################################################################
 ## Parameter zur Spezifizierung der Suche ################################
 
-TaxonName <- "Crassostrea gigas"
+# TaxonName <- "Crassostrea gigas"
+TaxonName <- "Acer monspessulanum"
 
 ## Verzeichnis der sMon Datensaetze (optional)
 sMon_Verzeichnis <- "/home/hanno/Storage_large/Species/sMon"
@@ -48,7 +49,7 @@ EigeneDaten_Dateiname <- "" # Name der Datei
 
 ## Ausgewaehlte Datenbank zur Ermittlung von Vorkommensdaten 
 ## (moegliche Auswahl: OBIS, GBIF, iNat, sMon)
-Datenbank <- c("OBIS","GBIF","iNat")# 
+Datenbank <- c("OBIS","GBIF","iNat","sMon")#
 
 ## Auswahl des geographischen Bereichs, in dem nach Vorkommensdaten gesucht
 ## werden soll (Koordinaten (Laengengrad+Breitengrad) der linken unteren und rechten oberen Ecke eines

@@ -39,20 +39,22 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
                                       "))")
   }
   
-  ## sMon occurrences ###############################################################
-
   if (all(is.na(Datenbank)) & length(EigeneDaten_Dateiname)==1){
-    # warning("No databases selected and no own records provided.")
+    
     warning("Keine Datenbank ausgewaehlt oder eigene Daten bereit gestellt.")
+    
   }
+  
+  ## sMon occurrences ###############################################################
   
   if ("sMon"%in%Datenbank){
     
     cat("\n** Bearbeitung von sMon ******************\n")
 
     if (is.na(sMon_Verzeichnis)){
-      # warning("No folder provided for sMon data. Please provide variable 'sMon_folder'.")
+      
       warning("Kein Verzeichnis fuer sMon Daten angegeben. Bitte als Variable 'sMon_Verzeichnis' angeben.")
+      
     } else {
         
       sMon_taxa <- fread(file.path("WP1","Data","AlienSpecies_in_sMon.csv"))
@@ -117,17 +119,17 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     
     occ_dat <- occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=T,limit=max_limit)[[2]]
     
-    if (nrow(occ_dat)>0){
-      cat(paste(TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
-    }
-    if (nrow(occ_dat)==max_limit){
-      # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
-      cat("Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.")
-    }
-    
+
     ## prepare output #############
-    if (nrow(occ_dat)>0){
+    if (!is.null(occ_dat)){
         
+      cat(paste(TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
+      
+      if (nrow(occ_dat)==max_limit){
+        # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
+        cat("\nMaximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
+      }
+      
       cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden\n"))
 
       if ("eventDate"%in%colnames(occ_dat)){
@@ -238,7 +240,7 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
       
       if (any(!c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")%in%colnames(own_records))){
         # stop("Column names in 'own_records' not correct. Please change to Taxon, Longitude, Latitude, Period and Database.")
-        stop("Spaltennamen in 'own_records' nicht korrekt. Bitte aendern in Taxon, Laengengrad, Breitengrad und Zeitpunkt.")
+        stop(paste0("Spaltennamen in ",EigeneDaten_Dateiname," nicht korrekt. Bitte aendern in Taxon, Laengengrad, Breitengrad und Zeitpunkt."))
       }
       
       own_records$Datenbank <- "Eigene Daten"
@@ -255,6 +257,23 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
   all_output$Laengengrad <- as.numeric(all_output$Laengengrad)
   all_output$Breitengrad <- as.numeric(all_output$Breitengrad)
   
-  return(all_output)
+  if (!is.null(all_output)){
+    
+    if (nrow(all_output) < 100) { # check, whether the number of occurrences is sufficient
+      warning("\nWarnung: Die Anzahl an Datenpunkten ist <100. SDMs können unzuverlässige Ergebnisse liefern.") 
+    } 
+    
+    ## save data to disk
+    fwrite(all_output, file.path("WP1","Data",paste0("Vorkommen_",TaxonName,".csv"))) # stores the final occurrence file on the users computer
+    
+    cat(paste0("\nVorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'WP1/Data' gespeichert.\n") ) # notification for the user
+    
+    return(all_output)
+    
+  } else {
+    
+    cat(paste("\nKeine ausreichenden Eintraege fuer",TaxonName,"gefunden.\n")) 
+    
+  }
 }
 
