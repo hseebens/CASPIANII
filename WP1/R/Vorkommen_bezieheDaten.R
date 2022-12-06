@@ -99,6 +99,10 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
       if (x==0){
         # cat(paste("No records found in sMon for",TaxonName,"\n"))
         cat(paste("Keine Eintraege in sMon fuer",TaxonName,"\n"))
+      } else {
+        
+        cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in sMon gefunden\n"))
+        
       }
     }
   } 

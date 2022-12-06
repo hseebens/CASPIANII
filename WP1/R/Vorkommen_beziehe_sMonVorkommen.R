@@ -11,14 +11,14 @@
 ###############################################################################################################
 
 
-get_sMon_occurrences <- function(taxon_name=taxon_name,sMon_folder=sMon_folder){
+get_sMon_occurrences <- function(TaxonName=TaxonName,sMon_Verzeichnis=sMon_Verzeichnis){
   
-  # sMon_folder <- file.path("..","..","Storage_large","Species","sMon")
-  # # taxon_name <- "Campanula cervicaria"
+  # sMon_Verzeichnis <- file.path("..","..","Storage_large","Species","sMon")
+  # # TaxonName <- "Campanula cervicaria"
   
   ## set working directory temporally to sMon folder
   working_directory <- getwd()
-  setwd(sMon_folder)
+  setwd(sMon_Verzeichnis)
   
   sMon_data <- list()
   for (i in 1:4){
@@ -26,13 +26,13 @@ get_sMon_occurrences <- function(taxon_name=taxon_name,sMon_folder=sMon_folder){
     ind_records <- c()
     
     ## sMon data set #1
-    sMon_data_species <- fread(file.path(sMon_folder,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),select="TaxonName")
-    ind_records <- which(sMon_data_species==taxon_name)
+    sMon_data_species <- fread(file.path(sMon_Verzeichnis,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),select="TaxonName")
+    ind_records <- which(sMon_data_species==TaxonName)
     
     if (length(ind_records)!=0){
-      col_names <- colnames(fread(file.path(sMon_folder,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),nrows=0))
-      sMon_data_sub <- fread(file.path(sMon_folder,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),
-                             nrows=length(ind_records),skip=min(ind_records)-1)
+      col_names <- colnames(fread(file.path(sMon_Verzeichnis,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),nrows=0))
+      sMon_data_sub <- fread(file.path(sMon_Verzeichnis,paste0("1875_9_1875_2_Modelled_OPs_incl_sd_pt_",i,".csv")),
+                             nrows=length(ind_records),skip=min(ind_records))
       colnames(sMon_data_sub) <- col_names
       
       sMon_data[[i]] <- sMon_data_sub
@@ -41,7 +41,7 @@ get_sMon_occurrences <- function(taxon_name=taxon_name,sMon_folder=sMon_folder){
   
   sMon_data <- rbindlist(sMon_data)
   
-  setwd(working_directory) # resset working directory
+  setwd(working_directory) # reset working directory
   
   return(sMon_data)
 }
