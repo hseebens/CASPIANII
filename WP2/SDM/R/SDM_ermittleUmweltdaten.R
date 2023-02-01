@@ -11,6 +11,7 @@
 
 
 ermittleUmweltdaten <- function(TaxonName=NULL, 
+                                Vorkommen=NULL,
                                 identifier=NULL,
                                 Klima_var=NULL, 
                                 Landnutz_var=NULL, 
@@ -28,15 +29,17 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   
   ## climate data
   if (!is.null(Klima_var)){
-    # download the full set of bioclimatic variables from worldclim at 2.5 min resolution, result is a raster stack
-    fullenvir <- raster::getData(name = "worldclim",var = "bio", res = 2.5)
-    envstack <- subset(fullenvir, Klima_var) # subset the worldclim data to the environmental data of interest as specified by the user
-    rm(fullenvir)
+    # # download the full set of bioclimatic variables from worldclim at 2.5 min resolution, result is a raster stack
+    # fullenvir <- suppressMessages(suppressWarnings(raster::getData(name = "worldclim",var = "bio", res = 2.5)))
+    # envstack <- subset(fullenvir, Klima_var) # subset the worldclim data to the environmental data of interest as specified by the user
+    # rm(fullenvir)
     
     # ## get environmental data from disk at high resolution
     # filenames <- paste0("wc2.1_30s_bio_",gsub("bio","",Klima_var),".tif")
-    # 
-    # envstack <- stack(file.path("..","..","..","..","DATA","Environmental","WorldClim",filenames))
+    # envstack <- stack(file.path("..","..","..","..","Storage_large","Climate",filenames))
+    filenames <- paste0("wc2.1_2.5m_bio_",gsub("bio","",Klima_var),".tif")
+    # envstack <- stack(file.path("Data","Input","WorldClim",filenames)) # workstation
+    envstack <- stack(file.path("..","..","..","..","DATA","Environmental","WorldClim",filenames)) # local
     
     ## crop to extent
     envstack  <- crop(envstack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
@@ -89,7 +92,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   }
   
   ## save output to disk
-  writeRaster(predictor_stack,file.path("Data","Input",paste0("RasterDatenUmwelt_",TaxonName,"_",identifier,".grd")), format="raster",overwrite=T)
+  writeRaster(predictor_stack,file.path("Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")), format="raster",overwrite=T)
   
   if (nlayers(predictor_stack)>1){
     corr <- layerStats(predictor_stack, 'pearson', na.rm=T) # correlation test of environmental variables of choice
@@ -101,34 +104,46 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
       ind_dupl <- duplicated(corr$`pearson correlation coefficient`[ind_highcorr]) # remove lower triangle of corr matrix
       highcorr <- cbind.data.frame(colnames(corr$`pearson correlation coefficient`)[ind_highcorr[,1]],colnames(corr$`pearson correlation coefficient`)[ind_highcorr[,2]],round(as.numeric(corr$`pearson correlation coefficient`[ind_highcorr]),2))
       colnames(highcorr) <- c("Var1","Var2","R2")
-      cat(" Folgende Variablen sind mit |r|>0.5 korreliert und einzelne Variablen könnten entfernt werden: \n")
+      cat("\n Folgende Variablen sind mit |r|>0.5 korreliert und einzelne Variablen könnten entfernt werden: \n")
       print(highcorr[!ind_dupl,])
     }
   }
 
   ## load species' occurrence records  
-  occ <- fread(file.path("Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  if (is.null(Vorkommen)){ # check if occurrence data are provided; if not, load from disk
+    Vorkommen <- fread(file.path("Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  }
   
   ## extract environmental data for occurrence records
   if(nlayers(predictor_stack)==1) {
-    occenv <- cbind(occ, pred_var = raster::extract(x = predictor_stack, y = data.frame(occ[,c('Laengengrad','Breitengrad')])))
-    colnames(occenv) <- c(colnames(occ),col_names)
+    occenv <- cbind(Vorkommen, pred_var = raster::extract(x = predictor_stack, y = data.frame(Vorkommen[,c('Laengengrad','Breitengrad')])))
+    colnames(occenv) <- c(colnames(Vorkommen),col_names)
   } else {
-    occenv <- cbind(occ, raster::extract(x = predictor_stack, y = data.frame(occ[,c('Laengengrad','Breitengrad')])))
+    occenv <- cbind(Vorkommen, raster::extract(x = predictor_stack, y = data.frame(Vorkommen[,c('Laengengrad','Breitengrad')])))
   }
 
   ## remove occurrence points without environmental data
   occenv <- occenv[complete.cases(occenv),] 
 
-  ## check
-  if (any(colSums(occenv[,(dim(occ)[2]+1):dim(occenv)[2]])==0)){
-    cat(" Die folgenden Landbeckungsvariablen beinhalten nur 0 für die Vorkommen der Art und sollten aus 'landcov' entfernt werden:")  
-    # print("Note: The following land cover variables only take on the value 0 across the occurrences of your focal species. Please remove/replace these variables to avoid errors while model fitting due to uninformative predictors.") # notification for the user
-    print(names(which(colSums(occenv[,(dim(occ)[2]+1):dim(occenv)[2]])==0)))
+  ## check for missing data
+  if (nrow(occenv)<50){
+    
+    warning("Keine ausreichende Überschneidung von Daten zum Vorkommen und Umweltvariablen. Kein output!")
+    return()
+    
+  } else {
+    
+    if (any(colSums(occenv[,(dim(Vorkommen)[2]+1):dim(occenv)[2]])==0)){
+      cat(" Die folgenden Landbeckungsvariablen beinhalten nur 0 für die Vorkommen der Art und sollten aus 'landcov' entfernt werden:")  
+      # print("Note: The following land cover variables only take on the value 0 across the occurrences of your focal species. Please remove/replace these variables to avoid errors while model fitting due to uninformative predictors.") # notification for the user
+      print(names(which(colSums(occenv[,(dim(Vorkommen)[2]+1):dim(occenv)[2]])==0)))
+    }
+    
+    ## output  
+    fwrite(occenv, file.path("Data","Input",paste0("Vorkommen+Umweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+    
+    return(occenv) 
+    
   }
-
-  ## output  
-  fwrite(occenv, file.path("Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
   
-  return(occenv) 
 } ## end of main function

@@ -6,10 +6,9 @@
 # This function is part of the SDM workflow.
 # This version is used, when land cover data is provided in the run script.
 #
-# Author: Larissa Nowak
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
 ##########################################################################################################
 
-# !!NOTE: the type of parallel processing that is used here might only work on Windows. If it is supposed to work for other systems, I probably need to write separate functions and build in some type of automated system detection in the run-script!!
 
 generiereAbsenzDaten <- function(TaxonName=NULL,
                                  VorkommenUmwelt=NULL, 
@@ -17,10 +16,10 @@ generiereAbsenzDaten <- function(TaxonName=NULL,
                                  speichern=T,
                                  identifier=NULL) { ## start of main function
 
-  cat(paste0("\n*** Generiere Absenzdaten für ",TaxonName,". ***\n") ) # notification for the user
+  cat(paste0("\n*** Generiere Absenzdaten für ",TaxonName," ***\n\n") ) # notification for the user
   
   ## load predictor variables
-  predictor_stack <- stack(file.path("Data","Input",paste0("RasterDatenUmwelt_",TaxonName,"_",identifier,".grd")))
+  predictor_stack <- stack(file.path("Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")))
   
   col_names_pred <- names(predictor_stack)
   

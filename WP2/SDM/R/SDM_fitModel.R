@@ -6,14 +6,18 @@
 # This function is part of the SDM workflow.
 # This version is used, when land cover data is provided in the run script.
 #
-# Author: Larissa Nowak
+# Author: Hanno Seebens (with support by Larissa Nowak), Senckenberg Gesellschaft für Naturforschung
 ##########################################################################################################
 
 
-fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { ## start of main function
+fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modelllaeufe=5) { ## start of main function
   
+  load(file=file.path("Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData")))
+  
+  VorkommenUmweltPA <- PAlist
+    
   cat(paste0("\n*** Fit Modell für ",TaxonName," ***\n") ) # notification for the user
-  cat("Das Fitten des Modells an Daten kann einige Zeit (Minuten bis Stunden) in Anspruch nehmen.\n")
+  cat("\nDas Fitten des Modells an Daten kann einige Zeit (Minuten bis Stunden) in Anspruch nehmen.\n")
   
   ## fit GAM model for different sets of pseudo absences and different random selections of 30/70 splits
   ## For example, 5 sets of pseudo absences and 5 random selections results in 25 model runs.
@@ -45,7 +49,7 @@ fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { #
     data_occ <- data_occ[complete.cases(data_occ),]
     data_occ <- cbind.data.frame(ID=1:nrow(data_occ),data_occ,stringsAsFactors=F)
     
-    for (j in 1:n_Modellläufe){
+    for (j in 1:n_Modelllaeufe){
       
       x <- x + 1
       
@@ -67,7 +71,7 @@ fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { #
   cl <- makeCluster(cores[1]-1) #not to overload your computer
   registerDoParallel(cl)
   
-  modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence")) %dopar% {
+  modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence"), .errorhandling = "remove") %dopar% {
   # modelruns <- list()
   # for (i in 1:length(data_all_runs)){
     
@@ -80,8 +84,6 @@ fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { #
 
     ## fit model to training block
     possibleError <- tryCatch(model1 <- gam(formula_model, family=family_model, data=fit_data, method = "REML"), 
-                              # method gives the method that is used to automatically find the right smoothing parameter, in this case "restcricted maximum likelihood"
-                              # gamma: Increase this beyond 1 to produce smoother models; gamma=1.4
                               error=function(e) e)
     
     if(!inherits(possibleError, "error")){ # check if gam fit worked
@@ -97,8 +99,10 @@ fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { #
       
       ## output
       return(list(run=i,PAblock=data_single_run$PAblock,RndSub=data_single_run$RndSub,AUC=AUC,mod=model1))
-      # if (is.na(AUC)) stop()
-      # modelruns[[i]] <- list(run=i,PAblock=data_single_run$PAblock,RndSub=data_single_run$RndSub,AUC=AUC,mod=model1)
+      
+    } else {
+      
+      return()
     }
   } # end of parallelised loop
 
@@ -106,18 +110,22 @@ fit_SDMs <- function(TaxonName=TaxonName,VorkommenUmweltPA,n_Modellläufe=5) { #
   stopCluster(cl)
 
   ## save output to disk
-  save(modelruns,            file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData")))
-
+  save(modelruns,file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData")))
+  # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData")))
+  
   ## evaluate model fit (export mean AUC and R2)
   out_eval <- list()
-  # x <- 0
+  x <- 0
   for (i in 1:length(modelruns)){
     dat <- modelruns[[i]]
-    out_eval[[i]] <- c(dat$PAblock,dat$RndSub,dat$AUC,summary(dat$mod)$r.sq)
+    if (!is.null(dat)){
+      x <- x + 1
+      out_eval[[x]] <- c(dat$PAblock,dat$RndSub,dat$AUC,summary(dat$mod)$r.sq)
+    }
   }
   out_eval <- as.data.frame(do.call("rbind",out_eval),stringsAsFactors=F)
   
-  cat(paste(" Anzahl an Modellläufen:",i,"\n"))
+  cat(paste(" Anzahl an Modellläufen:",x,"\n"))
   cat(paste(" Mittelwert AUC:",round(mean(out_eval$V3,na.rm=T),2),"\n"))
   cat(paste(" Mittelwert R2:",round(mean(out_eval$V4,na.rm=T),2),"\n"))
   

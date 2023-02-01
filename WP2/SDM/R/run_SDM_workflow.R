@@ -4,7 +4,7 @@
 # for a focal species
 # This workflow can be combined with CASPIAN
 #
-# Senckenberg Gesellschaft für Naturforschung, 8.11.22
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
 ##########################################################################################################
 
 graphics.off()
@@ -12,19 +12,19 @@ rm(list=ls())
 
 
 ##########################################################################################################
-## load functions ########################################################################################
+## Lade Funktionen #######################################################################################
 
-source(file.path("R","SDM_LadeSkripte.R")) # this loads all functions that are required throughout the SDM workflow
+source(file.path("R","SDM_LadeSkripte.R")) 
 
 
 ##########################################################################################################
-## Automatically install and load required packages, which are not yet in library ########################
+## Lade und installiere (sofern noch nicht geschehen) notwendige R Pakete ################################
 
 LadePakete()
 
 
 ##########################################################################################################
-## create outputfolder ###################################################################################
+## Erstelle Unterordner ##################################################################################
 
 # dir.create("output")
 # dir.create("output/input")
@@ -32,101 +32,168 @@ LadePakete()
 
 
 ##########################################################################################################
-## load data ##################################################################
+## Lade Artenliste #######################################################################################
 
 neobiota <- read.xlsx(file.path("Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
-artenliste <- subset(neobiota,Eintraege_GBIF_DE<5000 & Eintraege_GBIF_DE>100)$Taxon
 
-# occ <- read.csv("occtemp.csv")[-1] # alternatively, the user can insert a table with occurrence records here. This table should be in a .csv-format and be formatted exactly like the example in the manual; if the user does not run the entire analysis at once, she/he can insert the GBIF occurrence table created in  the first step here. 
-# # when reading in the file created during this workflow, it is important to remove the first column by adding [-1] as shown here!
+## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
+neobiota <- subset(neobiota,Datenbank!="EASIN")
+
+## Filter nach Arten mit ausreichend Datenpunkten (>100) und nicht zu vielen Datenpunkten (<5000), da 
+## Simulationen sehr lange dauern würden
+# artenliste <- subset(neobiota,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$Taxon 
+artenliste <- subset(neobiota,Eintraege_GBIF_DE>10000)$Taxon 
 
 
 ##########################################################################################################
-## Parameters ##################################################################
+## Parameter zur Modellierung ############################################################################
 
+## Name des jeweiligen Modelllaufs (frei vom Nutzer zu wählen)
+identifier <- "191222_NoEASIN" # a unique identifier for every run of the SDM workflow, needs to be a character
 
-##
-identifier <- "211122_Europe" # a unique identifier for every run of the SDM workflow, needs to be a character
+## Variablen zur Vorhersage der Habitate ##########################################
 
-## Predictors 
+## Maximale Anzahl der Datenpunkte, die von jeder ausgewählten Datenbank höchstens bezogen werden soll.
+## Hinweise: iNaturalist erlaubt keine downloads >10000 Datenpunkte. 
+## Downloads großer Datenmengen (>10000 Einträge) können effizienter direkt über die jeweilige Webseite sein.
+max_limit <- 30000
+
+## Klimatische Variablen (Gesamtliste und Übersetzung: https://www.worldclim.com/bioclim):
 Klima_var <- c("bio1","bio12","bio4") #  "tmin", "tmax", "tavg", "prec" and "bio" environmental variables of choice, user should insert the names of the desired variables as character as shown here
-Landnutz_var <- c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25") #   land cover variables of choice, user should insert the names of the desired variables as character as shown here
-# c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25") entsprechen 94% der Fläche von Deutschland
 
-# Ausschnitt <-c(NULL) # optional:the extent to which the area for model fitting (!) should be cropped; set to NULL for global/European extent
-Ausschnitt_ModellFit <- (c(-30,25,40,78)) # crop to Europe
-Ausschnitt_Extrapolation <- (c(3,47,17,55)) # crop to Germany  # lower left and upper right corner (long-lat)
+## Variablen zu Landbedeckung
+# LC2+LC3: urbane Regionen; LC12: Acker; LC18: Weideland/Grasland; LC23+LC24+LC25: Wälder; LC40+LC41: Binnengewässer
+# Die Bedeckung mit den Variablen LC2, LC3, LC12, LC18, LC23, LC24, LC25 entsprechen 94% der Fläche von Deutschland
+Landnutz_var <- c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25","LC40","LC41")
+
+## Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
+## Angaben beschreiben die Ausdehnung eines Rechtecks (long/lat für linke, untere und rechte, obere Ecke hintereinander)
+Ausschnitt_ModellFit <- (c(-30,25,40,78)) # Grenzen von Europa (Modell wird für alle Vorkommen in Europa angefittet)
+Ausschnitt_Extrapolation <- (c(3,47,17,55)) # Grenzen von Deutschland zur Extrapolation und Darstellung der Ergebnisse
 
 ## Anzahl der Läufe zur Generierung von Absenzdaten (pseudo absences) 
 ## Gesamtzahl der Modellläufe = n_AbsenzLaufe * n_Modelllaeufe
 n_AbsenzDaten <- 5
 
 ## Anzahl der Modelläufe zur Evaluierung der Modellergebnisse (Validierung)
-n_Modellläufe <- 5 
+n_Modelllaeufe <- 5 
 
+still_some <- TRUE
 
-for (i in 1:length(artenliste)){
-
-  print(i)
-  ptm <- proc.time()
+# for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der Habitateignung
+while (still_some){
   
-  ## Taxon Name
-  # TaxonName <- "Rhaponticum repens" # focal species, user should insert the scientific name as character string in the format shown here
-  TaxonName <- artenliste[i]
+  all_files <- list.files("Data/Input")
+  Vorkommen_alle <- all_files[grep("Vorkommen_",all_files)]
+  Vorkommen_alle <- Vorkommen_alle[grep(identifier,Vorkommen_alle)]
+  Vorkommen_alle <- sort(Vorkommen_alle[grep(".csv",Vorkommen_alle)])
+  available <- gsub("Vorkommen_|.csv","",Vorkommen_alle)
+  available <- gsub(identifier,"",available)
+  available <- gsub("_","",available)
   
+  # available <- gsub(identifier,"",available)
+  # available <- gsub("_","",available)
+  # still_to_do <- artenliste[!artenliste%in%available]
+  
+  # # finished <- list.files(file.path("Data","Output"))
+  # finished <- list.files(file.path("..","..","..","..","Storage_large","CASPIANII","Modelrun_191222"))
+  # finished <- finished[grep("HabitatEignung_",finished)]
+  # finished <- finished[grep(".gz",finished)]
+  # finished <- gsub("HabitatEignung_|.gz","",finished)
+  # finished <- gsub(identifier,"",finished)
+  # finished <- gsub("_","",finished)
+
+  req_files <- paste(artenliste,"_",identifier,sep="")
+  still_to_do <- artenliste[!artenliste%in%available]
+  
+  # still_to_do <- available[!available%in%finished]
+  
+  if (length(still_to_do)>0){
+      
+  ## Taxonname
+  # TaxonName <- artenliste[i]
+  TaxonName <- still_to_do[1]
+  # TaxonName <- "Astrantia major"
   
   ##########################################################################################################
-  ## prepare data ##########################################################################################
+  ## Datenermittlung #######################################################################################
   
   ## Aufbereitung aller notwendiger Daten (Vorkommen der Art, Umweltdaten und Pseudo-Absence Daten)
   
-  ## Ermittlung und Aufbereitung der Vorkommensdaten 
+  ## Ermittlung und Aufbereitung der Vorkommensdaten #######################################################
   Datenbank <- c("OBIS","GBIF","iNat")# 
   
-  Vorkommen <- ermittle_vorkommen(TaxonName=TaxonName,Datenbank=Datenbank,Ausschnitt=Ausschnitt_ModellFit,identifier=identifier)
+  Vorkommen <- ermittle_vorkommen(TaxonName=TaxonName,
+                                  Datenbank=Datenbank,
+                                  Ausschnitt=Ausschnitt_ModellFit,
+                                  identifier=identifier,
+                                  max_limit=max_limit)
+  ## Lade existierende Datei von Festplatte:
+  # Vorkommen <- fread(file.path("Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
   
-  print(proc.time()-ptm)
+  ## Karte....
+  
+  
+  if (is.null(Vorkommen)){
+    artenliste <- artenliste[artenliste!=TaxonName]
+  }
+  } else {
+    still_some <- FALSE
+  } 
+
 }
-  map_records(Vorkommen)
 
-
-  ## Kombiniere Vorkommensdaten und Umweltdaten
+  ## Kombiniere Vorkommensdaten und Umweltdaten ####################################################
   # loads desired environmental variables, checks for correlation of these variables accross the study region, extracts environmental variables for the occurrence records. If the correlation among environmental variables is too high, the user needs to remove them from envir and run this step again
-  VorkommenUmwelt <- ermittleUmweltdaten(TaxonName,identifier=identifier,Klima_var,Landnutz_var,Ausschnitt=Ausschnitt_ModellFit,plot_predictors=T)
-
-  ## Generiere Pseudo-Absence Daten
-  # samples 10 sets of pseudoabsences, extracts environment info for the pseudoabsences, attaches everything to the occurence table, creates a list with the ten occurrence-pseudabsence datasets
-  VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,VorkommenUmwelt=VorkommenUmwelt, n_AbsenzDaten=n_AbsenzDaten,
-                                            speichern=T,identifier=identifier)
-
-
-
-  ##########################################################################################################
-  ## fit and validate models ###############################################################################
-  # splits each pseudoabsence dataset into 10 random 30-70 datasplits and fits and evaluates one GAM with
-  # each data split, returns an object called modelruns100
-
-  Modellläufe <- fit_SDMs(TaxonName=TaxonName,VorkommenUmweltPA=VorkommenUmweltPA,n_Modellläufe=n_Modellläufe)
-
-
-  ##########################################################################################################
-  ## predict suitability ###################################################################################
-
-
-  # predicts environmental suitability based on models with a sufficiently good quality (AUC > 0.7)
-  HabitatEignung <- Vorhersage_alleLäufe(TaxonName=TaxonName,Modellläufe=Modellläufe,Ausschnitt=Ausschnitt_Extrapolation,speichern=T,identifier=identifier)
-
-  load(file=file.path("Data","Output", paste0("Suitability_",TaxonName,"_",identifier,".RData")))
-  HabitatEignung <- all_preds_singlefile
-
-  # # averages the predicted environmental suitability across the different models and saves a csv-file with the average suitabilities over the model runs
-  # avgsuitability <- mittlereVorhersage(HabitatEignung)
-
-  # transforms the average suitabilities to a raster file, plots them, saves the plot as pdf and returns the raster file
-  rasterHabitatEignung <- plotHabitatEignung(HabitatEignung,Vorkommen) #
-  # NOTE: If the same plot should be plotted and stored again, make sure the pdf-file with the respective name is closed. Otherwise, R will be unable to overwrite the file and yield an error, when running this step.
-
-}
-
-
-
+  VorkommenUmwelt <- ermittleUmweltdaten(TaxonName,
+                                         Vorkommen=Vorkommen,
+                                         identifier=identifier,
+                                         Klima_var,
+                                         Landnutz_var,
+                                         Ausschnitt=Ausschnitt_ModellFit,
+                                         plot_predictors=T)
+#   ## Lade existierende Datei von Festplatte:
+#   # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("Vorkommen+Umweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+#   
+#   ## Generiere Pseudo-Absence Daten #################################################################
+#   # samples 10 sets of pseudoabsences, extracts environment info for the pseudoabsences, attaches everything to the occurence table, creates a list with the ten occurrence-pseudabsence datasets
+#   VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
+#                                             VorkommenUmwelt=VorkommenUmwelt, 
+#                                             n_AbsenzDaten=n_AbsenzDaten,
+#                                             speichern=T,
+#                                             identifier=identifier)
+#   ## Lade existierende Datei von Festplatte:
+#   # load(file=file.path("Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+#   # VorkommenUmweltPA <- PAlist
+# 
+# 
+#   ##########################################################################################################
+#   ## fit und validiere Modell ###############################################################################
+#   # splits each pseudoabsence dataset into 10 random 30-70 datasplits and fits and evaluates one GAM with
+#   # each data split, returns an object called modelruns100
+# 
+#   Modelllaeufe <- fit_SDMs(TaxonName=TaxonName,
+#                            VorkommenUmweltPA=VorkommenUmweltPA,
+#                            n_Modelllaeufe=n_Modelllaeufe)
+#   ## Lade existierende Datei von Festplatte:
+#   # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData"))) # lade Datei 'modelruns'
+#   # Modelllaeufe <- modelruns
+# 
+#   ###########################################################################################################
+#   ## generiere Vorhersage ###################################################################################
+# 
+#   # # predicts environmental suitability based on models with a sufficiently good quality (AUC > 0.7)
+#   HabitatEignung <- Vorhersage_alleLaeufe(TaxonName=TaxonName,
+#                                           Modelllaeufe=Modelllaeufe,
+#                                           Ausschnitt=Ausschnitt_Extrapolation,
+#                                           speichern=T,
+#                                           identifier=identifier)
+#   
+#   ## Lade existierende Datei von Festplatte:
+#   # HabitatEignung <- fread(file=file.path("Data","Output", paste0("HabitatEignung_",TaxonName,"_",identifier,".gz"))) 
+# 
+#   ## Erstelle Karte der Habitateignung
+#   rasterHabitatEignung <- erstelleKarteHabitatEignung(HabitatEignung=HabitatEignung,
+#                                                       Vorkommen=Vorkommen) #
+# 
+# }

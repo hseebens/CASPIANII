@@ -13,7 +13,7 @@ source(file.path("R","SDM_LadePakete.R"))
 
 # data preparation
 source(file.path("R","SDM_ermittleVorkommen.R"))
-source(file.path("..","..","WP1","R","Vorkommen_bezieheDaten.R"))
+source(file.path("R","SDM_sammleVorkommenOnline.R"))
 
 source(file.path("R","SDM_ermittleUmweltdaten.R"))
 
