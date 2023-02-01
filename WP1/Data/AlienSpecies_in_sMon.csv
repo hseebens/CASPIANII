@@ -13,12 +13,13 @@ Lepidium neglectum,Lepidium densiflorum
 Lepidium virginicum,Lepidium virginicum
 Leucanthemum atratum agg.,Leucanthemum atratum
 Leucojum vernum,Leucojum vernum
-Ligusticum mutellina,Ligusticum mutellina
+Ligusticum mutellina,Mutellina adonidifolia
 Ligustrum vulgare,Ligustrum vulgare
 Lilium martagon,Lilium martagon
 Lindernia dubia,Lindernia dubia
 Linum perenne agg.,Linum perenne
 Linum usitatissimum,Linum usitatissimum
+Lithospermum purpurocaeruleum,Aegonychon purpurocaeruleum
 Lolium multiflorum,Lolium multiflorum
 Lolium remotum,Lolium remotum
 Lonicera caprifolium,Lonicera caprifolium
@@ -50,7 +51,6 @@ Ambrosia artemisiifolia,Ambrosia artemisiifolia
 Ambrosia trifida,Ambrosia trifida
 Amelanchier lamarckii,Amelanchier lamarckii
 Amelanchier ovalis,Amelanchier ovalis
-Amelanchier spicata,Amelanchier spicata
 Muscari botryoides,Muscari botryoides
 Myagrum perfoliatum,Myagrum perfoliatum
 Myosotis sylvatica agg.,Myosotis sylvatica
@@ -60,7 +60,6 @@ Myriophyllum heterophyllum,Myriophyllum heterophyllum
 Myrrhis odorata,Myrrhis odorata
 Narcissus poeticus,Narcissus poeticus
 Narcissus pseudonarcissus,Narcissus pseudonarcissus
-Ammophila arenaria agg.,Ammophila arenaria
 Nicandra physalodes,Nicandra physalodes
 Nonea pulla,Nonea pulla
 Nymphoides peltata,Nymphoides peltata
@@ -80,7 +79,7 @@ Parietaria pensylvanica,Parietaria pensylvanica
 Parthenocissus quinquefolia agg.,Parthenocissus quinquefolia
 Petasites albus,Petasites albus
 Petrorhagia saxifraga,Petrorhagia saxifraga
-Peucedanum ostruthium,Peucedanum ostruthium
+Peucedanum ostruthium,Imperatoria ostruthium
 Phacelia tanacetifolia,Phacelia tanacetifolia
 Phalaris arundinacea,Phalaris arundinacea
 Phalaris canariensis,Phalaris canariensis
@@ -178,7 +177,6 @@ Sedum spurium,Sedum spurium
 Sempervivum arachnoideum,Sempervivum arachnoideum
 Scilla bifolia agg.,Scilla bifolia
 Sempervivum tectorum,Sempervivum tectorum
-Senecio subalpinus,Jacobaea subalpina
 Senecio vernalis,Senecio vernalis
 Senecio viscosus,Senecio viscosus
 Silene conica,Silene conica
@@ -208,7 +206,7 @@ Tanacetum parthenium,Tanacetum parthenium
 Telekia speciosa,Telekia speciosa
 Teucrium chamaedrys,Teucrium chamaedrys
 Teucrium scorodonia,Teucrium scorodonia
-Thalictrum aquilegiifolium,Thalictrum aquilegifolium
+Thalictrum aquilegiifolium,Thalictrum aquilegiifolium
 Artemisia annua,Artemisia annua
 Artemisia austriaca,Artemisia austriaca
 Thymus pulegioides agg.,Thymus pulegioides
@@ -224,7 +222,6 @@ Tulipa sylvestris,Tulipa sylvestris
 Artemisia scoparia,Artemisia scoparia
 Typha minima,Typha minima
 Ulex europaeus,Ulex europaeus
-Artemisia tournefortiana,Artemisia biennis
 Vaccinium macrocarpon,Vaccinium macrocarpum
 Valerianella eriocarpa,Valerianella eriocarpa
 Verbascum blattaria,Verbascum blattaria
@@ -308,7 +305,6 @@ Calamintha nepeta agg.,Clinopodium nepeta
 Calendula arvensis,Calendula arvensis
 Calepina irregularis,Calepina irregularis
 Physalis franchetii,Alkekengi officinarum
-Euphorbia virgultosa,Euphorbia esula
 Chenopodium album agg.,Chenopodium album
 Chenopodium botrys,Dysphania botrys
 Chenopodium foliosum,Blitum virgatum
@@ -337,7 +333,7 @@ Cotula coronopifolia,Cotula coronopifolia
 Crepis setosa,Crepis setosa
 Cruciata glabra,Cruciata glabra
 Cruciata laevipes,Cruciata laevipes
-Cuscuta campestris,Cuscuta pentagona
+Cuscuta campestris,Cuscuta campestris
 Cuscuta gronovii,Cuscuta gronovii
 Cuscuta lupuliformis,Cuscuta lupuliformis
 Cymbalaria muralis,Cymbalaria muralis
@@ -361,7 +357,6 @@ Cyperus longus,Cyperus longus
 Cardamine hirsuta,Cardamine hirsuta
 Ambrosia coronopifolia,Ambrosia psilostachya
 Anthoxanthum aristatum,Anthoxanthum aristatum
-Draba muralis,Draba muralis
 Elymus hispidus,Thinopyrum intermedium
 Amaranthus blitum,Amaranthus blitum
 Echinocystis lobata,Echinocystis lobata
@@ -377,12 +372,10 @@ Cardamine heptaphylla,Cardamine heptaphylla
 Elodea canadensis,Elodea canadensis
 Elodea nuttallii,Elodea nuttallii
 Cardaminopsis arenosa,Arabidopsis arenosa
-Epilobium dodonaei,Chamaenerion dodonaei
-Ceratocapnos claviculata,Ceratocapnos claviculata
 Ceratocapnos claviculata,Ceratocapnos claviculata
 Chamaesyce humifusa,Euphorbia humifusa
 Chamaesyce maculata,Euphorbia maculata
-Consolida hispanica,Delphinium orientale
+Consolida hispanica,Delphinium hispanicum
 Securigera varia,Coronilla varia
 Pseudofumaria lutea,Pseudofumaria lutea
 Cardaria draba,Lepidium draba
@@ -450,7 +443,6 @@ Glaucium flavum,Glaucium flavum
 Salix repens agg.,Salix repens
 Xanthium strumarium agg.,Xanthium strumarium
 Carex buekii,Carex buekii
-Elymus obtusiflorus,Thinopyrum elongatum
 Helianthus tuberosus,Helianthus tuberosus
 Helleborus foetidus,Helleborus foetidus
 Helleborus niger,Helleborus niger
@@ -478,14 +470,11 @@ Allium schoenoprasum,Allium schoenoprasum
 Iva xanthiifolia,Iva xanthiifolia
 Juglans regia,Juglans regia
 Allium ursinum,Allium ursinum
-Chenopodium pumilio,Dysphania pumilio
-Chenopodium botrys,Dysphania botrys
-Cardaminopsis arenosa,Arabidopsis arenosa
 Laburnum anagyroides,Laburnum anagyroides
 Lactuca tatarica,Lactuca tatarica
 Lactuca virosa,Lactuca virosa
 Symphyotrichum lanceolatum,Symphyotrichum lanceolatum
-Symphyotrichum parviflorum,Symphyotrichum subulatum
+Symphyotrichum parviflorum,Symphyotrichum parviflorum
 Alnus incana,Alnus incana
 Symphytum asperum,Symphytum asperum
 Larix decidua,Larix decidua
