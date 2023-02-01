@@ -13,9 +13,9 @@
 # 
 # Weitere Informationen befinden sich in der Veroeffentlichung...
 #
-# Prokect: CASPIAN II
+# Projekt: CASPIAN II
 # 
-# Senckenberg Gesellschaft fuer Naturforschung, 28.11.22
+# Autor: Hanno Seebens, Senckenberg Gesellschaft fuer Naturforschung, 31.01.23
 ###############################################################################################################
 
 

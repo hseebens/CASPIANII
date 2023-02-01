@@ -38,10 +38,11 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   nRecords_sMon4 <- specNames_all4[,.N,by="TaxonName"]
   specNames4 <- unique(specNames_all4)
   
-  specNames_sMon <- rbind(specNames1,specNames2,specNames3,specNames4)
+  specNames_sMon <- unique(rbind(specNames1,specNames2,specNames3,specNames4))
   colnames(specNames_sMon) <- "Taxon"
   
-  nRecords_sMon <- rbind(nRecords_sMon1,nRecords_sMon2,nRecords_sMon3,nRecords_sMon4)
+  nRecords_sMon <- unique(rbind(nRecords_sMon1,nRecords_sMon2,nRecords_sMon3,nRecords_sMon4))
+  nRecords_sMon <- aggregate(N ~ TaxonName, FUN=sum, data=nRecords_sMon)
   colnames(nRecords_sMon) <- c("Taxon","Eintraege_sMon")
   
   setwd(working_directory) # resset working directory
