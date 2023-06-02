@@ -14,13 +14,13 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
                                 Vorkommen=NULL,
                                 identifier=NULL,
                                 Klima_var=NULL, 
-                                Landnutz_var=NULL, 
+                                Landbedeck_var=NULL, 
                                 Ausschnitt=NULL,
                                 plot_predictors=T) { ## start of main function
   
   cat(paste0("\n*** Ermittle Umweltdaten für ",TaxonName," ***\n") ) # notification for the user
   
-  col_names <- c(Klima_var,Landnutz_var)
+  col_names <- c(Klima_var,Landbedeck_var)
   
   ## Extent of selection
   ext_stack <- extent(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
@@ -38,8 +38,8 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     # filenames <- paste0("wc2.1_30s_bio_",gsub("bio","",Klima_var),".tif")
     # envstack <- stack(file.path("..","..","..","..","Storage_large","Climate",filenames))
     filenames <- paste0("wc2.1_2.5m_bio_",gsub("bio","",Klima_var),".tif")
-    # envstack <- stack(file.path("Data","Input","WorldClim",filenames)) # workstation
-    envstack <- stack(file.path("..","..","..","DATA","Environmental","WorldClim",filenames)) # local
+    envstack <- stack(file.path("Data","Input","WorldClim",filenames)) # workstation
+    # envstack <- stack(file.path("..","..","..","DATA","Environmental","WorldClim",filenames)) # local
     
     ## crop to extent
     envstack  <- crop(envstack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
@@ -48,7 +48,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   }
   
   ## land cover data
-  if (!is.null(Landnutz_var)){ # load the raster stack with the land cover data
+  if (!is.null(Landbedeck_var)){ # load the raster stack with the land cover data
 
     LCStack <- stack(paste(file.path("SDM","Data","Input","CorineLandcover",""),c("LC1.tif","LC2.tif", "LC3.tif", "LC4.tif", "LC5.tif", "LC6.tif", "LC7.tif", "LC8.tif", "LC9.tif", "LC10.tif",
                                                                             "LC11.tif","LC12.tif", "LC13.tif", "LC14.tif", "LC15.tif", "LC16.tif", "LC17.tif", "LC18.tif", "LC19.tif", "LC20.tif",
@@ -56,7 +56,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
                                                                             "LC31.tif","LC32.tif", "LC33.tif", "LC34.tif", "LC35.tif", "LC36.tif", "LC37.tif", "LC38.tif", "LC39.tif", "LC40.tif",
                                                                             "LC41.tif","LC42.tif", "LC43.tif", "LC44.tif"),sep="")) 
     
-    LCStack <- subset(LCStack, Landnutz_var) # subset the land cover data to the environmental data of interest as specified by the user
+    LCStack <- subset(LCStack, Landbedeck_var) # subset the land cover data to the environmental data of interest as specified by the user
     
     ## crop to extent
     LCStack <- crop(LCStack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
@@ -67,7 +67,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   }
 
   ## merge if climate and land cover variables provided
-  if (!is.null(Landnutz_var) & !is.null(Klima_var)){
+  if (!is.null(Landbedeck_var) & !is.null(Klima_var)){
     
     ## resample land cover to fit to climate raster (cropping for land cover not exact)
     new_raster <- envstack[[1]]

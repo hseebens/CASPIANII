@@ -29,17 +29,17 @@ LadePakete()
 ##########################################################################################################
 ## Lade Artenliste #######################################################################################
 
-neobiota <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+artenliste <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
 
 ## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
-neobiota <- subset(neobiota,Datenbank!="EASIN")
+artenliste <- subset(artenliste,Datenbank!="EASIN")
 
 ## Filter nach Arten mit ausreichend Datenpunkten (>50) und nicht zu vielen Datenpunkten (<10000 in 
 # Deutschland), da Simulationen ansonsten sehr lange dauern würden. Für Arten mit großen Datenmenge wurde 
 # ein alternativer workflow entwickelt ("SDM_bezieheHoheDatenmengen.R"), mit dem die Daten bezogen und
 # aufbereitet werden können. Dieser Schritt würde Schritt 1 unten für Arten mit großen Datenmengen
 # ersetzen. Schritte 2-7 können dann für alle Arten gleich durchgeführt werden.
-artenliste <- subset(neobiota,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$Taxon
+artenliste <- subset(artenliste,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$Taxon
 
 
 ##########################################################################################################
@@ -59,7 +59,7 @@ Klima_var <- c("bio1","bio12","bio4")
 # LC2+LC3: urbane Regionen; LC12: Acker; LC18: Weideland/Grasland; LC23+LC24+LC25: Wälder; LC40+LC41: Binnengewässer
 # Die Bedeckung mit den Variablen LC2, LC3, LC12, LC18, LC23, LC24, LC25 entsprechen 94% der Fläche von Deutschland.
 # Die Codes der Variablen findet man im Abschlussbericht des Projekvorhabens.
-Landnutz_var <- c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25","LC40","LC41")
+Landbedeck_var <- c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25","LC40","LC41")
 
 ## Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
 # Angaben beschreiben die Ausdehnung eines Rechtecks (long/lat für linke, untere und rechte, obere Ecke hintereinander)
@@ -104,7 +104,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          Vorkommen=Vorkommen,
                                          identifier=identifier,
                                          Klima_var,
-                                         Landnutz_var,
+                                         Landbedeck_var,
                                          Ausschnitt=Ausschnitt_ModellFit,
                                          plot_predictors=T)
   
