@@ -50,6 +50,8 @@ source(file.path("Vorkommen","R","Vorkommen_erstelleKarte.R"))
 
 ### SDM ###################################################################################
 
+
+source(file.path("SDM","R","SDM_UeberpruefeVerzeichnisse.R"))
 source(file.path("SDM","R","SDM_ermittleVorkommen.R"))
 source(file.path("SDM","R","SDM_sammleVorkommenOnline.R"))
 
