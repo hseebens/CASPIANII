@@ -43,6 +43,6 @@ ueberpruefe_Verzeichnisse <- function (){
     x <- 1
   }
   if (x==0){
-    cat("\n Alle Verzeichnisse korrekt.\n") # notification for the user
+    cat("\n Alle Verzeichnisse sind bereits vorhanden.\n") # notification for the user
   }
 }  
