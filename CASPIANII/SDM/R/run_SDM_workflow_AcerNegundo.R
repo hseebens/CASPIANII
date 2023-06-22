@@ -35,7 +35,7 @@ ueberpruefe_Verzeichnisse()
 ##########################################################################################################
 ## Lade Artenliste #######################################################################################
 
-artenliste <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+artenliste <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert_AcerNegundo.xlsx"),sheet=1)
 
 ## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
 artenliste <- subset(artenliste,Datenbank!="EASIN")
