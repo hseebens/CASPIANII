@@ -6,7 +6,7 @@
 # This function is part of the SDM workflow. 
 # This version is used, when land cover data is provided in the run script.
 #
-# Author: Larissa Nowak
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 23.06.23
 ##########################################################################################################
 
 
@@ -38,7 +38,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     # filenames <- paste0("wc2.1_30s_bio_",gsub("bio","",Klima_var),".tif")
     # envstack <- stack(file.path("..","..","..","..","Storage_large","Climate",filenames))
     filenames <- paste0("wc2.1_2.5m_bio_",gsub("bio","",Klima_var),".tif")
-    envstack <- stack(file.path("Data","Input","WorldClim",filenames)) # workstation
+    envstack <- stack(file.path("SDM","Data","Input","WorldClim",filenames)) # workstation
     # envstack <- stack(file.path("..","..","..","DATA","Environmental","WorldClim",filenames)) # local
     
     ## crop to extent
