@@ -11,7 +11,7 @@
 
 bezieheGBIFDaten <- function(dat=dat){
 
-  dat <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+  dat <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
   # dat <- dat[1:100,]
   
   ## get list of taxon names
@@ -92,7 +92,7 @@ bezieheGBIFDaten <- function(dat=dat){
   writeData(wb,"GesamtListeGebietsfremdeArten",dat_out[,-which(colnames(dat_out)=="SpecNames")], headerStyle = hs2)
   
   ## export file (overrides existing file!) ##########################
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
   
 }
 

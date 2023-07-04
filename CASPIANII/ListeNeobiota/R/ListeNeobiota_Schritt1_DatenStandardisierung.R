@@ -16,7 +16,7 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
   ## load data sets and standardise taxon names #################################################
   
   ## get names of individual sheets
-  sheet_names <- getSheetNames(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"))
+  sheet_names <- getSheetNames(file.path("ListeNeobiota","Data","Input","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"))
 
   ## Create Workbook object and add worksheets
   wb <- createWorkbook()
@@ -28,7 +28,7 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
     # cat(paste0("\nWorking on data set '",sheet_names[i],"'\n"))
     cat(paste0("\n  Bearbeiten von Datensatz '",sheet_names[i],"'\n"))
     
-    dat <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"),sheet=i)
+    dat <- read.xlsx(file.path("ListeNeobiota","Data","Input","ListeGebietsfremderArten_einzelneDB_Rohdaten.xlsx"),sheet=i)
     
     ## standardise column names ########################################################
     
@@ -80,7 +80,7 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
     if (any(sheet_names[i]%in%Pfad_Datensaetze)){
       
       ## get translation table
-      path_translate <- read.xlsx(file.path("ListeNeobiota","Data","PfadUebersetzung.xlsx"),sheet=1)
+      path_translate <- read.xlsx(file.path("ListeNeobiota","Data","Input","PfadUebersetzung.xlsx"),sheet=1)
       
       if (sheet_names[i]=="EASIN_Germany"){
         
@@ -179,5 +179,5 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
   }  
   
   ## Final output as xlsx
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }

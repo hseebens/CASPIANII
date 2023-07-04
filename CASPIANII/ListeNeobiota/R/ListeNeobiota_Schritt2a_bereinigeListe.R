@@ -12,7 +12,7 @@
 bereinigeListe <- function(){
 
   ## Lade Liste einheimischer Pflanzenarten
-  Artenliste <- read.xlsx(file.path("ListeNeobiota","Data","skript519_checkliste.xlsx"),sheet=1)
+  Artenliste <- read.xlsx(file.path("ListeNeobiota","Data","Input","skript519_checkliste.xlsx"),sheet=1)
   
   einheimisch <- subset(Artenliste,FLOR!="E") # waehle einheimische Pflanzenarten
   einheimisch_stand <- einheimisch
@@ -21,7 +21,7 @@ bereinigeListe <- function(){
   
   # table(grepl("\\(E\\)",einheimisch$VOLLNAME))
   
-  alienspecies <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+  alienspecies <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
   
   ## entferne einheimische Pflanzenarten aus Liste
   alienspecies <- alienspecies[!alienspecies$Taxon%in%einheimisch_stand[[1]]$Taxon,]
@@ -37,7 +37,7 @@ bereinigeListe <- function(){
   writeData(wb,"GesamtListeGebietsfremdeArten",alienspecies, headerStyle = hs2)
   
   ## export file (overrides existing file!) ##########################
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
   
 }
 

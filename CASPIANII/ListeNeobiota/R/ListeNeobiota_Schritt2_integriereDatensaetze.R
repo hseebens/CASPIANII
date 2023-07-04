@@ -9,12 +9,12 @@ integriereDatensaetze <- function(){
   
   ## Integrate all data into one file ##########################################################
   
-  sheet_names <- getSheetNames(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"))
+  sheet_names <- getSheetNames(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"))
   
   all_dat_sub <- list()
   for (i in 1:length(sheet_names)){
     
-    dat <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"),sheet=i)
+    dat <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_einzelneDB_standardisiert.xlsx"),sheet=i)
 
     ## add missing columns
     if (!"Status"%in%colnames(dat)){
@@ -89,7 +89,7 @@ integriereDatensaetze <- function(){
   
   ## mark/add species of union concern #####################################
 
-  eu_concern <- read.xlsx(file.path("ListeNeobiota","Data","List_IAS_union_concern.xlsx"))
+  eu_concern <- read.xlsx(file.path("ListeNeobiota","Data","Input","List_IAS_union_concern.xlsx"))
   eu_concern$scientificName <- gsub("\\s*\\([^\\)]+\\)","",eu_concern$scientificName) # remove synonyms provided in brackets
   
   ## standardise taxon names 
@@ -174,5 +174,5 @@ integriereDatensaetze <- function(){
   writeData(wb,"GesamtListeGebietsfremdeArten",final_dataset, headerStyle = hs2)
   
   ## export file ##########################
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }

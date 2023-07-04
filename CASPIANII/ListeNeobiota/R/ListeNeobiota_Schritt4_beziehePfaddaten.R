@@ -15,11 +15,11 @@
 
 beziehePfadDaten <- function(){
 
-  dat <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+  dat <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
 
   ## Prepare pathway data ###################################################################
   ## Pathway data from Saul et al. (2017) JAE 54, 657–669, doi: 10.1111/1365-2664.12819
-  pathways <- read.table(file.path("ListeNeobiota","Data","INTRODUCTION_PATHWAYS.csv"),sep=";",stringsAsFactors = F,header=T)
+  pathways <- read.table(file.path("ListeNeobiota","Data","Input","INTRODUCTION_PATHWAYS.csv"),sep=";",stringsAsFactors = F,header=T)
   colnames(pathways)[4] <- c("PathwayMain")
   colnames(pathways)[5] <- c("PathwaySub")
   colnames(pathways)[6] <- c("PathwayIntential")
@@ -68,7 +68,7 @@ beziehePfadDaten <- function(){
   ## standardise  pathway names ###################################################
   
   ## get translation table
-  path_translate <- read.xlsx(file.path("ListeNeobiota","Data","PfadUebersetzung.xlsx"),sheet=1)
+  path_translate <- read.xlsx(file.path("ListeNeobiota","Data","Input","PfadUebersetzung.xlsx"),sheet=1)
   
   ## replace CBD pathway names
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
@@ -113,5 +113,5 @@ beziehePfadDaten <- function(){
   writeData(wb,"GesamtListeGebietsfremdeArten",dat_path, headerStyle = hs2)
   
   ## export file (overrides existing file!) ##########################
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }

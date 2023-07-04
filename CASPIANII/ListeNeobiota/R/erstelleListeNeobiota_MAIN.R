@@ -24,6 +24,17 @@ graphics.off()
 rm(list=ls())
 
 
+##########################################################################################################
+## Bestimme Arbeitsverzeichnis (working directory) #######################################################
+
+# setwd("") 
+# Arbeitsverzeichnis muss eingefügt werden, sofern dies nicht beim Oeffnen des R Projekts 
+# bereits geschehen ist (s. nächten Kommentar)
+
+# Alternativ: Oeffne CASPIANII.Rproj im Verzeichnis CASPIANII, wodurch das Arbeitsverzeichnis automatisch 
+# gesetzt wird. In diesem Fall ist "setwd()" nicht notwendig.
+
+
 ##########################################################################
 ## Laden weiterer R Skripte ##############################################
 

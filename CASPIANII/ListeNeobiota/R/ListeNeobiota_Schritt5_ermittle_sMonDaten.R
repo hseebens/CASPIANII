@@ -49,7 +49,7 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   
   ## get alien species list #######################################
   
-  alienspecies <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+  alienspecies <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
   # alienspecies <- alienspecies[,-which(colnames(alienspecies)=="Eintraege_sMon")] # in case column exist from former runs
   
   ## standardise sMon species names for comparison ################
@@ -69,7 +69,7 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   aliens_in_sMon <- alienspecies$Taxon[alienspecies$Taxon%in%sMon_spec]
   
   ## export alien species list
-  fwrite(subset(alien_sMon_translation,Taxon%in%aliens_in_sMon),file.path("ListeNeobiota","Data","AlienSpecies_in_sMon.csv"))
+  fwrite(subset(alien_sMon_translation,Taxon%in%aliens_in_sMon),file.path("ListeNeobiota","Data","Output","AlienSpecies_in_sMon.csv"))
   
   nRecords_sMon_standardised <- merge(nRecords_sMon,specNames_sMon_standardised,by.x="Taxon",by.y="Taxon_orig")
   nRecords_aliens_in_sMon <- nRecords_sMon_standardised[,c("Taxon.y","Eintraege_sMon")]
@@ -114,5 +114,5 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   writeData(wb,"GesamtListeGebietsfremdeArten",alienspecies_nRecords, headerStyle = hs2)
   
   ## export file (overrides existing file!) ##########################
-  saveWorkbook(wb, file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
+  saveWorkbook(wb, file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"), overwrite = T, returnValue = FALSE)
 }
