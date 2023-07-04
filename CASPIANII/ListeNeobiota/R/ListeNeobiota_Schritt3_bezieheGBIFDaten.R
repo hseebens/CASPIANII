@@ -24,6 +24,9 @@ bezieheGBIFDaten <- function(dat=dat){
   
   # cat("\n Get GBIF keys for taxa \n")
   cat("\n Extrahiere GBIF keys fuer Taxa \n")
+
+  #setup progress bar
+  pb <- txtProgressBar(min=1, max=length(SpecNames), initial=0,style = 3)
   
   GBIF_speclist <- list()
   x <- 0
@@ -35,7 +38,9 @@ bezieheGBIFDaten <- function(dat=dat){
     x <- x + 1
     GBIF_speclist[[x]] <- c(specname$speciesKey,specname$matchType,SpecNames[i])
     
-    if (x%%1000==0) cat(paste(" ",x,"\n"))
+    # if (x%%200==0) cat(paste(" ",x,"\n"))
+    setTxtProgressBar(pb, i, label=info)
+    
   }
   GBIF_species <- as.data.frame(do.call("rbind",GBIF_speclist),stringsAsFactors = F)
   colnames(GBIF_species) <- c("speciesKey","matchType","Orig_name")
@@ -52,18 +57,25 @@ bezieheGBIFDaten <- function(dat=dat){
   
   GBIF_species$Eintraege_GBIF_DE <- 0
   GBIF_species$Eintraege_GBIF_Global <- 0
-  for (i in 1:length(GBIF_species$speciesKey)){
-    
-    nRecords_All <- try(occ_count(GBIF_species$speciesKey[i]))
-    nRecords_DE <- try(occ_count(GBIF_species$speciesKey[i],country="DE"))
+  
+  #setup progress bar
+  pb <- txtProgressBar(min=1, max=length(GBIF_species$speciesKey), initial=0,style = 3)
+  
+  for (i in 1:length(GBIF_species$speciesKey)){ #
+  
+    nRecords_All <- try(occ_count(speciesKey=GBIF_species$speciesKey[i]))
+    nRecords_DE <- try(occ_count(speciesKey=GBIF_species$speciesKey[i],country="DE"))
     
     if (class(nRecords_DE)=="try-error") next
     
     GBIF_species$Eintraege_GBIF_DE[i] <- nRecords_DE
     GBIF_species$Eintraege_GBIF_Global[i] <- nRecords_All
     
-    if (i%%1000==0) cat(paste(" ",i,"\n"))
+    # if (i%%100==0) cat(paste(" ",i,"\n"))
+    
+    setTxtProgressBar(pb, i, label=info)
   }
+  close(pb)
   
   ## merge record numbers with original input file 
   dat_out <- merge(dat,GBIF_species[,c("Orig_name","Eintraege_GBIF_DE","Eintraege_GBIF_Global")],by.x="SpecNames",by.y="Orig_name",all.x=T)

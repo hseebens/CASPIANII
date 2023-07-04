@@ -88,7 +88,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
 
   ## Taxonname
   TaxonName <- artenliste[i]
-  TaxonName <- "Alitta virens"
+  # TaxonName <- "Teredo navalis"
 
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
@@ -102,7 +102,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                   identifier=identifier,
                                   max_limit=20000)
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
   
   ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
