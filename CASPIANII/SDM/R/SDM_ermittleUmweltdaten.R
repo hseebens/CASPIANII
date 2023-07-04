@@ -149,9 +149,9 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     }
     
     ## output  
-    fwrite(occenv, file.path("SDM","Data","Input",paste0("Vorkommen+Umwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+    fwrite(occenv, file.path("SDM","Data","Input",paste0("VorkommenUmwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
     
-    cat(paste0("\n Umweltdaten wurden als 'Vorkommen+Umwelt_",TaxonName,"_",identifier,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+    cat(paste0("\n Umweltdaten wurden als 'VorkommenUmwelt_",TaxonName,"_",identifier,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
     
     return(occenv) 
   }

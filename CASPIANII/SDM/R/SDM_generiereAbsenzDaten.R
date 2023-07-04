@@ -76,10 +76,10 @@ generiereAbsenzDaten <- function(TaxonName=NULL,
     if (is.null(TaxonName) | is.null(identifier)){
       warning("Angabe 'TaxonName' oder 'identifier' fehlt. Bitte ergänzen.")
     }
-    save(PAlist, file=file.path("SDM","Data","Input", paste0("Vorkommen+Umwelt+Absenz_",TaxonName,"_",identifier,".RData")))
+    save(PAlist, file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData")))
     # load(file=file.path("Data","Input", "PAlist_Acer saccharinum_run.071122.test.RData"))
     
-    cat(paste0("\n Absenzdaten wurden als 'Vorkommen+Umwelt+Absenz_",TaxonName,"_",identifier,".RData' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+    cat(paste0("\n Absenzdaten wurden als 'VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
     
   }
   

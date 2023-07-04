@@ -11,13 +11,12 @@
 
 
 fit_SDMs <- function(TaxonName=TaxonName,
-                     VorkommenUmweltPA,
+                     VorkommenUmweltAbsenz,
                      n_Modelllaeufe=5,
                      identifier=identifier) { ## start of main function
   
-  load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData")))
-  
-  VorkommenUmweltPA <- PAlist
+  # load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData")))
+  # VorkommenUmweltAbsenz <- PAlist
     
   cat(paste0("\n*** Fit Modell für ",TaxonName," ***\n") ) # notification for the user
   cat("\nDas Fitten des Modells an Daten kann einige Zeit (Minuten bis Stunden) in Anspruch nehmen.\n")
@@ -28,7 +27,7 @@ fit_SDMs <- function(TaxonName=TaxonName,
   ## set GAM model
   
   ## prepare data to be modelled
-  data_occ <- VorkommenUmweltPA[[1]]
+  data_occ <- VorkommenUmweltAbsenz[[1]]
   data_occ <- data_occ[complete.cases(data_occ),]
   data_occ <- cbind.data.frame(ID=1:nrow(data_occ),data_occ,stringsAsFactors=F)
   
@@ -45,10 +44,10 @@ fit_SDMs <- function(TaxonName=TaxonName,
   
   data_all_runs <- list()
   x <- 0
-  for (i in 1:length(VorkommenUmweltPA)){
+  for (i in 1:length(VorkommenUmweltAbsenz)){
     
     ## prepare data to be modelled
-    data_occ <- VorkommenUmweltPA[[i]]
+    data_occ <- VorkommenUmweltAbsenz[[i]]
     data_occ <- data_occ[complete.cases(data_occ),]
     data_occ <- cbind.data.frame(ID=1:nrow(data_occ),data_occ,stringsAsFactors=F)
     

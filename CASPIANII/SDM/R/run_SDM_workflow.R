@@ -99,7 +99,6 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
 
   ## Taxonname
   TaxonName <- artenliste[i]
-  # TaxonName <- "Colinius virginamus"
 
   ##########################################################################################################
   ## Datenermittlung #######################################################################################

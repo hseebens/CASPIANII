@@ -99,8 +99,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
   
   ## Taxonname
   TaxonName <- artenliste[i]
-  # TaxonName <- "Teredo navalis"
-  
+
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
   ## Aufbereitung aller notwendiger Daten (Vorkommen der Art, Umweltdaten und Pseudo-Absenz Daten)
@@ -134,7 +133,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          plot_predictors=T)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("Vorkommen+Umwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
   
   
   ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
@@ -146,7 +145,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                                 identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
   # VorkommenUmweltAbsenz <- PAlist
   
   
