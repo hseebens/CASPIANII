@@ -13,26 +13,29 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
   
   ## check if species is purely marine (x=1), otherwise set x=0
   x <- 0
-  if (!is.na(entry$isMarine)){
-    if (entry$isMarine==1){
-      x <- 1 # set x to 1 if habitat is marine
+  if (is(entry,"data.frame")){ # if species is lacking in WoRMS, entry would be a string -> interpreted as being non-marine
+    if (!is.na(entry$isMarine)){
+      if (entry$isMarine==1){
+        x <- 1 # set x to 1 if habitat is marine
+      }
+    }
+    if (!is.na(entry$isTerrestrial)){
+      if (entry$isTerrestrial==1){
+        x <- 0 # set x to 0 if habitat is terrestrial
+      }
+    }
+    if (!is.na(entry$isFreshwater)){
+      if (entry$isFreshwater==1){
+        x <- 0 # set x to 0 if habitat is freshwater
+      }
     }
   }
-  if (!is.na(entry$isTerrestrial)){
-    if (entry$isTerrestrial==1){
-      x <- 0 # set x to 0 if habitat is terrestrial
-    }
-  }
-  if (!is.na(entry$isFreshwater)){
-    if (entry$isFreshwater==1){
-      x <- 0 # set x to 0 if habitat is freshwater
-    }
-  }
+
   if (x==1){
     
     cat(paste0("\n*** ",TaxonName," ist eine rein marine Art, fuer die keine Modellierung durchgefuehrt werden kann. ***\n") ) # notification for the user
     
-    return("Error: Marine species")
+    return("Error: Marine Art")
     
   } else { # if not a marine species, obtain occurrence data
 
@@ -114,7 +117,7 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
       ## save data to disk
       fwrite(Vorkommen_alle, file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
       
-      cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+      cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,"_",identifier,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
       
       return(Vorkommen_alle)
       

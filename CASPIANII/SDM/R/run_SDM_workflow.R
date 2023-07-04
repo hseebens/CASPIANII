@@ -15,6 +15,17 @@ rm(list=ls())
 
 
 ##########################################################################################################
+## Bestimme Arbeitsverzeichnis (working directory) #######################################################
+
+# setwd("") 
+# Arbeitsverzeichnis muss eingefügt werden, sofern dies nicht beim Oeffnen des R Projekts 
+# bereits geschehen ist (s. nächten Kommentar)
+
+# Alternativ: Oeffne CASPIANII.Rproj im Verzeichnis CASPIANII, wodurch das Arbeitsverzeichnis automatisch 
+# gesetzt wird. In diesem Fall ist "setwd()" nicht notwendig.
+
+
+##########################################################################################################
 ## Lade Funktionen #######################################################################################
 
 source(file.path("LadeSkripte.R")) 
@@ -88,7 +99,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
 
   ## Taxonname
   TaxonName <- artenliste[i]
-  # TaxonName <- "Teredo navalis"
+  # TaxonName <- "Colinius virginamus"
 
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
@@ -102,8 +113,15 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                   identifier=identifier,
                                   max_limit=20000)
   ## Alternativ: Lade existierende Datei von Festplatte:
-  Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
+  ## Marine Arten koennen nicht mit diesem Workflow simuliert werden. Diese Arten werden nicht beruecksichtigt.
+  if (!is(Vorkommen,"data.frame")){
+    
+    cat(paste0("\n Fuer ",TaxonName," wird keine Simulation durchgefuehrt.") ) # notification for the user
+    
+    next # gehe zur naechsten Art, wenn keine Informationen für diese Art vorliegen.
+  }
   
   ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
   
@@ -116,20 +134,20 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          plot_predictors=T)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("Vorkommen+Umweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("Vorkommen+Umwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
   
   ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
   
-  VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
+  VorkommenUmweltAbsenz <- generiereAbsenzDaten(TaxonName=TaxonName,
                                             VorkommenUmwelt=VorkommenUmwelt,
                                             n_AbsenzDaten=n_AbsenzDaten,
                                             speichern=T,
                                             identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
-  # VorkommenUmweltPA <- PAlist
+  # load(file=file.path("Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  # VorkommenUmweltAbsenz <- PAlist
 
 
   ###########################################################################################################
@@ -138,7 +156,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
   ## Schritt 4: kalibriere (fit) und validiere Modell #######################################################
   
   Modelllaeufe <- fit_SDMs(TaxonName=TaxonName,
-                           VorkommenUmweltPA=VorkommenUmweltPA,
+                           VorkommenUmweltAbsenz=VorkommenUmweltAbsenz,
                            n_Modelllaeufe=n_Modelllaeufe)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
