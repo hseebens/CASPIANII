@@ -10,13 +10,16 @@ library(CoordinateCleaner)
 
 identifier <- "191222_NoEASIN" # a unique identifier for every run of the SDM workflow, needs to be a character
 
-user <- "ekinhanno1" 
-email <- "ekinhanno1@gmail.com"
-pwd <- "seebenskaplan1234"
+## Login Daten für einen GBIF Konto
+user <- "" 
+email <- ""
+pwd <- ""
 
+## Geographischer Ausschnitt zu dem Daten bezogen werden
 Ausschnitt_ModellFit <- (c(-30,25,40,78))
 Ausschnitt=Ausschnitt_ModellFit
 
+## Liste gebietsfremder Arten
 neobiota <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
 
 ## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
