@@ -133,7 +133,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          plot_predictors=T)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("Vorkommen+Umwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
   
   ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
