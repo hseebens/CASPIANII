@@ -52,7 +52,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     TaxonName <- gsub(identifier,"",TaxonName)
     TaxonName <- gsub("_","",TaxonName)
     
-    if (all(is.na(Vorkommen$Laengengrad))) next
+    if (all(is.na(Vorkommen$Laengengrad))) next # check if no NA in Vorkommen$Laengengrad; is this faster than if(any(is.na()))?
     
     ## transform to spatial object
     all_coords <- Vorkommen[,c("Laengengrad", "Breitengrad", "Taxon")] # prepare raster file with the mean predictions for plotting
@@ -118,9 +118,9 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     values(aliens_masked)[values(aliens_masked)>300] <- 300
     
     if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(aliens_masked,col=rev(hcl.colors(10,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
@@ -131,9 +131,9 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     values(germany2) <- log10(values(germany2)+1)
     
     if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(germany2,col=rev(hcl.colors(10,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
@@ -150,9 +150,9 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     regions$Taxon[regions$Taxon>300] <- 300
     
     if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Data","Output","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     mf_choro(regions,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty") #,breaks="pretty"
     text(">",x=17.85,y=53,xpd=NA)

@@ -42,7 +42,7 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   # dev.off()
  
   # pdf(file.path("Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".pdf"))) # plot with occurrences
-  png(file.path("SDM","Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
+  png(file.path("SDM","Data","Output", "Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
   plot(rastpreds, col=viridis(100))
   if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
   points(Vorkommen, pch=1, cex=0.5)
