@@ -22,6 +22,11 @@ ueberpruefe_Verzeichnisse <- function (){
     cat("\n Verzeichnis 'SDM/Data/Output' erstellt.\n") # notification for the user
     x <- 1
   }
+  if (!file.exists(file.path("SDM","Data","Output", "Grafiken"))){
+    dir.create(file.path("SDM","Data","Output", "Grafiken"))
+    cat("\n Verzeichnis 'SDM/Data/Output' erstellt.\n") # notification for the user
+    x <- 1
+  }
   if (!file.exists(file.path("SDM","Data","Input"))){
     dir.create(file.path("SDM","Data","Input"))
     cat("\n Verzeichnis 'SDM/Data/Input' erstellt.\n") # notification for the user
