@@ -145,7 +145,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                                 identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  # load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
   # VorkommenUmweltAbsenz <- PAlist
   
   
