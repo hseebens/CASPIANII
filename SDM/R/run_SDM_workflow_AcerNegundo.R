@@ -213,3 +213,8 @@ erstelleKarte_potVorkommenAlle(
                               VorhersageVerzeichnis=file.path("SDM", "Data", "Output"), # should contain HabitatEignung_*.gz
                               identifier,
                               exportiereKarte=TRUE)
+
+# failsafe, close open (e.g.) png devices 
+for (i in 1:length(dev.list)){
+if(!is.null(dev.list())) dev.off() 
+}
