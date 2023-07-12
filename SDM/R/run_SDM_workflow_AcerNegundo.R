@@ -216,5 +216,5 @@ erstelleKarte_potVorkommenAlle(
 
 # failsafe, close open (e.g.) png devices 
 for (i in 1:length(dev.list)){
-if(!is.null(dev.list())) dev.off() 
+  if(!is.null(dev.list())) dev.off() 
 }
