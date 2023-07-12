@@ -10,10 +10,10 @@
 ##########################################################################################################
 
 
-fit_SDMs <- function(TaxonName=TaxonName,
+fit_SDMs <- function(TaxonName=parent.frame()$TaxonName,
                      VorkommenUmweltAbsenz,
                      n_Modelllaeufe=5,
-                     identifier=identifier) { ## start of main function
+                     identifier=parent.frame()$identifier) { ## start of main function
   
   # load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData")))
   # VorkommenUmweltAbsenz <- PAlist
@@ -70,7 +70,7 @@ fit_SDMs <- function(TaxonName=TaxonName,
   ## parallelised loop to fit GAM model for each case
   
   cores=detectCores()
-  cl <- makeCluster(cores[1]-1) #not to overload your computer
+  cl <- makeCluster(cores[1]-cores[1]/2) #not to overload your computer
   registerDoParallel(cl)
   
   modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence"), .errorhandling = "remove") %dopar% {
