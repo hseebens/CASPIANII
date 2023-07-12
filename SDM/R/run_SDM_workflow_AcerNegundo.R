@@ -203,11 +203,13 @@ erstelleKarte_istVorkommenAlle(
                              # VorkommenVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Vorkommen"),
                                VorkommenVerzeichnis=file.path("SDM", "Data", "Input"), # should contain Vorkommen_*.csv
                                identifier,
-                               exportiereKarte=T,
+                               exportiereKarte=TRUE,
                                #rasterKarte=T # unused argument, legacy code?
                                )
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Modelrun_191222") # path quite surely needs fixing as well
-                               ,identifier,
-                               exportiereKarte=T)
+erstelleKarte_potVorkommenAlle(
+                              # VorhersageVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Modelrun_191222") # path quite surely needs fixing as well
+                              VorhersageVerzeichnis=file.path("SDM", "Data", "Output"), # should contain HabitatEignung_*.gz
+                              identifier,
+                              exportiereKarte=TRUE)
