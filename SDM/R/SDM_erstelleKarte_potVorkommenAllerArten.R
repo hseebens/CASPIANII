@@ -1,8 +1,3 @@
-
-
-
-
-
 erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=parent.frame()$VorhersageVerzeichnis,
                                            identifier=parent.frame()$identifier,
                                            exportiereKarte=TRUE,
