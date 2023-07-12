@@ -35,7 +35,7 @@ Vorhersage_alleLaeufe <- function(TaxonName,
   ## genertes predictions for each fitted model (each pseudo absences data set * each random split)
 
   cores=detectCores()
-  cl <- makeCluster(cores[1]-1) #not to overload your computer
+  cl <- makeCluster(cores[1]-cores[1]/2) # limit used cores for load balancing
   registerDoParallel(cl)
   
   all_preds <- foreach(i=1:length(Modelllaeufe), .packages=c("mgcv"), .errorhandling = "remove") %dopar% {

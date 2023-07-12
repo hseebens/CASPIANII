@@ -64,7 +64,7 @@ generiereAbsenzDaten <- function(TaxonName=NULL,
   
   # parallel processing: 
   no_cores <- parallel::detectCores(logical = TRUE) # get number of logical cores of the user's machine
-  cl <- parallel::makeCluster(no_cores-1)  # provide clusters to R
+  cl <- parallel::makeCluster(no_cores-no_cores/2)  # provide clusters to R, set limit for load balancing
   doParallel::registerDoParallel(cl) # register to these clusters
   parallel::clusterExport(cl,list('myfun','PA_run', 'occ_data', 'predictor_stack', 'template' , 'col_names_pred'), envir=environment()) 
   # export all objects and functions to the clusters #envir() indicates that these functions and objects can be found within the environment of the main function
