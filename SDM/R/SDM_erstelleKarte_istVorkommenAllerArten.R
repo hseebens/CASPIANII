@@ -116,7 +116,11 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     
     # # nSpec_germany <- rasterize(all_coords_df[,c("Laengengrad","Breitengrad")],new_raster)
     # # germany2  <- crop(nSpec_germany, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
+<<<<<<< HEAD
     aliens_masked <- terra::mask(germany,germany_border)
+=======
+    aliens_masked <- terra::mask(germany2,germany_border)
+>>>>>>> 76e64e5d0bf16b07d736467ef54ab38c519991a0
     values(aliens_masked)[values(aliens_masked)>300] <- 300
     
     if (!is.null(Taxa)){
