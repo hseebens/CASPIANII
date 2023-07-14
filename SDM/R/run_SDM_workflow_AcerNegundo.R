@@ -60,10 +60,9 @@ artenliste <- subset(artenliste,Datenbank!="EASIN")
 artenliste <-
   subset(artenliste, Eintraege_GBIF_DE < 10000 &
            Eintraege_GBIF_DE > 50)$Taxon
- {
    if (rlang::is_empty(artenliste)) {
      stop("Die Auswahl der GBIF-Fundpunkte hat ein leeres Ergebnis produziert.")
-   }
+   
    print("Das Skript wurde nicht beendet! (Fehler: is_empty(artenliste)), nach subset.")
  }
 ##########################################################################################################
@@ -200,12 +199,22 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
 ## Verzeichnis mit Datensaetzen zum Vorkommen der Arten (Export von 'ermittle_vorkommen()' )
 
 ## Schritt 7a: integriere Vorkommen aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Vorkommen"),
+erstelleKarte_istVorkommenAlle(
+                             # VorkommenVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Vorkommen"),
+                               VorkommenVerzeichnis=file.path("SDM", "Data", "Input"), # should contain Vorkommen_*.csv
                                identifier,
-                               exportiereKarte=T,
-                               rasterKarte=T)
+                               exportiereKarte=TRUE,
+                               #rasterKarte=T # unused argument, legacy code?
+                               )
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Modelrun_191222")
-                               ,identifier,
-                               exportiereKarte=T)
+erstelleKarte_potVorkommenAlle(
+                              # VorhersageVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Modelrun_191222") # path quite surely needs fixing as well
+                              VorhersageVerzeichnis=file.path("SDM", "Data", "Output"), # should contain HabitatEignung_*.gz
+                              identifier,
+                              exportiereKarte=TRUE)
+
+# failsafe, close open (e.g.) png devices 
+for (i in 1:length(dev.list)){
+  if(!is.null(dev.list())) dev.off() 
+}

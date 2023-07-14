@@ -42,14 +42,14 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     cat("\n** Bearbeitung von GBIF ******************\n")
     
     xx <- name_backbone(name=TaxonName)$usageKey
-    nrecords <- occ_count(xx,georeferenced=T,country="DE") # number of available records
+    nrecords <- occ_count(taxonKey=xx, country="DE", hasCoordinate=TRUE) # number of available records
     
     if (nrecords>max_limit){
       # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
       warning(paste0("\n Anzahl der verfuegbaren Eintraege (n=",nrecords,") ueberschreitet Limit (",max_limit,")!\n Entweder sollte max_limit erhoeht werden (Warnung: iNaturalist erlaubt keine hohen downloads) oder Daten sollten direkt von Webseite geladen werden."))
     }
     
-    occ_dat <- occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=T,limit=max_limit)[[2]]
+    occ_dat <- occ_data(taxonKey =  xx, geometry = Ausschnitt,hasCoordinate=TRUE,limit=max_limit)[[2]] ### note: use taxonKey instead of scientificName to avoid text parsing errors
     
     
     ## prepare output #############
