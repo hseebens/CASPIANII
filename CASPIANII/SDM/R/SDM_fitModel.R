@@ -71,7 +71,7 @@ fit_SDMs <- function(TaxonName=NULL,
   ## parallelised loop to fit GAM model for each case
   
   cores=detectCores()
-  cl <- makeCluster(cores[1]-2) #not to overload your computer
+  cl <- makeCluster(cores[1]-1) #not to overload your computer
   registerDoParallel(cl)
   
   modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence"), .errorhandling = "remove") %dopar% {

@@ -5,16 +5,16 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
                                            identifier=identifier,
                                            Name_Artenliste=Name_Artenliste,
                                            Ausschnitt=Ausschnitt_Extrapolation,
-                                           exportiereKarte=F,
+                                           exportiereKarte=FALSE,
                                            Taxa=NULL){
 
   cat("\n Integriere tatsächliches Vorkommen aller Arten.\n\n")
   
   ## Load data #########################################################
   ## load maps of Germany
-  # regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_4",quiet=T)
-  regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_3")
-  germany_border <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",quiet=T)
+  # regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_4",quiet=TRUE)
+  regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_3", quiet=TRUE)
+  germany_border <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1", quiet=TRUE)
   # regions$ID <- 1:nrow(regions)
   
   ## read all files of occurrences
@@ -95,10 +95,10 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   
   if (!is.null(Taxa)){
     fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",Taxa,"_",identifier,".gz")))
-    terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Taxa,"_",identifier,".tif")), overwrite=T, filetype = "GTiff")
+    terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Taxa,"_",identifier,".tif")), overwrite=TRUE, filetype = "GTiff")
   } else {
     fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",identifier,".gz")))
-    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=T, filetype="GTiff")
+    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
     # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3_",identifier,".gz")))
     # all_rasters <- raster(file.path("Grafiken","RasterAllOccurrences_191222"))
   }
@@ -124,7 +124,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(aliens_masked,col=rev(hcl.colors(10,pal="Mint")))
-    plot(st_geometry(germany_border),add=T,lwd=0.5)
+    plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
 
@@ -137,13 +137,13 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(germany2,col=rev(hcl.colors(10,pal="Mint")))
-    plot(st_geometry(germany_border),add=T,lwd=0.5)
+    plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     dev.off()
 
     
     ## plot all all_sites_df summed up #################################################################
 
-    cat("\n Erstelle Karten...\n")
+    # cat("\n Erstelle Karten...\n")
     
     all_sites_agg <- aggregate(Taxon ~ CC_3, data=all_sites_df,length)
     

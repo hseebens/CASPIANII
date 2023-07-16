@@ -118,7 +118,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
 
   
   if (plot_predictors){
-    x11()
+    dev.new()
     plot(predictor_stack) # plot the layers
   }
   

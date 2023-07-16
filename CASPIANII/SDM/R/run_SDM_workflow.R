@@ -112,7 +112,7 @@ write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusMod
 
 ##########################################################################################################
 ## Schleife über alle Arten zur Berechnung der Habitateignung
-for (i in 1:3){ #length(Artenliste)
+for (i in 1:length(Artenliste)){ #
 
   ## Taxonname
   TaxonName <- Artenliste[i]
@@ -144,7 +144,7 @@ for (i in 1:3){ #length(Artenliste)
                                          Klima_var,
                                          Landbedeck_var,
                                          Ausschnitt=Ausschnitt_ModellFit,
-                                         plot_predictors=T)
+                                         plot_predictors=TRUE)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
   # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
@@ -155,7 +155,7 @@ for (i in 1:3){ #length(Artenliste)
   VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
                                             VorkommenUmwelt=VorkommenUmwelt,
                                             n_AbsenzDaten=n_AbsenzDaten,
-                                            speichern=T,
+                                            speichern=TRUE,
                                             identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
@@ -186,7 +186,7 @@ for (i in 1:3){ #length(Artenliste)
   HabitatEignung <- Vorhersage_alleLaeufe(TaxonName=TaxonName,
                                           Modelllaeufe=Modelllaeufe,
                                           Ausschnitt=Ausschnitt_Extrapolation,
-                                          speichern=T,
+                                          speichern=TRUE,
                                           identifier=identifier)
 
   ## Alternativ: Lade existierende Datei von Festplatte:
@@ -216,11 +216,11 @@ erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("SDM","Data","Inpu
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,
-                               exportiereKarte=T)
+                               exportiereKarte=TRUE)
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
 erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("SDM","Data","Output"),
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,
-                               exportiereKarte=T)
+                               exportiereKarte=TRUE)

@@ -212,6 +212,8 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     # text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
 
+    cat("\n Karten erstellt und in SDM->Grafiken gespeichert.\n")
+    
   }
 }
 
