@@ -15,17 +15,6 @@ rm(list=ls())
 
 
 ##########################################################################################################
-## Bestimme Arbeitsverzeichnis (working directory) #######################################################
-
-# setwd("") 
-# Arbeitsverzeichnis muss eingefügt werden, sofern dies nicht beim Oeffnen des R Projekts 
-# bereits geschehen ist (s. nächten Kommentar)
-
-# Alternativ: Oeffne CASPIANII.Rproj im Verzeichnis CASPIANII, wodurch das Arbeitsverzeichnis automatisch 
-# gesetzt wird. In diesem Fall ist "setwd()" nicht notwendig.
-
-
-##########################################################################################################
 ## Lade Funktionen #######################################################################################
 
 source(file.path("LadeSkripte.R")) 
@@ -96,32 +85,24 @@ n_Modelllaeufe <- 5
 ##### Habitatmodellierung #################################################################################
 
 for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der Habitateignung
-  
+
   ## Taxonname
   TaxonName <- artenliste[i]
-  # TaxonName <- "Teredo navalis"
-  
+
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
   ## Aufbereitung aller notwendiger Daten (Vorkommen der Art, Umweltdaten und Pseudo-Absenz Daten)
-  
+
   ## Schritt 1: Ermittlung und Aufbereitung der Vorkommensdaten #############################################
-  
+
   Vorkommen <- ermittleVorkommen(TaxonName=TaxonName,
-                                 Datenbank=c("OBIS","GBIF","iNat"),
-                                 Ausschnitt=Ausschnitt_ModellFit,
-                                 identifier=identifier,
-                                 max_limit=20000)
+                                  Datenbank=c("OBIS","GBIF","iNat"),
+                                  Ausschnitt=Ausschnitt_ModellFit,
+                                  identifier=identifier,
+                                  max_limit=20000)
   ## Alternativ: Lade existierende Datei von Festplatte:
   # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
-  
-  ## Marine Arten koennen nicht mit diesem Workflow simuliert werden. Diese Arten werden nicht beruecksichtigt.
-  if (!is(Vorkommen,"data.frame") ){
-    
-    cat(paste0("\n Fuer ",TaxonName," wird keine Simulation durchgefuehrt.") ) # notification for the user
-    
-    next # gehe zur naechsten Art, wenn keine Informationen für diese Art vorliegen.
-  }
+
   
   ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
   
@@ -134,55 +115,55 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          plot_predictors=T)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("VorkommenUmwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
-  
+  # VorkommenUmwelt <- fread(file.path("Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+
   
   ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
   
-  VorkommenUmweltAbsenz <- generiereAbsenzDaten(TaxonName=TaxonName,
-                                                VorkommenUmwelt=VorkommenUmwelt,
-                                                n_AbsenzDaten=n_AbsenzDaten,
-                                                speichern=T,
-                                                identifier=identifier)
+  VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
+                                            VorkommenUmwelt=VorkommenUmwelt,
+                                            n_AbsenzDaten=n_AbsenzDaten,
+                                            speichern=T,
+                                            identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
-  # VorkommenUmweltAbsenz <- PAlist
-  
-  
+  # load(file=file.path("Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  # VorkommenUmweltPA <- PAlist
+
+
   ###########################################################################################################
   ### Eigentliche Habitatmodellierung #######################################################################
   
   ## Schritt 4: kalibriere (fit) und validiere Modell #######################################################
   
   Modelllaeufe <- fit_SDMs(TaxonName=TaxonName,
-                           VorkommenUmweltAbsenz=VorkommenUmweltAbsenz,
+                           VorkommenUmweltPA=VorkommenUmweltPA,
                            n_Modelllaeufe=n_Modelllaeufe)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
   # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData"))) # lade Datei 'modelruns'
   # Modelllaeufe <- modelruns
-  
+
   
   ##########################################################################################################
   ### Bearbeitung der Ergebnisse ###########################################################################
   
   ## Schritt 5: generiere Vorhersage #######################################################################
-  
+
   HabitatEignung <- Vorhersage_alleLaeufe(TaxonName=TaxonName,
                                           Modelllaeufe=Modelllaeufe,
                                           Ausschnitt=Ausschnitt_Extrapolation,
                                           speichern=T,
                                           identifier=identifier)
-  
+
   ## Alternativ: Lade existierende Datei von Festplatte:
   # HabitatEignung <- fread(file=file.path("Data","Output", paste0("HabitatEignung_",TaxonName,"_",identifier,".gz")))
-  
+
   ## Schritt 6: Erstelle Karte der Habitateignung ########################################################
   
   rasterHabitatEignung <- erstelleKarteHabitatEignung(HabitatEignung=HabitatEignung,
                                                       Vorkommen=Vorkommen) #
-  
+
 } # Ende der Habitatmodellierung für einzelne Arten
 
 

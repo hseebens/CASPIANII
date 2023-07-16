@@ -10,13 +10,14 @@
 ##########################################################################################################
 
 
-fit_SDMs <- function(TaxonName=TaxonName,
-                     VorkommenUmweltAbsenz,
+fit_SDMs <- function(TaxonName=NULL,
+                     VorkommenUmweltPA,
                      n_Modelllaeufe=5,
-                     identifier=identifier) { ## start of main function
+                     identifier=NULL) { ## start of main function
   
-  # load(file=file.path("SDM","Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData")))
-  # VorkommenUmweltAbsenz <- PAlist
+  load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData")))
+  
+  VorkommenUmweltPA <- PAlist
     
   cat(paste0("\n*** Fit Modell für ",TaxonName," ***\n") ) # notification for the user
   cat("\nDas Fitten des Modells an Daten kann einige Zeit (Minuten bis Stunden) in Anspruch nehmen.\n")
@@ -27,7 +28,7 @@ fit_SDMs <- function(TaxonName=TaxonName,
   ## set GAM model
   
   ## prepare data to be modelled
-  data_occ <- VorkommenUmweltAbsenz[[1]]
+  data_occ <- VorkommenUmweltPA[[1]]
   data_occ <- data_occ[complete.cases(data_occ),]
   data_occ <- cbind.data.frame(ID=1:nrow(data_occ),data_occ,stringsAsFactors=F)
   
@@ -44,10 +45,10 @@ fit_SDMs <- function(TaxonName=TaxonName,
   
   data_all_runs <- list()
   x <- 0
-  for (i in 1:length(VorkommenUmweltAbsenz)){
+  for (i in 1:length(VorkommenUmweltPA)){
     
     ## prepare data to be modelled
-    data_occ <- VorkommenUmweltAbsenz[[i]]
+    data_occ <- VorkommenUmweltPA[[i]]
     data_occ <- data_occ[complete.cases(data_occ),]
     data_occ <- cbind.data.frame(ID=1:nrow(data_occ),data_occ,stringsAsFactors=F)
     
@@ -70,7 +71,7 @@ fit_SDMs <- function(TaxonName=TaxonName,
   ## parallelised loop to fit GAM model for each case
   
   cores=detectCores()
-  cl <- makeCluster(cores[1]-1) #not to overload your computer
+  cl <- makeCluster(cores[1]-2) #not to overload your computer
   registerDoParallel(cl)
   
   modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence"), .errorhandling = "remove") %dopar% {

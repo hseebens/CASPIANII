@@ -12,18 +12,22 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   
   GermanShapefile <- NULL
   if (file.exists(file.path("SDM","Data","Input","Shapefiles","gadm41_DEU_1.shp"))){
-    GermanShapefile <- readOGR(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",verbose=F) # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
+    # GermanShapefile <- readOGR(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",verbose=F) # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
+    GermanShapefile <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1") # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
   }
   
   ## transform suitability predictions into raster
   # meanSuit <- HabitatEignung[[length(HabitatEignung)]] # last entry contains mean predictions
   meanSuit_coords <- HabitatEignung[,c("x", "y", "HabitatEignung_mittel")] # prepare raster file with the mean predictions for plotting
-  coordinates(meanSuit_coords) <- ~ x + y
-  gridded(meanSuit_coords) <- T
-  rastpreds <- raster(meanSuit_coords)
+  rastpreds <- rast(meanSuit_coords, type="xyz")
+  # coordinates(meanSuit_coords) <- ~ x + y
+  # gridded(meanSuit_coords) <- T
+  # rastpreds <- raster(meanSuit_coords)
 
-  coordinates(Vorkommen)=~Laengengrad+Breitengrad # prepare occurrence file for plotting, transform it into a shapefile
-  proj4string(Vorkommen)<- CRS("+proj=longlat +datum=WGS84")
+  Vorkommen <- st_as_sf(Vorkommen, coords=c("Laengengrad","Breitengrad"),crs = 4326)
+  st_set_crs(Vorkommen, st_crs("+proj=longlat +datum=WGS84"))
+  # coordinates(Vorkommen)=~Laengengrad+Breitengrad # prepare occurrence file for plotting, transform it into a shapefile
+  # proj4string(Vorkommen)<- CRS("+proj=longlat +datum=WGS84")
   
 
   ## make plot #################################
@@ -44,9 +48,19 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   # pdf(file.path("Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".pdf"))) # plot with occurrences
   png(file.path("SDM","Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
   plot(rastpreds, col=viridis(100))
-  if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
+  if (!is.null(GermanShapefile)) plot(st_geometry(GermanShapefile),add=T,border=gray(0.7))
   points(Vorkommen, pch=1, cex=0.5)
   dev.off()
+  
+  
+  ## update status for species in log file #################################################
+  status_species <- read.xlsx(file.path("SDM","Data","Output","Status_Arten.xlsx"),sheet=1)
+  ind_species <- which(status_species$Taxon==TaxonName)
+  
+  status_species$Status[ind_species] <- "Habitatmodellierung ausgefuehrt."
+  
+  ## export status of species list
+  write.xlsx(status_species,file=file.path("SDM","Data","Output","Status_Arten.xlsx"))
   
   return(rastpreds)
   

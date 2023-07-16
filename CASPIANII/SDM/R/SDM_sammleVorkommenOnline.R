@@ -41,15 +41,15 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     
     cat("\n** Bearbeitung von GBIF ******************\n")
     
-    xx <- name_backbone(name=TaxonName)$usageKey
-    nrecords <- occ_count(xx,georeferenced=T,country="DE") # number of available records
+    taxonKey <- name_backbone(name=TaxonName)$usageKey
+    nrecords <- occ_search(taxonKey=taxonKey, limit=0, country="DE", hasCoordinate=TRUE)$meta$count # number of available records
     
     if (nrecords>max_limit){
       # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
-      warning(paste0("\n Anzahl der verfuegbaren Eintraege (n=",nrecords,") ueberschreitet Limit (",max_limit,")!\n Entweder sollte max_limit erhoeht werden (Warnung: iNaturalist erlaubt keine hohen downloads) oder Daten sollten direkt von Webseite geladen werden."))
+      warning(paste0("\n Anzahl der verfuegbaren Eintraege (n=",nrecords,") ueberschreitet Limit (n=",max_limit,") und wird auf Limit begrenzt!\n Entweder max_limit erhoehen (Warnung: iNaturalist erlaubt keine hohen downloads), alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden oder Daten direkt von Webseite laden."))
     }
     
-    occ_dat <- occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=T,limit=max_limit)[[2]]
+    occ_dat <- try(occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=TRUE,limit=max_limit)[[2]], silent=TRUE)
     
     
     ## prepare output #############
@@ -162,7 +162,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     }
   }
   
-
+  
   ## output ##############################################################################
   
   all_output <- rbindlist(all_records,use.names = T,fill=T)
@@ -174,7 +174,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     if (nrow(all_output) < 100) { # check, whether the number of occurrences is sufficient
       warning("\nWarnung: Die Anzahl an Datenpunkten ist <100. SDMs können unzuverlässige Ergebnisse liefern.") 
     } 
-
+    
     return(all_output)
     
   }

@@ -1,11 +1,18 @@
 
 
 ermittleVorkommen <- function(TaxonName=TaxonName,
-                               Datenbank=NULL,
-                               Ausschnitt=NULL,
-                               eigeneDaten=NULL,
-                               identifier=identifier,
-                               max_limit=20000){
+                              Name_Artenliste=NULL,
+                              Min_Anzahl_GBIF_DE=NULL,
+                              Max_Anzahl_GBIF_DE=NULL,
+                              Datenbank=NULL,
+                              Ausschnitt=NULL,
+                              eigeneDaten=NULL,
+                              identifier=identifier,
+                              max_limit=20000){
+  
+  ## load status file for reporting 
+  status_species <- read.xlsx(file.path("SDM","Data","Output","Status_Arten.xlsx"),sheet=1)
+  ind_species <- which(status_species$Taxon==TaxonName)
   
   ######################################################################################
   ## identify pure marine species for which the workflow does not work
@@ -13,29 +20,32 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
   
   ## check if species is purely marine (x=1), otherwise set x=0
   x <- 0
-  if (is(entry,"data.frame")){ # if species is lacking in WoRMS, entry would be a string -> interpreted as being non-marine
-    if (!is.na(entry$isMarine)){
-      if (entry$isMarine==1){
+  if (!any(grepl("Error",entry))){
+    if (all(!is.na(entry$isMarine))){
+      if (all(entry$isMarine==1)){
         x <- 1 # set x to 1 if habitat is marine
       }
     }
-    if (!is.na(entry$isTerrestrial)){
-      if (entry$isTerrestrial==1){
+    if (all(!is.na(entry$isTerrestrial))){
+      if (all(entry$isTerrestrial==1)){
         x <- 0 # set x to 0 if habitat is terrestrial
       }
     }
-    if (!is.na(entry$isFreshwater)){
-      if (entry$isFreshwater==1){
+    if (all(!is.na(entry$isFreshwater))){
+      if (all(entry$isFreshwater==1)){
         x <- 0 # set x to 0 if habitat is freshwater
       }
     }
   }
-
+  
   if (x==1){
     
     cat(paste0("\n*** ",TaxonName," ist eine rein marine Art, fuer die keine Modellierung durchgefuehrt werden kann. ***\n") ) # notification for the user
+
+    ## write status to log file
+    status_species$Status[ind_species] <- "Keine Habitatmodellierung, da es sich um eine marine Art handelt."
     
-    return("Error: Marine Art")
+    return("Error: Marine species")
     
   } else { # if not a marine species, obtain occurrence data
 
@@ -117,7 +127,10 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
       ## save data to disk
       fwrite(Vorkommen_alle, file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
       
-      cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,"_",identifier,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+      cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+      
+      ## write status to log file
+      status_species$Status[ind_species] <- "Genügend Daten zur Habitatmodellierung vorhanden"
       
       return(Vorkommen_alle)
       
@@ -125,7 +138,13 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
       
       cat(paste("\n Nach Bereinigung keine ausreichenden Eintraege fuer",TaxonName,"vorhanden.\n")) 
       
+      ## write status to log file
+      status_species$Status[ind_species] <- "Keine ausreichende Datenmenge zur Habitatmodellierung"
+      
     }
   }
+
+  ## export status of species list
+  write.xlsx(status_species,file=file.path("SDM","Data","Output","Status_Arten.xlsx"))
 }
 

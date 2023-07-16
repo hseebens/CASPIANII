@@ -18,15 +18,19 @@ Vorhersage_alleLaeufe <- function(TaxonName,
   cat("\nDie Berechnung von Vorhersagen kann einige Zeit in Anspruch nehmen.\n")
   
   ## load predictor variables 
-  allenvir <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")))
-
+  # allenvir <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")))
+  allenvir <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".tif")))
+  
   ## Extent of selection
-  ext_stack <- extent(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
-  envstack  <- crop(allenvir, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
+  ext_stack <- terra::ext(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
+  envstack  <- terra::crop(allenvir, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
   
   ## prepare data frame to be used in the predictions
-  envstack <- rasterToPoints(envstack) 
-  envstack <- as.data.frame(envstack)
+  envstack <- as.data.frame(envstack, xy = TRUE)
+  # terra::xyFromCell(envstack)
+  # terra::extract(envstack,xy=TRUE)
+  # envstack <- rasterToPoints(envstack) 
+  # envstack <- as.data.frame(envstack)
   envstack <- envstack[complete.cases(envstack),]
   
   coords <- envstack[,c("x","y")] # prepare data frame to store predictions

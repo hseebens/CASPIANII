@@ -15,17 +15,6 @@ rm(list=ls())
 
 
 ##########################################################################################################
-## Bestimme Arbeitsverzeichnis (working directory) #######################################################
-
-# setwd("") 
-# Arbeitsverzeichnis muss eingefügt werden, sofern dies nicht beim Oeffnen des R Projekts 
-# bereits geschehen ist (s. nächten Kommentar)
-
-# Alternativ: Oeffne CASPIANII.Rproj im Verzeichnis CASPIANII, wodurch das Arbeitsverzeichnis automatisch 
-# gesetzt wird. In diesem Fall ist "setwd()" nicht notwendig.
-
-
-##########################################################################################################
 ## Lade Funktionen #######################################################################################
 
 source(file.path("LadeSkripte.R")) 
@@ -44,19 +33,15 @@ ueberpruefe_Verzeichnisse()
 
 
 ##########################################################################################################
-## Lade Artenliste #######################################################################################
+## Artenliste #######################################################################################
 
-artenliste <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+# Name des files, welches die Artenliste enthält. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
+# und "Eintraege_GBIF_DE" sein. Eine entsprechende Datei mit dem Workflow "ListeNeobiota" generiert.
 
-## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
-artenliste <- subset(artenliste,Datenbank!="EASIN")
+Name_Artenliste <- "ListeGebietsfremderArten_gesamt_standardisiert.xlsx"
 
-## Filter nach Arten mit ausreichend Datenpunkten (>50) und nicht zu vielen Datenpunkten (<10000 in 
-# Deutschland), da Simulationen ansonsten sehr lange dauern würden. Für Arten mit großen Datenmenge wurde 
-# ein alternativer workflow entwickelt ("SDM_bezieheHoheDatenmengen.R"), mit dem die Daten bezogen und
-# aufbereitet werden können. Dieser Schritt würde Schritt 1 unten für Arten mit großen Datenmengen
-# ersetzen. Schritte 2-7 können dann für alle Arten gleich durchgeführt werden.
-artenliste <- subset(artenliste,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$Taxon
+Min_Anzahl_GBIF_DE <- 50 # sollte 50 nicht unterschreiten
+Max_Anzahl_GBIF_DE <- 10000 # sollte 10000 nicht überschreiten
 
 
 ##########################################################################################################
@@ -65,12 +50,12 @@ artenliste <- subset(artenliste,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu wählen)
 identifier <- "191222_NoEASIN" # a unique identifier for every run of the SDM workflow, needs to be a character
 
+
 ## Variablen zur Vorhersage der Habitate ##########################################
 
 ## Klimatische Variablen (Gesamtliste und Übersetzung: https://www.worldclim.com/bioclim).
 # Die Codes des Variablen findet man entweder auf der Homepage oder im Abschlussbericht des Projektvorhabens.
 Klima_var <- c("bio1","bio12","bio4") 
-
 
 ## Variablen zu Landbedeckung
 # LC2+LC3: urbane Regionen; LC12: Acker; LC18: Weideland/Grasland; LC23+LC24+LC25: Wälder; LC40+LC41: Binnengewässer
@@ -78,27 +63,60 @@ Klima_var <- c("bio1","bio12","bio4")
 # Die Codes der Variablen findet man im Abschlussbericht des Projekvorhabens.
 Landbedeck_var <- c("LC2","LC3", "LC12","LC18","LC23","LC24","LC25","LC40","LC41")
 
-## Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
+## Geographischer Fokus ############################################################
+# Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
 # Angaben beschreiben die Ausdehnung eines Rechtecks (long/lat für linke, untere und rechte, obere Ecke hintereinander)
 Ausschnitt_ModellFit <- c(-30,25,40,78) # Grenzen von Europa (Modell wird für alle Vorkommen in Europa angefittet)
 Ausschnitt_Extrapolation <- c(3,47,17,55) # Grenzen von Deutschland zur Extrapolation und Darstellung der Ergebnisse
 
-## Anzahl der Läufe zur Generierung von Absenzdaten (pseudo absences)
+
+## Anzahl der Läufe zur Generierung von Absenzdaten (pseudo absences) ##############
 # Gesamtzahl der Modellläufe = n_AbsenzLaufe * n_Modelllaeufe
 n_AbsenzDaten <- 5
 
-## Anzahl der Modelläufe zur Evaluierung der Modellergebnisse (Validierung)
+## Anzahl der Modelläufe zur Evaluierung der Modellergebnisse (Validierung) ########
 # Gesamtzahl der Modellläufe = n_AbsenzLaufe * n_Modelllaeufe
 n_Modelllaeufe <- 5
 
 
+##########################################################################################################
+## Lade Artenliste #######################################################################################
+
+Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
+
+
+## Filter nach Arten mit ausreichend Datenpunkten (>50) und nicht zu vielen Datenpunkten (<10000 in 
+# Deutschland), da Simulationen ansonsten sehr lange dauern würden. Für Arten mit großen Datenmenge wurde 
+# ein alternativer workflow entwickelt ("SDM_bezieheHoheDatenmengen.R"), mit dem die Daten bezogen und
+# aufbereitet werden können. Dieser Schritt würde Schritt 1 unten für Arten mit großen Datenmengen
+# ersetzen. Schritte 2-7 können dann für alle Arten gleich durchgeführt werden.
+Artenliste <- subset(Artenliste,Eintraege_GBIF_DE<Max_Anzahl_GBIF_DE & Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon
+
+
 ###########################################################################################################
 ##### Habitatmodellierung #################################################################################
+###########################################################################################################
 
-for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der Habitateignung
+## generiere log-file um Status der Modellierung fuer jede Art aufzufuehren
+
+status_species <- as.data.frame(read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)[,c("Taxon","Eintraege_GBIF_DE")])
+
+status_species$Status <- NA
+
+status_species$Status[status_species$Eintraege_GBIF_DE<Min_Anzahl_GBIF_DE] <- "Keine Habitatmodellierung, da die Datenmenge der Vorkommensdaten nicht ausreicht."
+status_species$Status[status_species$Eintraege_GBIF_DE>Max_Anzahl_GBIF_DE] <- "Datenmenge zu groß für diesen Workflow. Bitte alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden."
+
+## speichere vorlaeufige Liste des Status aller Arten
+write.xlsx(status_species,file=file.path("SDM","Data","Output","Status_Arten.xlsx"))
+
+
+##########################################################################################################
+## Schleife über alle Arten zur Berechnung der Habitateignung
+for (i in 1:length(Artenliste)){
 
   ## Taxonname
-  TaxonName <- artenliste[i]
+  TaxonName <- Artenliste[i]
+  # TaxonName <- "Teredo navalis"
 
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
@@ -107,20 +125,16 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
   ## Schritt 1: Ermittlung und Aufbereitung der Vorkommensdaten #############################################
 
   Vorkommen <- ermittleVorkommen(TaxonName=TaxonName,
-                                  Datenbank=c("OBIS","GBIF","iNat"),
-                                  Ausschnitt=Ausschnitt_ModellFit,
-                                  identifier=identifier,
-                                  max_limit=20000)
+                                 Name_Artenliste=Name_Artenliste,
+                                 Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
+                                 Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE,
+                                 Datenbank=c("OBIS","GBIF","iNat"),
+                                 Ausschnitt=Ausschnitt_ModellFit,
+                                 identifier=identifier,
+                                 max_limit=20000)
   ## Alternativ: Lade existierende Datei von Festplatte:
   # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
-  ## Marine Arten koennen nicht mit diesem Workflow simuliert werden. Diese Arten werden nicht beruecksichtigt.
-  if (!is(Vorkommen,"data.frame")){
-    
-    cat(paste0("\n Fuer ",TaxonName," wird keine Simulation durchgefuehrt.") ) # notification for the user
-    
-    next # gehe zur naechsten Art, wenn keine Informationen für diese Art vorliegen.
-  }
   
   ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
   
@@ -133,20 +147,20 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                          plot_predictors=T)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmwelt_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
   
   ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
   
-  VorkommenUmweltAbsenz <- generiereAbsenzDaten(TaxonName=TaxonName,
+  VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
                                             VorkommenUmwelt=VorkommenUmwelt,
                                             n_AbsenzDaten=n_AbsenzDaten,
                                             speichern=T,
                                             identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("Data","Input", paste0("VorkommenUmweltAbsenz_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
-  # VorkommenUmweltAbsenz <- PAlist
+  # load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  # VorkommenUmweltPA <- PAlist
 
 
   ###########################################################################################################
@@ -155,11 +169,12 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
   ## Schritt 4: kalibriere (fit) und validiere Modell #######################################################
   
   Modelllaeufe <- fit_SDMs(TaxonName=TaxonName,
-                           VorkommenUmweltAbsenz=VorkommenUmweltAbsenz,
-                           n_Modelllaeufe=n_Modelllaeufe)
+                           VorkommenUmweltPA=VorkommenUmweltPA,
+                           n_Modelllaeufe=n_Modelllaeufe,
+                           identifier=identifier)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData"))) # lade Datei 'modelruns'
+  # load(file=file.path("SDM","Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData"))) # lade Datei 'modelruns'
   # Modelllaeufe <- modelruns
 
   
@@ -175,7 +190,7 @@ for (i in 1:length(artenliste)){ # Schleife über alle Arten zur Berechnung der 
                                           identifier=identifier)
 
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # HabitatEignung <- fread(file=file.path("Data","Output", paste0("HabitatEignung_",TaxonName,"_",identifier,".gz")))
+  # HabitatEignung <- fread(file=file.path("SDM","Data","Output", paste0("HabitatEignung_",TaxonName,"_",identifier,".gz")))
 
   ## Schritt 6: Erstelle Karte der Habitateignung ########################################################
   
