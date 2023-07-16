@@ -2,7 +2,7 @@
 LadePakete <- function(){
   
   # list of required packages
-  packages <- c("raster", "rgbif", "CoordinateCleaner", "maps", "dismo", "ggplot2","data.table", 
+  packages <- c("terra", "R.utils", "rgbif", "CoordinateCleaner", "maps", "dismo", "ggplot2","data.table", 
                 "rgdal", "viridis","mgcv", "PresenceAbsence", "doParallel","openxlsx","robis","spocc",
                 "leaflet","mapsf","geosphere","sf","SearchTrees","worrms") 
   
