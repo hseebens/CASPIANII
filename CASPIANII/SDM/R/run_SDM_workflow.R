@@ -202,9 +202,12 @@ for (i in 1:3){ #length(Artenliste)
 
 
 ###########################################################################################################
-## Schritt 7: Synthese von Vorkommen und Vorhersage #######################################################
+## Schritt 7: Synthesekarten zum Vorkommen und Vorhersage #################################################
 ## Nur moeglich wenn mehrere Arten simuliert wurden (length(Artenliste)>1) !
 
+if (length(Artenliste)==1){
+  warning("\nWarnung: Es koennen keine Synthesekarten erstellt werden, da nur eine Art vorliegt.") 
+}
 
 ## Verzeichnis mit Datensaetzen zum Vorkommen der Arten (Export von 'ermittle_vorkommen()' )
 
