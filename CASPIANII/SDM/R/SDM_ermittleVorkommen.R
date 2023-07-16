@@ -11,7 +11,7 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
                               max_limit=20000){
   
   ## load status file for reporting 
-  status_species <- read.xlsx(file.path("SDM","Data","Output","Status_Arten.xlsx"),sheet=1)
+  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")),sheet=1)
   ind_species <- which(status_species$Taxon==TaxonName)
   
   ######################################################################################
@@ -145,6 +145,6 @@ ermittleVorkommen <- function(TaxonName=TaxonName,
   }
 
   ## export status of species list
-  write.xlsx(status_species,file=file.path("SDM","Data","Output","Status_Arten.xlsx"))
+  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
 }
 

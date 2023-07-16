@@ -62,7 +62,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
         cat("\n Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
       }
       
-      cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden\n"))
+      cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden.\n"))
       
       if ("eventDate"%in%colnames(occ_dat)){
         occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
@@ -100,7 +100,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     
     if (nrow(occ_dat)>0){
       
-      cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in iNaturalist gefunden\n"))
+      cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in iNaturalist gefunden.\n"))
       
       ## prepare output #############
       occ_dat <- occ_dat[,c("name","longitude","latitude","date")]
@@ -138,7 +138,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
       if (nrow(occ_dat)>0){
         
         # cat(paste(nrow(occ_dat),"records of",TaxonName,"found in OBIS\n"))
-        cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden\n"))
+        cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden.\n"))
         
         ## prepare output #############
         if ("date"%in%colnames(occ_dat)){

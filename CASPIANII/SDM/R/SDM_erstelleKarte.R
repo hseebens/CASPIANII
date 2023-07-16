@@ -54,13 +54,13 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   
   
   ## update status for species in log file #################################################
-  status_species <- read.xlsx(file.path("SDM","Data","Output","Status_Arten.xlsx"),sheet=1)
+  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")),sheet=1)
   ind_species <- which(status_species$Taxon==TaxonName)
   
   status_species$Status[ind_species] <- "Habitatmodellierung ausgefuehrt."
   
   ## export status of species list
-  write.xlsx(status_species,file=file.path("SDM","Data","Output","Status_Arten.xlsx"))
+  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
   
   return(rastpreds)
   
