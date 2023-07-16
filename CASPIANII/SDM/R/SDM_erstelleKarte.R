@@ -62,6 +62,8 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   ## export status of species list
   write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
   
+  cat(paste0("\n*** Habitatmodellierung fuer ",TaxonName," abgeschlossen. *** \n") ) # notification for the user
+
   return(rastpreds)
   
 } ## end of main function
