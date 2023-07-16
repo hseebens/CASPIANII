@@ -5,7 +5,9 @@
 
 erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerzeichnis,
                                            identifier=identifier,
-                                           exportiereKarte=T,
+                                           Name_Artenliste=Name_Artenliste,
+                                           Ausschnitt=Ausschnitt_Extrapolation,
+                                           exportiereKarte=TRUE,
                                            Taxa=NULL){
 
   cat("\n Integriere potentielles Vorkommen aller Arten.\n\n")
@@ -25,7 +27,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
  
   if (!is.null(Taxa)){
     
-    neobiota <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+    neobiota <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
     Arten_Gruppe <- subset(neobiota,ArtGruppe==Taxa)$Taxon
     
     all_files <- all_files[grepl(paste(Arten_Gruppe,collapse="|"),all_files)]
@@ -34,7 +36,8 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   ## loop over all available predictor files #######################
   
   ## template for collecting records
-  all_rasters <- new_raster <- raster(ncols=150,nrows=150,xmx=16,xmn=5,ymn=47,ymx=56) #
+  ext_stack <- ext(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
+  all_rasters <- new_raster <- rast(ncols=150,nrows=150,extent=ext_stack) #
   values(all_rasters) <- 0
   values(new_raster) <- 0
   
@@ -54,7 +57,8 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     
     ## generate empty raster for the first loop as a data container    
     if (i==1){
-      rasterData_all <- rasterFromXYZ(meanSuit_coords)
+      # rasterData_all <- rasterFromXYZ(meanSuit_coords)
+      rasterData_all <- rast(meanSuit_coords, type="xyz")
       values(rasterData_all)[!is.na(values(rasterData_all))] <- 0
       rasterData_max07 <- rasterData_all
     }
@@ -81,13 +85,13 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     
     ## collect data as raster cells
     ## suitability >0.7
-    raster_aliens <- rasterize(meanSuit_coords[,c("x","y")],rasterData_max07,field=meanSuit_coords$HabitatEignung_mittel)
+    raster_aliens <- terra::rasterize(x=as.matrix(meanSuit_coords[,c("x","y")]), y=rasterData_max07, values=meanSuit_coords$HabitatEignung_mittel)
     values(raster_aliens)[values(raster_aliens)>0.7] <- 1
     values(raster_aliens)[values(raster_aliens)<0.7] <- 0
     rasterData_max07 <- rasterData_max07 + raster_aliens
     
     ## all values
-    raster_aliens <- rasterize(meanSuit_coords[,c("x","y")],rasterData_all,field=meanSuit_coords$HabitatEignung_mittel)
+    raster_aliens <- terra::rasterize(as.matrix(meanSuit_coords[,c("x","y")]), rasterData_all, values=meanSuit_coords$HabitatEignung_mittel)
     rasterData_all <- rasterData_all + raster_aliens
 
     ## prepare output polygon data
@@ -113,8 +117,10 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   all_meanSuits_df <- all_meanSuits_df[all_meanSuits_df$CC_3!="NA",]
   
   ## crop raster to German borders
-  rasterData_all_masked <- mask(rasterData_all,germany_border)
-  rasterData_max07_masked <- mask(rasterData_max07,germany_border)
+  terra::crs(rasterData_all) <- "epsg:4326"
+  terra::crs(rasterData_max07) <- "epsg:4326"
+  rasterData_all_masked <- terra::mask(rasterData_all,germany_border)
+  rasterData_max07_masked <- terra::mask(rasterData_max07,germany_border)
   
   
   ## output ############################################################
@@ -124,15 +130,15 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_",Taxa,"_maxEignung_GADM3_",identifier,".gz")))
     fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_",Taxa,"_mittlereEignung_GADM3_",identifier,".gz")))
     
-    writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_mittlereEignung_raster_",identifier)),overwrite=T,format="GTiff")
-    writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_maxEignung_raster_",identifier)),overwrite=T,format="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_mittlereEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_maxEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
     
   } else {
     fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_maxEignung_GADM3_",identifier,".gz")))
     fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_meanEignung_GADM3_",identifier,".gz")))
     
-    writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_mittlereEignung_raster_",identifier)),overwrite=T,format="GTiff")
-    writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_maxEignung_raster_",identifier)),overwrite=T,format="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_mittlereEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_maxEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
   }
 
   # all_maxSuits_df <- fread(file=file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_maxEignung_GADM3_",identifier,".gz")))

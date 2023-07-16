@@ -3,6 +3,8 @@
 
 erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeichnis,
                                            identifier=identifier,
+                                           Name_Artenliste=Name_Artenliste,
+                                           Ausschnitt=Ausschnitt_Extrapolation,
                                            exportiereKarte=F,
                                            Taxa=NULL){
 
@@ -24,7 +26,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   ## subset for certain taxa
   if (!is.null(Taxa)){
     
-    neobiota <- read.xlsx(file.path("SDM","Data","Input","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+    neobiota <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
     Arten_Gruppe <- subset(neobiota,ArtGruppe==Taxa)$Taxon
     
     all_files <- all_files[grepl(paste(Arten_Gruppe,collapse="|"),all_files)]
@@ -35,7 +37,8 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   all_sites <- really_all_coords <- list()
   
   ## template for collecting records
-  all_rasters <- new_raster <- raster(ncols=150,nrows=150,xmx=16,xmn=5,ymn=47,ymx=56) #
+  ext_stack <- ext(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
+  all_rasters <- new_raster <- rast(ncols=150,nrows=150,extent=ext_stack) #
   values(all_rasters) <- 0
   values(new_raster) <- 0
   
@@ -66,7 +69,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     polys <- pts_regs$CC_3[!is.na(pts_regs$CC_3)]
     
     # generate rasterized map
-    raster_aliens <- rasterize(all_coords[,c("Laengengrad","Breitengrad")],new_raster)
+    raster_aliens <- terra::rasterize(as.matrix(all_coords[,c("Laengengrad","Breitengrad")]),new_raster)
     values(raster_aliens)[!is.na(values(raster_aliens))] <- 1
     values(raster_aliens)[is.na(values(raster_aliens))] <- 0
     all_rasters <- all_rasters + raster_aliens
@@ -92,10 +95,10 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   
   if (!is.null(Taxa)){
     fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",Taxa,"_",identifier,".gz")))
-    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Taxa,"_",identifier)),overwrite=T,format="GTiff")
+    terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Taxa,"_",identifier,".tif")), overwrite=T, filetype = "GTiff")
   } else {
     fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",identifier,".gz")))
-    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier)),overwrite=T,format="GTiff")
+    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=T, filetype="GTiff")
     # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3_",identifier,".gz")))
     # all_rasters <- raster(file.path("Grafiken","RasterAllOccurrences_191222"))
   }
@@ -107,14 +110,12 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     
     ## Plot raster map ################################################################################
     
-    Ausschnitt <- (c(3,47,17,55.1)) # crop to Germany  # lower left and upper right corner (long-lat)
-    ext_stack <- extent(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
-    germany  <- crop(all_rasters, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
+    germany  <- terra::crop(all_rasters, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
     # values(germany)[values(germany)>100] <- 100
     
     # # nSpec_germany <- rasterize(all_coords_df[,c("Laengengrad","Breitengrad")],new_raster)
     # # germany2  <- crop(nSpec_germany, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
-    aliens_masked <- mask(germany,germany_border)
+    aliens_masked <- terra::mask(germany,germany_border)
     values(aliens_masked)[values(aliens_masked)>300] <- 300
     
     if (!is.null(Taxa)){
@@ -127,7 +128,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
 
-    germany2 <- mask(germany,germany_border)
+    germany2 <- terra::mask(germany,germany_border)
     values(germany2) <- log10(values(germany2)+1)
     
     if (!is.null(Taxa)){
@@ -159,7 +160,6 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     dev.off()
 
   }
-
 }
 
 

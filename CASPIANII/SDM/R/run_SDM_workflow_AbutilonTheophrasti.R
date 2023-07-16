@@ -209,16 +209,21 @@ for (i in 1:length(Artenliste)){ # Schleife über alle Arten zur Berechnung der 
 
 ###########################################################################################################
 ## Schritt 7: Synthese von Vorkommen und Vorhersage #######################################################
+## Nur moeglich wenn mehrere Arten simuliert wurden (length(Artenliste)>1) !
+
 
 ## Verzeichnis mit Datensaetzen zum Vorkommen der Arten (Export von 'ermittle_vorkommen()' )
 
 ## Schritt 7a: integriere Vorkommen aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Vorkommen"),
+erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("SDM","Data","Input"),
                                identifier,
-                               exportiereKarte=T,
-                               rasterKarte=T)
+                               Name_Artenliste=Name_Artenliste,
+                               Ausschnitt=Ausschnitt_Extrapolation,
+                               exportiereKarte=T)
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("..","..","..","Storage_large","CASPIANII","Modelrun_191222")
-                               ,identifier,
+erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("SDM","Data","Output"),
+                               identifier,
+                               Name_Artenliste=Name_Artenliste,
+                               Ausschnitt=Ausschnitt_Extrapolation,
                                exportiereKarte=T)
