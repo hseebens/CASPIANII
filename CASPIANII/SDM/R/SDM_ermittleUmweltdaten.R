@@ -54,9 +54,8 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
       cat("\n Datensatz ",filenames[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","WorldClim"))
     }
 
-    # envstack <- raster(file.path("SDM","Data","Input","WorldClim",filenames)) # workstation
-    envstack <- rast(file.path("..","..","..","DATA","Environmental","WorldClim",filenames)) # local
-    
+    envstack <- rast(file.path("SDM","Data","Input","WorldClim",filenames)) # workstation
+
     ## crop to extent
     envstack  <- crop(envstack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
     
