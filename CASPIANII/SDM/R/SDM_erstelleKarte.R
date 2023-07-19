@@ -6,7 +6,14 @@
 # Author: Hanno Seebens (with support by Larissa Nowak), Senckenberg Gesellschaft für Naturforschung
 ##########################################################################################################
 
-erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of main function
+erstelleKarteHabitatEignung <- function(HabitatEignung=NULL, 
+                                        Vorkommen=NULL,
+                                        identifier=NULL) { ## start of main function
+
+  ## check identifier separator
+  if (strtrim(identifier,1)!="_"){
+    identifier <- paste0("_",identifier)
+  }
   
   # print("Note: If the same plot should be plotted and stored again, make sure the pdf-file with the respective name is closed on your computer. Otherwise, R will be unable to overwrite the file and yield an error, when running this step.") # notification for the user
   
@@ -45,8 +52,8 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   # if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
   # dev.off()
  
-  # pdf(file.path("Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".pdf"))) # plot with occurrences
-  png(file.path("SDM","Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,"_",identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
+  # pdf(file.path("Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,identifier,".pdf"))) # plot with occurrences
+  png(file.path("SDM","Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
   plot(rastpreds, col=viridis(100))
   if (!is.null(GermanShapefile)) plot(st_geometry(GermanShapefile),add=T,border=gray(0.7))
   points(Vorkommen, pch=1, cex=0.5)
@@ -54,13 +61,13 @@ erstelleKarteHabitatEignung <- function(HabitatEignung, Vorkommen) { ## start of
   
   
   ## update status for species in log file #################################################
-  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")),sheet=1)
+  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
   ind_species <- which(status_species$Taxon==TaxonName)
   
   status_species$Status[ind_species] <- "Habitatmodellierung ausgefuehrt."
   
   ## export status of species list
-  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
+  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
   
   cat(paste0("\n*** Habitatmodellierung fuer ",TaxonName," abgeschlossen. *** \n") ) # notification for the user
 

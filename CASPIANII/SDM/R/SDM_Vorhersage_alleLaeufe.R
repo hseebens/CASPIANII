@@ -17,9 +17,14 @@ Vorhersage_alleLaeufe <- function(TaxonName,
   cat(paste0("\n*** Extrapolation der Vorhersagen für ",TaxonName," ***\n") ) # notification for the user
   cat("\nDie Berechnung von Vorhersagen kann einige Zeit in Anspruch nehmen.\n")
   
+  ## check identifier separator
+  if (strtrim(identifier,1)!="_"){
+    identifier <- paste0("_",identifier)
+  }
+  
   ## load predictor variables 
-  # allenvir <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")))
-  allenvir <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".tif")))
+  # allenvir <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".grd")))
+  allenvir <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".tif")))
   
   ## Extent of selection
   ext_stack <- terra::ext(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
@@ -87,7 +92,7 @@ Vorhersage_alleLaeufe <- function(TaxonName,
     if (is.null(TaxonName) | is.null(identifier)){
       warning("Angaben 'TaxonName' und/oder 'identifier' fehlen. Bitte ergänzen.")
     }
-    fwrite(all_preds_singlefile, file=file.path("SDM","Data","Output", paste0("HabitatEignung_",TaxonName,"_",identifier,".gz"))) 
+    fwrite(all_preds_singlefile, file=file.path("SDM","Data","Output", paste0("HabitatEignung_",TaxonName,identifier,".gz"))) 
   }
 
   ## return final product

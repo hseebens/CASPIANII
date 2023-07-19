@@ -20,9 +20,13 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   
   cat(paste0("\n*** Ermittle Umweltdaten für ",TaxonName," ***\n") ) # notification for the user
 
+  ## check identifier separator
+  if (strtrim(identifier,1)!="_"){
+    identifier <- paste0("_",identifier)
+  }
   
   ## load status file for reporting 
-  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")),sheet=1)
+  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
   ind_species <- which(status_species$Taxon==TaxonName)
 
   ## all variables  
@@ -51,7 +55,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     ## check availability of land cover files
     if (any(file.exists(file.path("SDM","Data","Input","WorldClim",filenames))==FALSE)){
       ind <- which(file.exists(file.path("SDM","Data","Input","WorldClim",filenames))==FALSE)
-      cat("\n Datensatz ",filenames[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","WorldClim"))
+    cat("\n Datensatz ",filenames[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","WorldClim"),". Bitte ergaenzen.\n")
     }
 
     envstack <- rast(file.path("SDM","Data","Input","WorldClim",filenames)) # workstation
@@ -76,7 +80,8 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     ## check availability of land cover files
     if (any(file.exists(file.path("SDM","Data","Input","CorineLandcover",LC_files))==FALSE)){
       ind <- which(file.exists(file.path("SDM","Data","Input","CorineLandcover",LC_files))==FALSE)
-      cat("\n Datensatz ",LC_files[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","CorineLandcover"))
+      cat("\n Datensatz ",LC_files[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","CorineLandcover"),". Bitte ergaenzen.\n")
+      stop()
     }
     
     ## generate folder paths
@@ -122,7 +127,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   }
   
   ## save output to disk
-  writeRaster(predictor_stack,file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".tif")), filetype = "GTiff",overwrite=TRUE)
+  writeRaster(predictor_stack,file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".tif")), filetype = "GTiff",overwrite=TRUE)
   
   if (nlyr(predictor_stack)>1){
     corr <- layerCor(predictor_stack, 'pearson', na.rm=T) # correlation test of environmental variables of choice
@@ -146,7 +151,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
 
   ## load species' occurrence records  
   if (is.null(Vorkommen)){ # check if occurrence data are provided; if not, load from disk
-    Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+    Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
   }
   
   ## check for large data sets and down-sampled those (workflow cannot handle very large files (>>20000 occurrence records))
@@ -188,12 +193,12 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     }
     
     ## output  
-    fwrite(occenv, file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+    fwrite(occenv, file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
     
     return(occenv) 
   }
   
   ## export status of species list
-  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
+  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
   
 } ## end of main function

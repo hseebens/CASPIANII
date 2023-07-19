@@ -6,7 +6,7 @@
 # Projektvorhabens "Erweiterung des Modells CASPIAN zur Prognose der Einfuhr und Ausbreitung von invasiven 
 # Arten durch verschiedene Verkehrsträger (CASPIAN II)". 
 #
-# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 05.05.23
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 17.07.23
 ##########################################################################################################
 
 ## Bereinigen der Arbeitsumgebung
@@ -15,40 +15,29 @@ rm(list=ls())
 
 
 ##########################################################################################################
-## Lade Funktionen #######################################################################################
-
-source(file.path("LadeSkripte.R")) 
+## Konfiguration der Habitatmodellierung #################################################################
+##########################################################################################################
 
 
 ##########################################################################################################
-## Lade und installiere (sofern noch nicht geschehen) notwendige R Pakete ################################
+## Artenliste ############################################################################################
 
-LadePakete()
-
-
-##########################################################################################################
-## Ueberpruefe und erstelle Verzeichnisstruktur (sofern noch nicht geschehen) ############################
-
-ueberpruefe_Verzeichnisse()
-
-
-##########################################################################################################
-## Artenliste #######################################################################################
-
-# Name des files, welches die Artenliste enthält. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
+# Name des Datensatzes, welches die Artenliste enthaelt. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
 # und "Eintraege_GBIF_DE" sein. Eine entsprechende Datei mit dem Workflow "ListeNeobiota" generiert.
 
 Name_Artenliste <- "ListeGebietsfremderArten_gesamt_standardisiert.xlsx"
 
+# Limits der Datenmenge fuer eine Habitatmodellierung (nur auf GBIF bezogen; weitere Datenpunkte 
+# aus anderen Datenbanken zusaetzlich bezogen werden.)
 Min_Anzahl_GBIF_DE <- 50 # sollte 50 nicht unterschreiten
-Max_Anzahl_GBIF_DE <- 10000 # sollte 10000 nicht überschreiten
+Max_Anzahl_GBIF_DE <- 10000 # sollte 10000 nicht ueberschreiten
 
 
 ##########################################################################################################
 ## Parameter zur Modellierung ############################################################################
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu wählen)
-identifier <- "Testlauf_160723" # a unique identifier for every run of the SDM workflow, needs to be a character
+identifier <- "170723" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 
 ## Variablen zur Vorhersage der Habitate ##########################################
@@ -78,41 +67,60 @@ n_AbsenzDaten <- 5
 # Gesamtzahl der Modellläufe = n_AbsenzLaufe * n_Modelllaeufe
 n_Modelllaeufe <- 5
 
+##########################################################################################################
+## Ende: Konfiguration der Habitatmodellierung ###########################################################
+##########################################################################################################
+
+
+
+###########################################################################################################
+##### Beginn: Habitatmodellierung #########################################################################
+###########################################################################################################
+## (In den folgenden Zeilen muessen keine Anpassungen mehr vorgenommen werden. Die obigen 
+## Konfigurationen werden uebernommen.)
+###########################################################################################################
+
+
+##########################################################################################################
+## Lade Funktionen #######################################################################################
+
+source(file.path("LadeSkripte.R")) 
+
+##########################################################################################################
+## Lade und installiere (sofern noch nicht geschehen) notwendige R Pakete ################################
+
+LadePakete()
+
+##########################################################################################################
+## Ueberpruefe und erstelle Verzeichnisstruktur (sofern noch nicht geschehen) ############################
+
+ueberpruefe_Verzeichnisse()
+
+##########################################################################################################
+## Ueberpruefe Datensaetze (Artenliste und Daten der Vorhersagevariablen) ################################
+
+ueberpruefe_Datensaetze(Klima_var=Klima_var,
+                        Landbedeck_var=Landbedeck_var,
+                        Name_Artenliste=Name_Artenliste)
 
 ##########################################################################################################
 ## Lade Artenliste #######################################################################################
 
-Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
-
-
-## Filter nach Arten mit ausreichend Datenpunkten (>50) und nicht zu vielen Datenpunkten (<10000 in 
-# Deutschland), da Simulationen ansonsten sehr lange dauern würden. Für Arten mit großen Datenmenge wurde 
-# ein alternativer workflow entwickelt ("SDM_bezieheHoheDatenmengen.R"), mit dem die Daten bezogen und
-# aufbereitet werden können. Dieser Schritt würde Schritt 1 unten für Arten mit großen Datenmengen
-# ersetzen. Schritte 2-7 können dann für alle Arten gleich durchgeführt werden.
-Artenliste <- subset(Artenliste,Eintraege_GBIF_DE<Max_Anzahl_GBIF_DE & Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon
-
+Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
+                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
+                                   Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE)
 
 ###########################################################################################################
-##### Habitatmodellierung #################################################################################
-###########################################################################################################
+## Generiere Tabelle zum Stand der Modellierung fuer jede Art #############################################
 
-## generiere log-file um Status der Modellierung fuer jede Art aufzufuehren
-
-status_species <- as.data.frame(read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)[,c("Taxon","Eintraege_GBIF_DE")])
-
-status_species$Status <- NA
-
-status_species$Status[status_species$Eintraege_GBIF_DE<Min_Anzahl_GBIF_DE] <- "Keine Habitatmodellierung, da die Datenmenge der Vorkommensdaten nicht ausreicht."
-status_species$Status[status_species$Eintraege_GBIF_DE>Max_Anzahl_GBIF_DE] <- "Datenmenge zu groß für diesen Workflow. Bitte alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden."
-
-## speichere vorlaeufige Liste des Status aller Arten
-write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung_",identifier,".xlsx",sep="")))
-
+erstelleStatusFile(Name_Artenliste=Name_Artenliste,
+                   identifier=identifier,
+                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
+                   Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE)
 
 ##########################################################################################################
 ## Schleife über alle Arten zur Berechnung der Habitateignung
-for (i in 1:length(Artenliste)){ #
+for (i in 17:length(Artenliste)){ #
 
   ## Taxonname
   TaxonName <- Artenliste[i]
@@ -126,8 +134,6 @@ for (i in 1:length(Artenliste)){ #
 
   Vorkommen <- ermittleVorkommen(TaxonName=TaxonName,
                                  Name_Artenliste=Name_Artenliste,
-                                 Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
-                                 Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE,
                                  Datenbank=c("OBIS","GBIF","iNat"),
                                  Ausschnitt=Ausschnitt_ModellFit,
                                  identifier=identifier,
@@ -135,6 +141,9 @@ for (i in 1:length(Artenliste)){ #
   ## Alternativ: Lade existierende Datei von Festplatte:
   # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
 
+  if (!is.data.frame(Vorkommen)){
+    next # falls keine Vorkommensdaten bezogen werden konnten, ueberspringe diese Art
+  } 
   
   ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
   
@@ -144,7 +153,7 @@ for (i in 1:length(Artenliste)){ #
                                          Klima_var,
                                          Landbedeck_var,
                                          Ausschnitt=Ausschnitt_ModellFit,
-                                         plot_predictors=TRUE)
+                                         plot_predictors=FALSE)
   
   ## Alternativ: Lade existierende Datei von Festplatte:
   # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
@@ -195,7 +204,8 @@ for (i in 1:length(Artenliste)){ #
   ## Schritt 6: Erstelle Karte der Habitateignung ########################################################
   
   rasterHabitatEignung <- erstelleKarteHabitatEignung(HabitatEignung=HabitatEignung,
-                                                      Vorkommen=Vorkommen) #
+                                                      Vorkommen=Vorkommen,
+                                                      identifier=identifier) #
 
 } # Ende der Habitatmodellierung für einzelne Arten
 

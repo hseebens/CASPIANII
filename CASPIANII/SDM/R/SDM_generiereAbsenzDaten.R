@@ -18,9 +18,14 @@ generiereAbsenzDaten <- function(TaxonName=NULL,
 
   cat(paste0("\n*** Generiere ",n_AbsenzDaten," Absenzdatensaetze für ",TaxonName," ***\n") ) # notification for the user
   
+  ## check identifier separator
+  if (strtrim(identifier,1)!="_"){
+    identifier <- paste0("_",identifier)
+  }
+  
   ## load predictor variables
-  predictor_stack <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".tif")))
-  # predictor_stack <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,"_",identifier,".grd")))
+  predictor_stack <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".tif")))
+  # predictor_stack <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".grd")))
   
   col_names_pred <- names(predictor_stack)
   
@@ -99,7 +104,7 @@ generiereAbsenzDaten <- function(TaxonName=NULL,
     if (is.null(TaxonName) | is.null(identifier)){
       warning("Angabe 'TaxonName' oder 'identifier' fehlt. Bitte ergänzen.")
     }
-    save(PAlist, file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData")))
+    save(PAlist, file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
     # load(file=file.path("Data","Input", "PAlist_Acer saccharinum_run.071122.test.RData"))
   }
   

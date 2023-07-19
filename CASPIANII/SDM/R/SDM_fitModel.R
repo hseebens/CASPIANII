@@ -15,7 +15,12 @@ fit_SDMs <- function(TaxonName=NULL,
                      n_Modelllaeufe=5,
                      identifier=NULL) { ## start of main function
   
-  load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData")))
+  ## check identifier separator
+  if (strtrim(identifier,1)!="_"){
+    identifier <- paste0("_",identifier)
+  }
+  
+  load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
   
   VorkommenUmweltPA <- PAlist
     
@@ -113,8 +118,8 @@ fit_SDMs <- function(TaxonName=NULL,
   stopCluster(cl)
 
   ## save output to disk
-  save(modelruns,file=file.path("SDM","Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData")))
-  # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,"_",identifier,".RData")))
+  save(modelruns,file=file.path("SDM","Data","Output", paste0("ModelFit_",TaxonName,identifier,".RData")))
+  # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,identifier,".RData")))
   
   ## evaluate model fit (export mean AUC and R2)
   out_eval <- list()
