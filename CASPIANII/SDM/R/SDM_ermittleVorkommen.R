@@ -1,18 +1,11 @@
 
 
 ermittleVorkommen <- function(TaxonName=NULL,
-                              Name_Artenliste=NULL,
                               Datenbank=NULL,
                               Ausschnitt=NULL,
                               eigeneDaten=NULL,
                               identifier=NULL,
                               max_limit=20000){
-  
-  
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
   
   ## load status file for reporting 
   status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
@@ -126,30 +119,40 @@ ermittleVorkommen <- function(TaxonName=NULL,
     
     if (!is.null(Vorkommen_alle)){
       
-      if (nrow(Vorkommen_alle) < 100) { # check, whether the number of occurrences is sufficient
-        # print("NOTE: The number of occurrences is < 50. SDMs might not yield reliable results.") }
-        warning("\nWarnung: Die Anzahl an Datenpunkten ist <100. SDMs können unzuverlässige Ergebnisse liefern.") 
-      } 
-      
-      ## save data to disk
-      fwrite(Vorkommen_alle, file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
-      
-      cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
-      
-      ## write status to log file
-      status_species$Status[ind_species] <- "Genügend Daten zur Habitatmodellierung vorhanden"
-      
-      ## export status of species list
-      write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
-      
-      return(Vorkommen_alle)
-      
+      if (nrow(Vorkommen_alle) < 50) { # check, whether the number of occurrences is sufficient
+
+        cat(paste("\nWarnung: Die Anzahl an Datenpunkten ist <50. Es kann keine Habitatmodellierung fuer",TaxonName,"durchgeführt werden.")) 
+        
+        ## write status to log file
+        status_species$Status[ind_species] <- "Nach Bereinigung Datenmenge zu gering zur Habitatmodellierung."
+        
+        ## export status of species list
+        write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
+        
+        return("Keine ausreichende Datenmenge zur Habitatmodellierung")
+        
+      } else {
+        
+        ## save data to disk
+        fwrite(Vorkommen_alle, file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
+        
+        cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
+        
+        ## write status to log file
+        status_species$Status[ind_species] <- "Genügend Daten zur Habitatmodellierung vorhanden"
+        
+        ## export status of species list
+        write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
+        
+        return(Vorkommen_alle)
+        
+      }
     } else {
       
-      cat(paste("\n Nach Bereinigung keine ausreichenden Eintraege fuer",TaxonName,"vorhanden.\n")) 
+      cat(paste("\nEs liegen keine Daten zum Vorkommen von",TaxonName,"vor. Die Habitatmodellierung kann nicht durchgefuehrt werden.")) 
       
       ## write status to log file
-      status_species$Status[ind_species] <- "Keine ausreichende Datenmenge zur Habitatmodellierung"
+      status_species$Status[ind_species] <- "Nach Bereinigung Datenmenge zu gering zur Habitatmodellierung."
       
       ## export status of species list
       write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))

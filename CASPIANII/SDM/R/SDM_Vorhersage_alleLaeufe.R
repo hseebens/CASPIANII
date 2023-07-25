@@ -16,12 +16,7 @@ Vorhersage_alleLaeufe <- function(TaxonName,
   
   cat(paste0("\n*** Extrapolation der Vorhersagen für ",TaxonName," ***\n") ) # notification for the user
   cat("\nDie Berechnung von Vorhersagen kann einige Zeit in Anspruch nehmen.\n")
-  
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
-  
+
   ## load predictor variables 
   # allenvir <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".grd")))
   allenvir <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".tif")))

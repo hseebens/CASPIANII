@@ -15,11 +15,6 @@ fit_SDMs <- function(TaxonName=NULL,
                      n_Modelllaeufe=5,
                      identifier=NULL) { ## start of main function
   
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
-  
   load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
   
   VorkommenUmweltPA <- PAlist

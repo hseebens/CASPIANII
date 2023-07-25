@@ -8,7 +8,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
                                            Name_Artenliste=Name_Artenliste,
                                            Ausschnitt=Ausschnitt_Extrapolation,
                                            exportiereKarte=TRUE,
-                                           Taxa=NULL){
+                                           Artgruppe=NULL){
 
   cat("\n Integriere potentielles Vorkommen aller Arten.\n\n")
   
@@ -25,10 +25,10 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   all_files <- all_files[grep("HabitatEignung_",all_files)]
   all_files <- all_files[grep("\\.gz",all_files)]
  
-  if (!is.null(Taxa)){
+  if (!is.null(Artgruppe)){
     
     neobiota <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
-    Arten_Gruppe <- subset(neobiota,ArtGruppe==Taxa)$Taxon
+    Arten_Gruppe <- subset(neobiota,ArtGruppe==Artgruppe)$Taxon
     
     all_files <- all_files[grepl(paste(Arten_Gruppe,collapse="|"),all_files)]
   }
@@ -126,22 +126,22 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   ## output ############################################################
   all_maxSuits_df <- all_maxSuits_df[order(all_maxSuits_df$CC_3,all_maxSuits_df$HabitatEignung,decreasing = T),]
 
-  if (!is.null(Taxa)){
-    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_",Taxa,"_maxEignung_GADM3_",identifier,".gz")))
-    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_",Taxa,"_mittlereEignung_GADM3_",identifier,".gz")))
+  if (!is.null(Artgruppe)){
+    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_GADM3_",identifier,".gz")))
+    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_GADM3_",identifier,".gz")))
     
-    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_mittlereEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
-    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Taxa,"_maxEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_EignungSumme_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_Eignung07_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
     
   } else {
-    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_maxEignung_GADM3_",identifier,".gz")))
-    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_meanEignung_GADM3_",identifier,".gz")))
+    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_GADM3_",identifier,".gz")))
+    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_GADM3_",identifier,".gz")))
     
-    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_mittlereEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
-    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_maxEignung_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_EignungSumme_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_Eignung07_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
   }
 
-  # all_maxSuits_df <- fread(file=file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_maxEignung_GADM3_",identifier,".gz")))
+  # all_maxSuits_df <- fread(file=file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_Eignung07_GADM3_",identifier,".gz")))
   # all_meanSuits_df <- fread(file=file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_meanEignung_GADM3_",identifier,".gz")))
   
   ## calculate distance beteen neighbouring points
@@ -164,12 +164,13 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     regions_plot <- merge(regions,regs_spec,by="CC_3",all=T)
 
     ## plot presence-absence (suit > 0.7) ##############
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3_pretty_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3_pretty_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     mf_choro(regions_plot,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty")
+    plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
     
@@ -180,21 +181,22 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     # regions$ID <- 1:nrow(regions)
     regions_plot <- merge(regions,all_meanSuits_agg,by="CC_3")
     
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_SumEignungAlle_GADM3_pretty_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_GADM3_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     } else {
-      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_SumEignungAlle_GADM3_pretty_",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     }
     mf_choro(regions_plot,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty") #
+    plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
     
     ## plots ratster data #####################
     
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_SumEignungAlle_",Taxa,"_raster150",identifier,".png")),unit="in",width=8,height=8,res=300)
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_HabitateignungSumme_",Artgruppe,"_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_SumEignungAlle_raster150",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_HabitateignungSumme_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(rasterData_all_masked,col=rev(hcl.colors(10,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
@@ -202,10 +204,10 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     dev.off()
     
     ## presence/absence ###########
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_",Taxa,"_raster150",identifier,".png")),unit="in",width=8,height=8,res=300)
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_",Artgruppe,"_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_raster150",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(rasterData_max07_masked,col=rev(hcl.colors(10,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)

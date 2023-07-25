@@ -6,7 +6,8 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
                                            Name_Artenliste=Name_Artenliste,
                                            Ausschnitt=Ausschnitt_Extrapolation,
                                            exportiereKarte=FALSE,
-                                           Taxa=NULL){
+                                           max_nTaxa=300,
+                                           Artgruppe=NULL){
 
   cat("\n Integriere tatsächliches Vorkommen aller Arten.\n\n")
   
@@ -24,10 +25,10 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   all_files <- all_files[grep("\\.csv",all_files)]
   
   ## subset for certain taxa
-  if (!is.null(Taxa)){
+  if (!is.null(Artgruppe)){
     
     neobiota <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
-    Arten_Gruppe <- subset(neobiota,ArtGruppe==Taxa)$Taxon
+    Arten_Gruppe <- subset(neobiota,ArtGruppe==Artgruppe)$Taxon
     
     all_files <- all_files[grepl(paste(Arten_Gruppe,collapse="|"),all_files)]
   }
@@ -93,13 +94,13 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
 
   colnames(all_sites_df) <- c("Taxon","CC_3")
   
-  if (!is.null(Taxa)){
-    fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",Taxa,"_",identifier,".gz")))
-    terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Taxa,"_",identifier,".tif")), overwrite=TRUE, filetype = "GTiff")
+  if (!is.null(Artgruppe)){
+    fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",Artgruppe,identifier,".gz")))
+    terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Artgruppe,identifier,".tif")), overwrite=TRUE, filetype = "GTiff")
   } else {
-    fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3_",identifier,".gz")))
-    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
-    # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3_",identifier,".gz")))
+    fwrite(all_sites_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_GADM3",identifier,".gz")))
+    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
+    # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3",identifier,".gz")))
     # all_rasters <- raster(file.path("Grafiken","RasterAllOccurrences_191222"))
   }
   
@@ -116,29 +117,29 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     # # nSpec_germany <- rasterize(all_coords_df[,c("Laengengrad","Breitengrad")],new_raster)
     # # germany2  <- crop(nSpec_germany, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
     aliens_masked <- terra::mask(germany,germany_border)
-    values(aliens_masked)[values(aliens_masked)>300] <- 300
+    values(aliens_masked)[values(aliens_masked)>max_nTaxa] <- max_nTaxa
     
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Raster_max",max_nTaxa,"_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Raster_max",max_nTaxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     plot(aliens_masked,col=rev(hcl.colors(10,pal="Mint")))
     plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
 
-    germany2 <- terra::mask(germany,germany_border)
-    values(germany2) <- log10(values(germany2)+1)
-    
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
-    } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",identifier,".png")),unit="in",width=8,height=8,res=300)
-    }
-    plot(germany2,col=rev(hcl.colors(10,pal="Mint")))
-    plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
-    dev.off()
+    # germany2 <- terra::mask(germany,germany_border)
+    # values(germany2) <- log10(values(germany2)+1)
+    # 
+    # if (!is.null(Artgruppe)){
+    #   png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
+    # } else {
+    #   png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_raster150_log10",identifier,".png")),unit="in",width=8,height=8,res=300)
+    # }
+    # plot(germany2,col=rev(hcl.colors(10,pal="Mint")))
+    # plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
+    # dev.off()
 
     
     ## plot all all_sites_df summed up #################################################################
@@ -148,14 +149,15 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     all_sites_agg <- aggregate(Taxon ~ CC_3, data=all_sites_df,length)
     
     regions <- merge(regions,all_sites_agg,by="CC_3")
-    regions$Taxon[regions$Taxon>300] <- 300
+    regions$Taxon[regions$Taxon>max_nTaxa] <- max_nTaxa
     
-    if (!is.null(Taxa)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",Taxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max",max_nTaxa,"_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max100_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_GADM3_max",max_nTaxa,identifier,".png")),unit="in",width=8,height=8,res=300)
     }
     mf_choro(regions,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty") #,breaks="pretty"
+    plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.85,y=53,xpd=NA)
     dev.off()
 

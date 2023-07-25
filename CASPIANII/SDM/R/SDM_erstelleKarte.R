@@ -10,17 +10,11 @@ erstelleKarteHabitatEignung <- function(HabitatEignung=NULL,
                                         Vorkommen=NULL,
                                         identifier=NULL) { ## start of main function
 
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
-  
   # print("Note: If the same plot should be plotted and stored again, make sure the pdf-file with the respective name is closed on your computer. Otherwise, R will be unable to overwrite the file and yield an error, when running this step.") # notification for the user
   
   GermanShapefile <- NULL
   if (file.exists(file.path("SDM","Data","Input","Shapefiles","gadm41_DEU_1.shp"))){
-    # GermanShapefile <- readOGR(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",verbose=F) # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
-    GermanShapefile <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1") # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
+    GermanShapefile <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",quiet=TRUE) # optional: loads a shapefile of the shape of Germany to be used for cropping the suitability plot to the extent and shape of Germany; set to NULL if this is not desired!
   }
   
   ## transform suitability predictions into raster
@@ -52,10 +46,10 @@ erstelleKarteHabitatEignung <- function(HabitatEignung=NULL,
   # if (!is.null(GermanShapefile)) plot(GermanShapefile,add=T,border=gray(0.7))
   # dev.off()
  
-  # pdf(file.path("Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,identifier,".pdf"))) # plot with occurrences
-  png(file.path("SDM","Grafiken", paste0("KarteHabitatEignung+Vorkommen_",TaxonName,identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
+  # pdf(file.path("Grafiken", paste0("KarteHabitatEignungVorkommen_",TaxonName,identifier,".pdf"))) # plot with occurrences
+  png(file.path("SDM","Grafiken", paste0("KarteHabitatEignungVorkommen_",TaxonName,identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
   plot(rastpreds, col=viridis(100))
-  if (!is.null(GermanShapefile)) plot(st_geometry(GermanShapefile),add=T,border=gray(0.7))
+  if (!is.null(GermanShapefile)) plot(st_geometry(GermanShapefile),add=T,border=gray(0.1))
   points(Vorkommen, pch=1, cex=0.5)
   dev.off()
   

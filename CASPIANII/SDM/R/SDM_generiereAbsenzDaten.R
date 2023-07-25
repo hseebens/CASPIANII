@@ -13,16 +13,11 @@
 generiereAbsenzDaten <- function(TaxonName=NULL,
                                  VorkommenUmwelt=NULL, 
                                  n_AbsenzDaten=5,
-                                 speichern=T,
+                                 speichern=TRUE,
                                  identifier=NULL) { ## start of main function
 
   cat(paste0("\n*** Generiere ",n_AbsenzDaten," Absenzdatensaetze für ",TaxonName," ***\n") ) # notification for the user
-  
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
-  
+
   ## load predictor variables
   predictor_stack <- rast(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".tif")))
   # predictor_stack <- stack(file.path("SDM","Data","Input",paste0("UmweltdatenRaster_",TaxonName,identifier,".grd")))

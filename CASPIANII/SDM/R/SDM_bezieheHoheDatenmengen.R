@@ -1,32 +1,78 @@
+###########################################################################################################
+#
+# Dieses Skript beinhaltet die Erweiterung für den Workflow "SDM" zur Vorhersage der Habitateignung von Arten
+# mit Vorkommen in Deutschland. Mit dieser Erweiterung können Vorkommensdaten von Arten von GBIF herunter-
+# geladen werden mit mehr als 20000 Datenpunkten. Diese Vorkommensdaten können anschließend mit Workflow
+# SDM verwendet werden, um die Habitateignung berechnen und vorhersagen zu können.
+#
+# Author: Hanno Seebens, Senckenberg Gesellschaft fuer Naturforschung, 23.07.23
+##########################################################################################################
+
+## Bereinigen der Arbeitsumgebung
+graphics.off()
 rm(list=ls())
 
-library(rgbif)
-library(openxlsx)
-library(data.table)
-library(rgdal)
-library(CoordinateCleaner)
 
-# source(file.path("R","decompress_file.R"))
+##########################################################################################################
+## Konfiguration des Downloads ##########################################################################
+##########################################################################################################
 
-identifier <- "191222_NoEASIN" # a unique identifier for every run of the SDM workflow, needs to be a character
 
+## Artenliste ############################################################################################
+# Name des Datensatzes, welches die Artenliste enthaelt. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
+# und "Eintraege_GBIF_DE" sein. Eine entsprechende Datei mit dem Workflow "ListeNeobiota" generiert.
+Name_Artenliste <- "ListeGebietsfremderArten_gesamt_standardisiert.xlsx"
+
+## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
+identifier <- "170723" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+
+## GBIF Konto Details #############################################################
+## Ein GBIF Konto muss auf https://www.gbif.org/ erstellt werden. Die Login Daten
+## Name (user), Emailadresse und Passwort muessen in diesem Skript angegeben werden.
+## Ein Beispiel Konto kann verwendet werden:
 user <- "ekinhanno1" 
 email <- "ekinhanno1@gmail.com"
 pwd <- "seebenskaplan1234"
 
-Ausschnitt_ModellFit <- (c(-30,25,40,78))
-Ausschnitt=Ausschnitt_ModellFit
+## Geographischer Fokus ############################################################
+# Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
+# Angaben beschreiben die Ausdehnung eines Rechtecks (long/lat fuer linke, untere und rechte, obere Ecke hintereinander)
+Ausschnitt_ModellFit <- c(-30,25,40,78) # Grenzen von Europa (Modell wird fuer alle Vorkommen in Europa angefittet)
 
-neobiota <- read.xlsx(file.path("ListeNeobiota","Data","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
+##########################################################################################################
+## Ende: Konfiguration der Habitatmodellierung ###########################################################
+##########################################################################################################
 
-## Entfernt Einträge, die nur aus EASIN stammen (abweichende Definition)
-# neobiota <- subset(neobiota,Datenbank!="EASIN")
 
-## Filter nach Arten mit ausreichend Datenpunkten (>100) und nicht zu vielen Datenpunkten (<5000), da 
-## Simulationen sehr lange dauern würden
-# artenliste <- subset(neobiota,Eintraege_GBIF_DE<10000 & Eintraege_GBIF_DE>50)$Taxon 
-artenliste <- subset(neobiota,Eintraege_GBIF_DE>20000)$Taxon 
-# artenliste <- artenliste[1:3]
+
+
+##########################################################################################################
+##### Beginn: Download ###################################################################################
+##########################################################################################################
+
+
+##########################################################################################################
+## Lade Funktionen #######################################################################################
+source(file.path("LadeSkripte.R")) 
+
+##########################################################################################################
+## Lade und installiere (sofern noch nicht geschehen) notwendige R Pakete ################################
+
+LadePakete()
+
+
+###########################################################################################################
+## Lade Artenliste ########################################################################################
+
+Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
+
+## Filter nach Arten mit >20000 Datenpunkten 
+artenliste <- subset(Artenliste,Eintraege_GBIF_DE>20000)$Taxon 
+
+## check identifier separator
+if (strtrim(identifier,1)!="_"){
+  identifier <- paste0("_",identifier)
+}
 
 #######################################################################################
 ### get GBIF keys for all species #####################################################
@@ -78,8 +124,8 @@ occ_download_get(out,path=path_to_storage)
 # 
 # ## extract data ########################################
 allfiles <- list.files(path_to_storage)
-# zippedfile <- allfiles[grepl(as.character(out[[1]]),allfiles)]
-zippedfile <- c("0270117-220831081235567.zip")
+zippedfile <- allfiles[grepl(as.character(out[[1]]),allfiles)]
+# zippedfile <- c("0270117-220831081235567.zip")
 # zippedfile <- c("0270252-220831081235567.zip")
 # extract_files <- zippedfile
 
@@ -150,7 +196,7 @@ for (i in 1:length(Vorkommen_split)){
   
   print(str(Vorkommen_cleaned))
   
-  fwrite(Vorkommen_cleaned,file.path("Data","Input",paste0("Vorkommen_",Vorkommen_cleaned$Taxon[1],"_",identifier,".csv")))
+  fwrite(Vorkommen_cleaned,file.path("Data","Input",paste0("Vorkommen_",Vorkommen_cleaned$Taxon[1],identifier,".csv")))
   # Vorkommen_alle[[i]] <- Vorkommen_cleaned
   
 }

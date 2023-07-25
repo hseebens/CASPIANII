@@ -20,11 +20,6 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   
   cat(paste0("\n*** Ermittle Umweltdaten für ",TaxonName," ***\n") ) # notification for the user
 
-  ## check identifier separator
-  if (strtrim(identifier,1)!="_"){
-    identifier <- paste0("_",identifier)
-  }
-  
   ## load status file for reporting 
   status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
   ind_species <- which(status_species$Taxon==TaxonName)
@@ -157,7 +152,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   ## check for large data sets and down-sampled those (workflow cannot handle very large files (>>20000 occurrence records))
   if (nrow(Vorkommen)>20000){
     
-    warning(paste0("\n Anzahl Vorkommen zu hoch (n=",nrow(Vorkommen),"). Datensatz wird auf max 20000 Einträge reduziert. \n"))
+    warning(paste0("\n Anzahl Vorkommen zu hoch (n=",nrow(Vorkommen),") fuer ",TaxonName,". Datensatz wird auf max 20000 Einträge reduziert. \n"))
     
     ind_rows <- sample(1:nrow(Vorkommen),20000)
     Vorkommen <- Vorkommen[ind_rows,]

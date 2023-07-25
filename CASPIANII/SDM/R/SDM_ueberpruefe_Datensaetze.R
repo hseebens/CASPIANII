@@ -36,6 +36,18 @@ ueberpruefe_Datensaetze <- function(Klima_var=NULL,
     stop(paste0("\n Datensatz ",Name_Artenliste," fehlt im Verzeichnis",file.path("SDM","Data","Input")))
     x <- 1
   }
+
+  ## check availability of country borders
+  if (any(file.exists(file.path("SDM","Data","Input","Shapefiles","ne_50m_land.shp"))==FALSE)){
+    stop(paste0("\n Datensatz ne_50m_land.shp fehlt im Verzeichnis",file.path("SDM","Data","Input","Shapefiles")))
+    x <- 1
+  }
+  
+  ## check availability of borders of federal states
+  if (any(file.exists(file.path("SDM","Data","Input","Shapefiles","gadm41_DEU_1.shp"))==FALSE)){
+    stop(paste0("\n Datensatz gadm41_DEU_1.shp fehlt im Verzeichnis",file.path("SDM","Data","Input","Shapefiles")))
+    x <- 1
+  }
   
   if (x==0){
     cat("\n Alle Datensaetze vorhanden.\n")
