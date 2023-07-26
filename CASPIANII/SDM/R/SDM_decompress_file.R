@@ -44,3 +44,13 @@ decompress_file <- function(directory, file, .file_cache = FALSE) {
     }
   }
 } 
+
+
+
+
+# unzipLarge <- function(zipfile, exdir = getwd()) {
+#   oldWd <- getwd()
+#   on.exit(setwd(oldWd))
+#   setwd(exdir)
+#   system2("jar", args = c("xf", zipfile))
+# }

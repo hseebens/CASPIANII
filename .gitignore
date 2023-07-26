@@ -1,0 +1,9 @@
+CASPIANII/SDM/Data/
+CASPIANII/SDM/Grafiken/
+*.docx
+*.pdf
+*.odt
+*.xlsx
+CASPIANII/.*
+Admin/
+WorkingDocs/

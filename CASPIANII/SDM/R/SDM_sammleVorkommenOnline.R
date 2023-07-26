@@ -45,42 +45,47 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
     nrecords <- occ_search(taxonKey=taxonKey, limit=0, country="DE", hasCoordinate=TRUE)$meta$count # number of available records
     
     if (nrecords>max_limit){
+      
       # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
-      warning(paste0("\n Anzahl der verfuegbaren Eintraege (n=",nrecords,") ueberschreitet Limit (n=",max_limit,") und wird auf Limit begrenzt!\n Entweder max_limit erhoehen (Warnung: iNaturalist erlaubt keine hohen downloads), alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden oder Daten direkt von Webseite laden."))
-    }
-    
-    occ_dat <- try(occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=TRUE,limit=max_limit)[[2]], silent=TRUE)
-    
-    
-    ## prepare output #############
-    if (!is.null(occ_dat)){
+      cat(paste0("\n Anzahl der verfuegbaren Eintraege in GBIF (n=",nrecords,") ueberschreitet Limit (n=",max_limit,"). Vorkommensdaten sollten mit alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' oder Daten direkt von Webseite heruntergeladen werden."))
       
-      cat(paste(" ",TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
+    } else {
       
-      if (nrow(occ_dat)==max_limit){
-        # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
-        cat("\n Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
+      occ_dat <- try(occ_data(scientificName = TaxonName,geometry = Ausschnitt,hasCoordinate=TRUE,limit=max_limit)[[2]], silent=TRUE)
+      
+      
+      ## prepare output #############
+      if (!is.null(occ_dat)){
+        
+        cat(paste(" ",TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
+        
+        if (nrow(occ_dat)==max_limit){
+          # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
+          cat("\n Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
+        }
+        
+        cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden.\n"))
+        
+        if ("eventDate"%in%colnames(occ_dat)){
+          occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
+        } else {
+          occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude")]
+          occ_dat$eventDate <- NA
+        }
+        occ_dat$Datenbank <- "GBIF"
+        
+        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
+        
+        x <- x + 1
+        all_records[[x]] <- as.data.table(occ_dat)
+        
+      } else { ## no output
+        # cat(paste("No records found for",TaxonName,"in GBIF\n"))
+        cat(paste(" Keine Eintraege in GBIF fuer",TaxonName,"\n"))
       }
       
-      cat(paste(" ",nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden.\n"))
-      
-      if ("eventDate"%in%colnames(occ_dat)){
-        occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
-      } else {
-        occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude")]
-        occ_dat$eventDate <- NA
-      }
-      occ_dat$Datenbank <- "GBIF"
-      
-      colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
-      
-      x <- x + 1
-      all_records[[x]] <- as.data.table(occ_dat)
-      
-    } else { ## no output
-      # cat(paste("No records found for",TaxonName,"in GBIF\n"))
-      cat(paste(" Keine Eintraege in GBIF fuer",TaxonName,"\n"))
     }
+    
   } 
   
   ## iNaturalist occurrences ############################################################

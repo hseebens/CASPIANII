@@ -17,6 +17,7 @@ rm(list=ls())
 ## Konfiguration des Downloads ##########################################################################
 ##########################################################################################################
 
+setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
 
 ## Artenliste ############################################################################################
 # Name des Datensatzes, welches die Artenliste enthaelt. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
@@ -37,7 +38,7 @@ pwd <- "seebenskaplan1234"
 ## Geographischer Fokus ############################################################
 # Geographischer Ausschnitt zum Fitten des Modells (Ausschnitt_ModellFit) und zur Vorhersage/Extrapolation der Ergebnisse (Ausschnitt_Extrapolation)
 # Angaben beschreiben die Ausdehnung eines Rechtecks (long/lat fuer linke, untere und rechte, obere Ecke hintereinander)
-Ausschnitt_ModellFit <- c(-30,25,40,78) # Grenzen von Europa (Modell wird fuer alle Vorkommen in Europa angefittet)
+Ausschnitt <- c(-30,25,40,78) # Grenzen von Europa (Modell wird fuer alle Vorkommen in Europa angefittet)
 
 ##########################################################################################################
 ## Ende: Konfiguration der Habitatmodellierung ###########################################################
@@ -116,16 +117,16 @@ queries[[1]] <- occ_download_prep(
 
 ## execute requests in sequence
 out <- occ_download_queue(.list = queries, status_ping = 60)
-# 
-# ## get data ################################
+ 
+## get data ################################
 path_to_storage <- file.path("SDM","Data","Input")
-occ_download_get(out,path=path_to_storage)
-# 
-# 
-# ## extract data ########################################
+occ_download_get(out,path=path_to_storage,overwrite=TRUE) # WARNING: function might not work properly! Beta-version.
+
+ 
+## extract data ########################################
 allfiles <- list.files(path_to_storage)
 zippedfile <- allfiles[grepl(as.character(out[[1]]),allfiles)]
-# zippedfile <- c("0270117-220831081235567.zip")
+# zippedfile <- c("0116057-230530130749713.zip")
 # zippedfile <- c("0270252-220831081235567.zip")
 # extract_files <- zippedfile
 
@@ -134,9 +135,9 @@ zippedfile <- allfiles[grepl(as.character(out[[1]]),allfiles)]
 if (length(zippedfile)>1) stop("More than one zip file found!")
 
 if (!file.exists(paste0(path_to_storage,gsub("\\.zip","\\.csv",zippedfile)))){ # check if file has been unzipped already 
-  try(gbif_raw <- decompress_file(path_to_storage,zippedfile)) # try to unzip
+  # try(gbif_raw <- decompress_file(path_to_storage,zippedfile)) # try to unzip
+  unzip(file.path(path_to_storage,zippedfile), overwrite=TRUE, exdir=path_to_storage)
 } 
-if (class(gbif_raw)=="try-error") next
 
 unzipped <- gsub("\\.zip","\\.csv",zippedfile)
 
@@ -168,7 +169,7 @@ Vorkommen <- Vorkommen[!ind,]
 
 Vorkommen$Taxon <- NA
 Vorkommen_split <- split(Vorkommen[,c("Breitengrad","Laengengrad","Zeitpunkt")],f=Vorkommen$speciesKey)
-country_borders <- readOGR(dsn=file.path("Data","Input","Shapefiles"),layer="ne_50m_land",stringsAsFactors=F,verbose=F)
+country_borders <- readOGR(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="ne_50m_land",stringsAsFactors=F,verbose=F)
 
 Vorkommen_alle <- list()
 for (i in 1:length(Vorkommen_split)){
@@ -192,11 +193,11 @@ for (i in 1:length(Vorkommen_split)){
   Vorkommen_cleaned$Datenbank <- "GBIF"
   Vorkommen_cleaned <- Vorkommen_cleaned[,c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")]
 
-  print(Vorkommen_cleaned$Taxon[1])
+  # print(Vorkommen_cleaned$Taxon[1])
+  # 
+  # print(str(Vorkommen_cleaned))
   
-  print(str(Vorkommen_cleaned))
-  
-  fwrite(Vorkommen_cleaned,file.path("Data","Input",paste0("Vorkommen_",Vorkommen_cleaned$Taxon[1],identifier,".csv")))
+  fwrite(Vorkommen_cleaned,file.path("SDM","Data","Input",paste0("Vorkommen_",Vorkommen_cleaned$Taxon[1],identifier,".csv")))
   # Vorkommen_alle[[i]] <- Vorkommen_cleaned
   
 }

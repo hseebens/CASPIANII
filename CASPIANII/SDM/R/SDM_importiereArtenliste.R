@@ -13,12 +13,12 @@
 
 
 importiereArtenliste <- function(Name_Artenliste=NULL,
-                                 Min_Anzahl_GBIF_DE=50,
-                                 Max_Anzahl_GBIF_DE=20000){
+                                 Min_Anzahl_GBIF_DE=50
+                                 ){
  
   Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
   
-  Artenliste <- subset(Artenliste,Eintraege_GBIF_DE<Max_Anzahl_GBIF_DE & Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon
+  Artenliste <- subset(Artenliste,Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon
   
   return(Artenliste)
   
