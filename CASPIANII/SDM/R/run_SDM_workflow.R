@@ -108,8 +108,7 @@ ueberpruefe_Datensaetze(Klima_var=Klima_var,
 ## Lade Artenliste ########################################################################################
 
 Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
-                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE
-                                   )
+                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE)
 
 ## check identifier separator
 if (strtrim(identifier,1)!="_"){
@@ -127,12 +126,12 @@ erstelleStatusFile(Name_Artenliste=Name_Artenliste,
 
 ##########################################################################################################
 ## Schleife ueber alle Arten zur Berechnung der Habitateignung
-for (i in 549:length(Artenliste)){ #
+for (i in 1:length(Artenliste)){ #
 
   ## Auswahl einer Art ###################################################################################
   TaxonName <- Artenliste[i]  ## Taxonname
   # TaxonName <- "Teredo navalis"
-  # TaxonName <- "Amaranthus blitum emarginatus"
+  # TaxonName <- "Amelanchier humilis"
   
   cat(paste0("\n\n************* Bearbeitung von ",TaxonName," ************* \n") ) # notification for the user
   
@@ -143,6 +142,7 @@ for (i in 549:length(Artenliste)){ #
 
   ## Schritt 1: Ermittlung und Aufbereitung der Vorkommensdaten #############################################
 
+  # entweder wird ein vorhandener Datensatz eingelesen oder ein Download vorgenommen.
   if (file.exists(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv")))){
     
     Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
@@ -162,20 +162,20 @@ for (i in 549:length(Artenliste)){ #
     next # falls keine Vorkommensdaten bezogen werden konnten, ueberspringe diese Art
   } 
 
-  ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
-  
-  VorkommenUmwelt <- ermittleUmweltdaten(TaxonName,
-                                         Vorkommen=Vorkommen,
-                                         identifier=identifier,
-                                         Klima_var,
-                                         Landbedeck_var,
-                                         Ausschnitt=Ausschnitt_ModellFit,
-                                         plot_predictors=FALSE)
-  
-  ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
-
-  
+  # ## Schritt 2: Kombiniere Vorkommensdaten und Umweltdaten ################################################
+  # 
+  # VorkommenUmwelt <- ermittleUmweltdaten(TaxonName,
+  #                                        Vorkommen=Vorkommen,
+  #                                        identifier=identifier,
+  #                                        Klima_var,
+  #                                        Landbedeck_var,
+  #                                        Ausschnitt=Ausschnitt_ModellFit,
+  #                                        plot_predictors=FALSE)
+  # 
+  # ## Alternativ: Lade existierende Datei von Festplatte:
+  # # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # 
+  # 
   # ## Schritt 3: Generiere Pseudo-Absence Daten ##############################################################
   # 
   # VorkommenUmweltPA <- generiereAbsenzDaten(TaxonName=TaxonName,
