@@ -147,6 +147,8 @@ for (i in 1:length(Artenliste)){ #
     
     Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
     
+    cat(paste0("\n Vorkommensdaten werden aus ",paste0("Vorkommen_",TaxonName,identifier,".csv")," im Verzeichnis 'Data/Input' genommen.\n") ) # notification for the user
+    
   } else {
     
     Vorkommen <- ermittleVorkommen(TaxonName=TaxonName,
