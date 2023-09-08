@@ -1,0 +1,18 @@
+"path" "dummy" "geringe GBIF Datendichte" "geringe sMon Datendichte" "gute GBIF Datenverfügbarkeit" "gute sMon Datendichte" "mittlere GBIF Datenverfügbarkeit" "möglicherweise nicht etabliert" "sehr gute Datendichte in GBIF und sMon"
+"1" "Absichtlich" 0 424 578 22 57 134 109 35
+"2" "Andere Gütertransporte" 0 343 386 8 71 76 40 31
+"3" "Andere Pfade" 0 425 448 1 4 10 19 5
+"4" "Anhaftung an Landfahrzeuge (Bahn, Straßenverkehr)" 0 48 63 NA 9 16 4 12
+"5" "Anhaftung an Personen" 0 27 29 NA 4 4 2 3
+"6" "Anhaftung an Schiffe" 0 65 69 NA NA 1 3 1
+"7" "Ballastwasser" 0 127 135 NA NA 3 3 1
+"8" "Blinder Passagier auf oder in Transportmitteln" 0 34 40 2 2 5 4 NA
+"9" "Eigenständige Ausbreitung" 0 84 95 1 9 16 18 3
+"10" "Erdaushub" 0 115 133 NA 28 36 6 24
+"11" "Fahrtwind" 0 12 16 1 10 11 NA 6
+"12" "Gefangenschaftsflüchtling" 0 1049 1254 33 141 230 474 85
+"13" "Korridor" 0 72 81 NA 1 3 3 NA
+"14" "Transport im Container" 0 19 22 NA 1 4 1 2
+"15" "Transport mit Flugzeugen" 0 7 8 NA 1 2 NA NA
+"16" "Transport über Holzpaletten" 0 17 18 NA 1 2 1 1
+"17" "Unbekannt" 0 185 202 8 1 4 64 NA

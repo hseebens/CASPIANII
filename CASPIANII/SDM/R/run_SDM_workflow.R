@@ -126,7 +126,7 @@ erstelleStatusFile(Name_Artenliste=Name_Artenliste,
 
 ##########################################################################################################
 ## Schleife ueber alle Arten zur Berechnung der Habitateignung
-for (i in 1:length(Artenliste)){ #
+for (i in 100:length(Artenliste)){ #
 
   ## Auswahl einer Art ###################################################################################
   TaxonName <- Artenliste[i]  ## Taxonname
@@ -222,7 +222,7 @@ for (i in 1:length(Artenliste)){ #
                                           identifier=identifier)
 
   ## Alternativ: Lade existierende Datei von Festplatte:
-  HabitatEignung <- fread(file=file.path("SDM","Data","Output", paste0("HabitatEignung_",TaxonName,identifier,".gz")))
+  # HabitatEignung <- fread(file=file.path("SDM","Data","Output", paste0("HabitatEignung_",TaxonName,identifier,".gz")))
 
   ## Schritt 6: Erstelle Karte der Habitateignung ########################################################
 
