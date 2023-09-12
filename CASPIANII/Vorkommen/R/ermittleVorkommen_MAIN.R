@@ -15,18 +15,23 @@
 graphics.off()
 rm(list=ls())
 
-## Laden notwendiger Funktionen ##############################################
-# library(rgbif)
-# library(robis)
-# library(spocc)
-# library(leaflet)
-# library(data.table)
-# library(CoordinateCleaner)
+
+##########################################################################
+## Lade Funktionen #######################################################
+
 source(file.path("LadeSkripte.R"))
 
-## Laden notwendiger Pakete ##########################################
+
+##########################################################################
+## Lade und installiere (sofern noch nicht geschehen) notwendige R Pakete 
+
 LadePakete()
 
+
+##########################################################################
+## Ueberpruefe und erstelle Verzeichnisstruktur (sofern noch nicht geschehen) 
+
+ueberpruefe_Datenverzeichnis()
 
 
 ##########################################################################
@@ -38,10 +43,13 @@ LadePakete()
 ## Parameter zur Spezifizierung der Suche ################################
 
 # TaxonName <- "Crassostrea gigas"
-TaxonName <- "Alopochen aegyptiaca"
+TaxonName <- "Impatiens glandulifera"
 
 ## Verzeichnis der sMon Datensaetze (optional)
-sMon_Verzeichnis <- "/home/hanno/Storage_large/Species/sMon"
+sMon_Verzeichnis <- "C:/Hanno/Storage_large/Species/sMon"
+
+## Berechnete Wahrscheinlichkeit des Auftretens der Art (0 (sehr unwahrscheinlich) - 1 (sehr wahrscheinlich))
+sMon_Wahrscheinlichkeit <- 0.9
 
 ## Verzeichnis und Dateiname des eigenen Datensatzes (optional)
 EigeneDaten_Verzeichnis <- "" # Name des Verzeichnis
@@ -57,16 +65,20 @@ Datenbank <- c("OBIS","GBIF","iNat","sMon")#
 Ausschnitt <- c(5,45,15,58) # lower left and upper right corner (long-lat)
 
 
-
 ##########################################################################
 ## Ermittle Vorkommen in den ausgewaehlten Datenquellen ##################
 
-Vorkommen <- Vorkommen_bezieheDaten(TaxonName=TaxonName,Datenbank=Datenbank,sMon_Verzeichnis=sMon_Verzeichnis,Ausschnitt=Ausschnitt)
+Vorkommen <- Vorkommen_bezieheDaten(TaxonName=TaxonName,
+                                    Datenbank=Datenbank,
+                                    sMon_Verzeichnis=sMon_Verzeichnis,
+                                    sMon_Wahrscheinlichkeit=sMon_Wahrscheinlichkeit,
+                                    Ausschnitt=Ausschnitt,
+                                    max_limit=20000)
 
 
 
 ##########################################################################
 ## Darstellung der Vorkommen auf einer Karte #############################
 
-Vorkommen_erstelleKarte(Vorkommen_sub)
+Vorkommen_erstelleKarte(Vorkommen)
 

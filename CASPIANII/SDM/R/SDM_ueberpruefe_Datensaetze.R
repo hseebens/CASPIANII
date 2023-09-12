@@ -49,8 +49,14 @@ ueberpruefe_Datensaetze <- function(Klima_var=NULL,
     x <- 1
   }
   
+  ## check availability of borders of municipalities
+  if (any(file.exists(file.path("SDM","Data","Input","Shapefiles","gadm41_DEU_3"))==FALSE)){
+    stop(paste0("\n Datensatz gadm41_DEU_3 fehlt im Verzeichnis",file.path("SDM","Data","Input","Shapefiles")))
+    x <- 1
+  }
+  
   if (x==0){
-    cat("\n Alle Datensaetze vorhanden.\n")
+    cat("\n Alle notwendingen Datensaetze vorhanden.\n")
   }
   
 }

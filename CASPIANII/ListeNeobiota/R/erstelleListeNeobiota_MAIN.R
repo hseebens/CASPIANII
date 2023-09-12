@@ -48,6 +48,13 @@ LadePakete()
 
 
 ##########################################################################
+## Ueberpruefe Verzeichnisstruktur und erstelle sofern nicht vorhanden ###
+## und ueberpruefe Vorhandensein notwendinger Datensaetze
+
+ueberpruefe_Datenverzeichnisse()
+
+
+##########################################################################
 ## Generierung der Liste von Neobiota ####################################
 ##########################################################################
 

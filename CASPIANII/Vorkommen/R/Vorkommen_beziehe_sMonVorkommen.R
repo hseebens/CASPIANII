@@ -11,7 +11,9 @@
 ###############################################################################################################
 
 
-get_sMon_occurrences <- function(TaxonName=TaxonName,sMon_Verzeichnis=sMon_Verzeichnis){
+get_sMon_occurrences <- function(TaxonName=TaxonName,
+                                 sMon_Verzeichnis=sMon_Verzeichnis,
+                                 sMon_Wahrscheinlichkeit=0.7){
   
   # sMon_Verzeichnis <- file.path("..","..","Storage_large","Species","sMon")
   # # TaxonName <- "Campanula cervicaria"
@@ -35,7 +37,7 @@ get_sMon_occurrences <- function(TaxonName=TaxonName,sMon_Verzeichnis=sMon_Verze
                              nrows=length(ind_records),skip=min(ind_records))
       colnames(sMon_data_sub) <- col_names
       
-      sMon_data[[i]] <- sMon_data_sub
+      sMon_data[[i]] <- subset(sMon_data_sub,OP>=sMon_Wahrscheinlichkeit)
     }
   }
   
