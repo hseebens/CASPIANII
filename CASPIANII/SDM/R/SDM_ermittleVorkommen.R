@@ -139,7 +139,7 @@ ermittleVorkommen <- function(TaxonName=NULL,
         cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'Data/Input' gespeichert.\n") ) # notification for the user
         
         ## write status to log file
-        status_species$Status[ind_species] <- "Genügend Daten zur Habitatmodellierung vorhanden"
+        status_species$Status[ind_species] <- "Genügend Daten zur Habitatmodellierung vorhanden."
         
         ## export status of species list
         write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
