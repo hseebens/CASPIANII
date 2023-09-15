@@ -32,6 +32,7 @@ integriereDatensaetze <- function(){
   }  
   all_data <- do.call("rbind",all_dat_sub)
   colnames(all_data)[length(colnames(all_data))] <- "Datenbank"
+  all_data <- unique(all_data)
   
   ## remove empty rows
   ind_NAs <- (!apply(all_data[,1:8],1,function(s) all(is.na(s)))) # remove NAs
@@ -42,6 +43,7 @@ integriereDatensaetze <- function(){
   all_data$Datenbank <- gsub("_Germany","",all_data$Datenbank)
   
   dupl_entries <- sort(unique(all_data$wissenschaftlicherName[duplicated(all_data[,which(colnames(all_data)%in%c("Taxon","wissenschaftlicherName","Gattung","Familie"))])]))
+  dupl_entries <- sort(unique(all_data$Taxon[duplicated(all_data$Taxon)]))
   
   new_rows <- list()
   ind_rm_all <- c()
@@ -50,12 +52,15 @@ integriereDatensaetze <- function(){
     for (i in 1:length(dupl_entries)){
       
       ## identify rows with identical entries
-      single <- subset(all_data,wissenschaftlicherName==dupl_entries[i])
-      ind_rm <- all_data$wissenschaftlicherName==dupl_entries[i]
+      single <- subset(all_data,Taxon==dupl_entries[i])
+      ind_rm <- all_data$Taxon==dupl_entries[i]
       
       ## collapse database entries
       all_sources <- paste(unique(single$Datenbank),collapse = "; ")
       single[1,]$Datenbank <- all_sources
+
+      all_names <- paste(unique(single$wissenschaftlicherName[!is.na(single$wissenschaftlicherName)]),collapse = "; ")
+      single[1,]$wissenschaftlicherName <- all_names
       
       all_paths <- single$Pfad[!is.na(single$Pfad)]
       all_paths <- unique(all_paths)

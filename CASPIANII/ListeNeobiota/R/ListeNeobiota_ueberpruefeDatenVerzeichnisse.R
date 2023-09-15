@@ -22,6 +22,11 @@ ueberpruefe_Datenverzeichnisse <- function (){
     cat("\n Verzeichnis 'ListeNeobiota/Data/Input' erstellt.\n") # notification for the user
     x <- 1
   }
+  if (!file.exists(file.path("ListeNeobiota","Data","Output"))){
+    dir.create(file.path("ListeNeobiota","Data","Output"))
+    cat("\n Verzeichnis 'ListeNeobiota/Data/Output' erstellt.\n") # notification for the user
+    x <- 1
+  }
   if (!file.exists(file.path("ListeNeobiota","Data","Shapefiles"))){
     dir.create(file.path("ListeNeobiota","Data","Shapefiles"))
     cat("\n Verzeichnis 'ListeNeobiota/Data/Shapefiles' erstellt.\n") # notification for the user
