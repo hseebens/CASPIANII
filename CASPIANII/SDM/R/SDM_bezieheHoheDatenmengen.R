@@ -17,7 +17,7 @@ rm(list=ls())
 ## Konfiguration des Downloads ##########################################################################
 ##########################################################################################################
 
-setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
+# setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
 
 ## Artenliste ############################################################################################
 # Name des Datensatzes, welches die Artenliste enthaelt. Dies muss eine .xlsx Datei sein mit den Spalten "Taxon"
@@ -25,7 +25,7 @@ setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
 Name_Artenliste <- "ListeGebietsfremderArten_gesamt_standardisiert.xlsx"
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
-identifier <- "170723" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+identifier <- "160823" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 ## GBIF Konto Details #############################################################
 ## Ein GBIF Konto muss auf https://www.gbif.org/ erstellt werden. Die Login Daten
@@ -67,8 +67,8 @@ LadePakete()
 
 Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
 
-## Filter nach Arten mit >20000 Datenpunkten 
-artenliste <- subset(Artenliste,Eintraege_GBIF_DE>20000)$Taxon 
+## Filter nach Arten mit >10000 Datenpunkten 
+artenliste <- c("Acer negundo",subset(Artenliste,Eintraege_GBIF_DE>10000)$Taxon) 
 
 ## check identifier separator
 if (strtrim(identifier,1)!="_"){
