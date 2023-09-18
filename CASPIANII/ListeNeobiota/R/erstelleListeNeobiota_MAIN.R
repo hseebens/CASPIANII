@@ -65,7 +65,8 @@ ueberpruefe_Datenverzeichnisse()
 Pfad_Datensaetze <- c("Tackenberg_2017","BfN","EASIN_Germany")
 
 ## lokales Verzeichnis der sMon Daten (koennen hier bezogen werden: https://idata.idiv.de/ddm/Data/ShowData/1875?version=9)
-sMon_Verzeichnis <- "/home/hanno/Storage_large/Species/sMon"
+# sMon_Verzeichnis <- "C:/Hanno/Storage_large/Species/sMon"
+sMon_Verzeichnis <- file.path("C:","Hanno","Storage_large","Species","sMon")
 
 
 ##########################################################################
