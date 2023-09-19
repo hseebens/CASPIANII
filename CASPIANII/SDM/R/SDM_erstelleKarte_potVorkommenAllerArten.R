@@ -169,7 +169,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions_plot,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty")
+    mf_choro(regions_plot,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
@@ -186,7 +186,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     }
-    mf_choro(regions_plot,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty") #
+    mf_choro(regions_plot,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
@@ -198,7 +198,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_HabitateignungSumme_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    plot(rasterData_all_masked,col=rev(hcl.colors(10,pal="Mint")))
+    plot(rasterData_all_masked,col=rev(hcl.colors(12,pal="OrYel")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     # text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
@@ -209,7 +209,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    plot(rasterData_max07_masked,col=rev(hcl.colors(10,pal="Mint")))
+    plot(rasterData_max07_masked,col=rev(hcl.colors(12,pal="OrYel")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     # text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
