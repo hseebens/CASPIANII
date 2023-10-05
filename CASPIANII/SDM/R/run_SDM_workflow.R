@@ -110,6 +110,7 @@ ueberpruefe_Datensaetze(Klima_var=Klima_var,
 Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
                                    Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE)
 
+
 ## check identifier separator
 if (strtrim(identifier,1)!="_"){
   identifier <- paste0("_",identifier)
@@ -124,6 +125,8 @@ erstelleStatusFile(Name_Artenliste=Name_Artenliste,
                    Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
                    Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE)
 
+status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
+
 ##########################################################################################################
 ## Schleife ueber alle Arten zur Berechnung der Habitateignung
 for (i in 100:length(Artenliste)){ #
@@ -133,9 +136,18 @@ for (i in 100:length(Artenliste)){ #
   # TaxonName <- "Teredo navalis"
   # TaxonName <- "Amaranthus blitum emarginatus"
   
-  cat(paste0("\n\n************* Bearbeitung von ",TaxonName," ************* \n") ) # notification for the user
+  cat(paste0("\n\n************* Bearbeitung von ",TaxonName," ************* \n") )
   
-  
+  ## Ueberpruefe ob Modellierung bereits durchgefuehrt wurde. Wenn ja, springe zur nächsten Art
+  ind_species <- which(status_species$Taxon==TaxonName)
+
+  if (status_species[ind_species,3]!="Bisher keine Habitatmodellierung durchgefuehrt."){ 
+    
+    cat(paste0("\n************* Bearbeitung von ",TaxonName," bereits durchgefuehrt ***** \n") ) 
+    
+    next
+  }
+
   ##########################################################################################################
   ## Datenermittlung #######################################################################################
   ## Aufbereitung aller notwendiger Daten (Vorkommen der Art, Umweltdaten und Pseudo-Absenz Daten)
@@ -145,7 +157,7 @@ for (i in 100:length(Artenliste)){ #
   # entweder wird ein vorhandener Datensatz eingelesen oder ein Download vorgenommen.
   if (file.exists(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv")))){
     
-    Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
+    Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) 
     
     cat(paste0("\n Vorkommensdaten werden aus ",paste0("Vorkommen_",TaxonName,identifier,".csv")," im Verzeichnis 'Data/Input' genommen.\n") ) # notification for the user
     

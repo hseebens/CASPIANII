@@ -20,6 +20,7 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
                                    EigeneDaten_Dateiname=NA,
                                    Datenbank=NA,
                                    sMon_Verzeichnis=NA,
+                                   sMon_Wahrscheinlichkeit=0.7,
                                    max_limit=10000,
                                    Ausschnitt=NULL){
   
@@ -56,8 +57,16 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
       warning("Kein Verzeichnis fuer sMon Daten angegeben. Bitte als Variable 'sMon_Verzeichnis' angeben.")
       
     } else {
+      
+      if (file.exists(file.path("ListeNeobiota","Data","AlienSpecies_in_sMon.csv"))){
         
-      sMon_taxa <- fread(file.path("WP1","Data","AlienSpecies_in_sMon.csv"))
+        sMon_taxa <- fread(file.path("ListeNeobiota","Data","AlienSpecies_in_sMon.csv"))
+        
+      } else {
+        
+        warning(paste0("\n Datensatz AlienSpecies_in_sMon.csv existiert nicht. Bitte unter ListeNeobiota/Data/ abspeichern. Dies wird bei Anwendung des Workflows 'ListeNeobiota' automatisch durchgefuehrt."))
+        
+      }
       
       if (TaxonName%in%sMon_taxa$Taxon){ # check if TaxonName is a synonym in sMon
         
@@ -114,7 +123,7 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     cat("\n** Bearbeitung von GBIF ******************\n")
     
     xx <- name_backbone(name=TaxonName)$usageKey
-    nrecords <- occ_count(xx,georeferenced=T,country="DE") # number of available records
+    nrecords <- occ_search(xx,limit=0,hasCoordinate =TRUE,country="DE")$meta$count # number of available records
     
     if (nrecords>max_limit){
       # warning(paste0("\nNumber of available records (n=",nrecords,") exceeds limit (",max_limit,")!\n You may either increase limit or download from website."))
@@ -268,7 +277,7 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     } 
     
     ## save data to disk
-    fwrite(all_output, file.path("WP1","Data",paste0("Vorkommen_",TaxonName,".csv"))) # stores the final occurrence file on the users computer
+    fwrite(all_output, file.path("Vorkommen","Data",paste0("Vorkommen_",TaxonName,".csv"))) # stores the final occurrence file on the users computer
     
     cat(paste0("\nVorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'WP1/Data' gespeichert.\n") ) # notification for the user
     

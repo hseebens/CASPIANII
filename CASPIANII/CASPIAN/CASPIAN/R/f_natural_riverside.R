@@ -34,13 +34,27 @@
 
 
 f_natural_riverside <- function(D,a,b) {
+
  # D<-D*1000  #converting km to m
-  #negative logistic:
+
+  # D<-D*1000  #converting km to m  #negative logistic:
   #return(1/(2*pi*(a^2))*exp(-D/a))
 
   #exponential power:
+
    prob<-(b/(2*pi*(a^2)*gamma(2/b)))*exp(-(D^b)/(a^b))
    return(prob)   
 #  return(0.01)
+
+  # return((b/(2*pi*(a^2)*gamma(2/b)))*exp(-(D^b)/(a^b)))
+  
+  # D <- 10
+  # a <- 1.06 # González-Martínez et al. 2006. Always >0
+  # b <- 4.813674e-01 # González-Martínez et al . 2006.   >1: thin-tailed ; <1: fat-tailed. Values for b generally found from 0.3 to 0.6 (Nathan et al. 2012)
+  # 
+  res <- (b/(2*pi*(a^2)*gamma(2/b)))*exp(-(D^b)/(a^b))
+  
+  return(res)
+
 }
 

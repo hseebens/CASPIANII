@@ -18,7 +18,7 @@ importiereArtenliste <- function(Name_Artenliste=NULL,
  
   Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
   
-  Artenliste <- subset(Artenliste,Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon
+  Artenliste <- unique(subset(Artenliste,Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon)
   
   return(Artenliste)
   

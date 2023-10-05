@@ -99,6 +99,8 @@ beziehePfadDaten <- function(){
   ## generate output ######################################################################
   dat_path <- dat_path[order(dat_path$ArtGruppe,dat_path$wissenschaftlicherName),] # sort output
   
+  colnames(dat_path)[colnames(dat_path)=="pathway"] <- "Pfad"
+  
   dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]
 
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")

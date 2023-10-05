@@ -29,8 +29,8 @@ erstelleStatusFile <- function(Name_Artenliste=NULL,
       
       status_species$Status <- "Bisher keine Habitatmodellierung durchgefuehrt."
       
-      status_species$Status[status_species$Eintraege_GBIF_DE<Min_Anzahl_GBIF_DE] <- "Keine Habitatmodellierung, da die Datenmenge der Vorkommensdaten nicht ausreicht."
-      status_species$Status[status_species$Eintraege_GBIF_DE>Max_Anzahl_GBIF_DE] <- "Datenmenge zu groß für diesen Workflow. Bitte alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden."
+      status_species$Status[status_species$Eintraege_GBIF_DE<=Min_Anzahl_GBIF_DE] <- "Keine Habitatmodellierung, da die Datenmenge der Vorkommensdaten nicht ausreicht."
+      status_species$Status[status_species$Eintraege_GBIF_DE>=Max_Anzahl_GBIF_DE] <- "Datenmenge zu groß für diesen Workflow. Bitte alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' verwenden."
       
       ## speichere vorlaeufige Liste des Status aller Arten
       write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))

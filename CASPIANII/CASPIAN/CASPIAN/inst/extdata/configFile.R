@@ -59,16 +59,16 @@ plot_funct_rel <- FALSE # plot functional relationships of dispersal kernels
 runTerrestrialModel<-TRUE # consider terrestrial spread?
 
 ## model structure: select pathways of dispersal #####################
-incl_attachment   <-TRUE # if attachment to vehicles should be considered.
-incl_airflow      <-TRUE # if vehicle airstream should be considered.
-incl_natural      <-TRUE #if natural dispersal should be considered.
+incl_attachment   <-FALSE # if attachment to vehicles should be considered.
+incl_airflow      <-FALSE # if vehicle airstream should be considered.
+incl_natural      <-FALSE #if natural dispersal should be considered.
 incl_containers   <-FALSE #if container flow should be considered.
 incl_pallets      <-FALSE #if pallets flow should be considered.
 incl_riverside    <-TRUE #if spread along riverside of water ways should be considered (Note that this can only run in isolation. Other pathways will be ignored.)
 
 ## simulation: set simulation setting ################################
-num_iter_T<- 1000 # simulation steps. Terrestrial model only.
-iter_save_T <- c(1,seq(100,900,100),num_iter_T) # time steps at which results should be stored. Terrestrial model only.
+num_iter_T<- 10000 # simulation steps. Terrestrial model only.
+iter_save_T <- c(1,seq(1000,9000,1000),num_iter_T) # time steps at which results should be stored. Terrestrial model only.
 
 netw_type <- c("A","B","L") # types of network considered : "Rail" "A"    "B"    "L"    "S"    "K"    "F"    "G"    "X"    "R"    "k"
 traffic_type_T <- c("all") # types of traffic considered : "cargo" (trucks and cargo trains), "passengers" (cars and passenger trains),   "all"
