@@ -28,5 +28,5 @@ ParametersToCalibrate <- c("nat_riverside1","nat_riverside2") #names of the para
 calibrateCASPIAN(path2data = path2data, 
                  configFile = configFile, speciesData = speciesData,networkType="aquatic",
                  ParametersToCalibrate = ParametersToCalibrate,
-                 yearToCalibrate=1996, maxit=2)
+                 yearToCalibrate=1996, maxit=100)
 
