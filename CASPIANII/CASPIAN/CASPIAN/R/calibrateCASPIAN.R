@@ -116,10 +116,10 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   #######################################
   # build general calibration configFile HERE. Changes plot options, number of iterations, and initialization options.
   tx  <- readLines(configFile)
-  tx[grep("makeplot",tx)]<-"makeplot <- FALSE"
-  tx[grep("save_plot",tx)]<-"save_plot <- FALSE"
-  tx[grep("initialize",tx)]<-"initialize <- FALSE"
-  tx[grep("save_init",tx)]<-"save_init <- FALSE"
+  tx[grep("makeplot<-",tx)]<-"makeplot<- FALSE"
+  tx[grep("save_plot<-",tx)]<-"save_plot<- FALSE"
+  tx[grep("initialize<-",tx)]<-"initialize<- FALSE"
+  tx[grep("save_init<-",tx)]<-"save_init<- FALSE"
   if (runTerrestrialModel==TRUE){
   tx[grep("num_iter_T",tx)]<-paste0("num_iter_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
   tx[grep("iter_save_T",tx)]<-paste0("iter_save_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
@@ -189,29 +189,32 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   sink()
   
   sink("Optimizer_Results.txt")
-  opt_Nelder2
+  print(opt_Nelder2)
   sink()
   
   ### calculate model output with best parameter values
+  cat("\n Calculating model output with optimized parameter values \n")
   
   #read configFile and replace default values with optimized ones
+  tx  <- readLines(calib_ConfigFile)
+  
   for (i in 1:length(opt_Nelder2$par)){
     tx[grep(parNames[i],tx)]<-paste0("par_",parNames[i]," <- ",opt_Nelder2$par[i])
     cat("\n", tx[grep(parNames[i],tx)],"\n")
   }
-  #alter additional options: plots, initialization, number of steps in the simulation
-  tx  <- readLines(configFile)
-  tx[grep("makeplot",tx)]<-"makeplot <- TRUE"
-  tx[grep("save_plot",tx)]<-"save_plot <- TRUE"
-  tx[grep("initialize",tx)]<-"initialize <- FALSE"
-  tx[grep("save_init",tx)]<-"save_init <- FALSE"
+ 
+   #alter additional options: plots, initialization, number of steps in the simulation
+  tx[grep("makeplot<-",tx)]<-"makeplot<- TRUE"
+  tx[grep("save_plot<-",tx)]<-"save_plot<- TRUE"
+  tx[grep("initialize<-",tx)]<-"initialize<- FALSE"
+  tx[grep("save_init<-",tx)]<-"save_init<- FALSE"
   if (runTerrestrialModel==TRUE){
-    tx[grep("num_iter_T",tx)]<-paste0("num_iter_T <- ",as.numeric(as.character(unique(data_coords$iter))))
-    tx[grep("max_iter_T",tx)]<-paste0("max_iter_T <- ",max(as.numeric(as.character(unique(data_coords$iter)))))
+    tx[grep("num_iter_T",tx)]<-paste0("num_iter_T <- ",max(as.numeric(as.character(unique(data_coords$iter)))))
+    tx[grep("iter_save_T",tx)]<-paste0("iter_save_T <- c(",paste(unique(data_coords$iter),collapse=","),")")
   }
   if (runAquaticModel==TRUE){
-    tx[grep("num_iter_W",tx)]<-paste0("num_iter_W <- ",as.numeric(as.character(unique(data_coords$iter))))
-    tx[grep("max_iter_W",tx)]<-paste0("max_iter_W <- ",max(as.numeric(as.character(unique(data_coords$iter)))))
+    tx[grep("num_iter_W",tx)]<-paste0("num_iter_W <- ",max(as.numeric(as.character(unique(data_coords$iter)))))
+    tx[grep("iter_save_W",tx)]<-paste0("iter_save_W <- ,c(",paste(unique(data_coords$iter),collapse=","),")")
   }
   # assign name to optimized config file and write to file
   opt_ConfigFile<-"Optimized_configFile.R"
