@@ -122,11 +122,11 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   tx[grep("save_init",tx)]<-"save_init <- FALSE"
   if (runTerrestrialModel==TRUE){
   tx[grep("num_iter_T",tx)]<-paste0("num_iter_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
-  tx[grep("max_iter_T",tx)]<-paste0("max_iter_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+  tx[grep("iter_save_T",tx)]<-paste0("iter_save_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
   }
   if (runAquaticModel==TRUE){
     tx[grep("num_iter_W",tx)]<-paste0("num_iter_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
-    tx[grep("max_iter_W",tx)]<-paste0("max_iter_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+    tx[grep("iter_save_W",tx)]<-paste0("iter_save_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
   }
   
   # assign name to optimized config file and write to file
@@ -167,6 +167,16 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   n <- nrow(parRange)
   opt_ui <- rbind( diag(n), -diag(n) )
   opt_ci <- c( parRange[,2], - parRange[,3] )
+  
+  #export objects to global environment
+  assign(x="calib_ConfigFile", value=calib_ConfigFile, envir = .GlobalEnv)
+  assign(x="InvasionData", value=InvasionData, envir = .GlobalEnv)
+  assign(x="defaultValues", value=defaultValues, envir = .GlobalEnv)
+  assign(x="parSel", value=parSel, envir = .GlobalEnv)
+  assign(x="opt_ui", value=opt_ui, envir = .GlobalEnv)
+  assign(x="opt_ci", value=opt_ci, envir = .GlobalEnv)
+  assign(x="file_init", value=file_init, envir = .GlobalEnv)
+  assign(x="parNames", value=parNames, envir = .GlobalEnv)
   
   #run optimizer
   sink("constroptim_log.txt")

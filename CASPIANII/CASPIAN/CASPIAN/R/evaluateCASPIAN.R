@@ -31,14 +31,14 @@ evaluateCASPIAN <- function(pars) {
   }
   
   # write the updated configFile
-  writeLines(tx, con=calib_configFile)
+  writeLines(tx, con=calib_ConfigFile)
   
   #run CASPIAN
   invisible(capture.output(
-    outputCASPIAN <- runCASPIAN(configFile=calib_configFile,path2data=path2data)
+    outputCASPIAN <- runCASPIAN(configFile=calib_ConfigFile,path2data=path2data)
   ))
-  assign(x = "outputCASPIAN",value = outputCASPIAN, envir = .GlobalEnv)
   outputCASPIAN <- outputCASPIAN$TerrestrialResults
+  assign(x = "outputCASPIAN",value = outputCASPIAN, envir = .GlobalEnv)
   
   # match CASPIAN results with data
   nruns <- 1
