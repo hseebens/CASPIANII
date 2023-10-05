@@ -34,12 +34,13 @@
 
 
 f_natural_riverside <- function(D,a,b) {
-  D<-D*1000  #converting km to m
+ # D<-D*1000  #converting km to m
   #negative logistic:
   #return(1/(2*pi*(a^2))*exp(-D/a))
 
   #exponential power:
-  # return((b/(2*pi*(a^2)*gamma(2/b)))*exp(-(D^b)/(a^b)))
-  return(0.01)
+   prob<-(b/(2*pi*(a^2)*gamma(2/b)))*exp(-(D^b)/(a^b))
+   return(prob)   
+#  return(0.01)
 }
 

@@ -24,5 +24,8 @@ source(file.path("R","combID.R"))
 source(file.path("R","Attachment_kernel.R"))
 source(file.path("R","Airflow_kernel.R"))
 source(file.path("R","combID.R"))
+source(file.path("R","createMixWithDefaults.R"))
+source(file.path("R","evaluateCASPIAN.R"))
+source(file.path("R","calibrateCASPIAN.R"))
 
 
