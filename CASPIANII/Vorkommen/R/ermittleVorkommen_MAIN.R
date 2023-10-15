@@ -49,7 +49,7 @@ TaxonName <- "Impatiens glandulifera"
 sMon_Verzeichnis <- "C:/Hanno/Storage_large/Species/sMon"
 
 ## Berechnete Wahrscheinlichkeit des Auftretens der Art (0 (sehr unwahrscheinlich) - 1 (sehr wahrscheinlich))
-sMon_Wahrscheinlichkeit <- 0.9
+sMon_Wahrscheinlichkeit <- 0.5
 
 ## Verzeichnis und Dateiname des eigenen Datensatzes (optional)
 EigeneDaten_Verzeichnis <- "" # Name des Verzeichnis
@@ -58,6 +58,7 @@ EigeneDaten_Dateiname <- "" # Name der Datei
 ## Ausgewaehlte Datenbank zur Ermittlung von Vorkommensdaten 
 ## (moegliche Auswahl: OBIS, GBIF, iNat, sMon)
 Datenbank <- c("OBIS","GBIF","iNat","sMon")#
+Datenbank <- c("sMon","OBIS","iNat")#
 
 ## Auswahl des geographischen Bereichs, in dem nach Vorkommensdaten gesucht
 ## werden soll (Koordinaten (Laengengrad+Breitengrad) der linken unteren und rechten oberen Ecke eines

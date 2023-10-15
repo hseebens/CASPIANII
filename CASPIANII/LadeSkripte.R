@@ -88,3 +88,38 @@ source(file.path("SDM","R","SDM_erstelleKarte_istVorkommenAllerArten.R"))
 
 # integrate habitat suitabilities of all species and map
 source(file.path("SDM","R","SDM_erstelleKarte_potVorkommenAllerArten.R"))
+
+
+##### CASPIAN Modell #######################################################
+
+
+source(file.path("CASPIAN","R","runCASPIAN.R"))
+source(file.path("CASPIAN","R","InitializeSpread.R"))
+source(file.path("CASPIAN","R","SpreadModel.R"))
+source(file.path("CASPIAN","R","getNodesCoord.R"))
+source(file.path("CASPIAN","R","getNeighborSegmCoord.R"))
+source(file.path("CASPIAN","R","WaterSpreadModel.R"))
+source(file.path("CASPIAN","R","pUnion.R"))
+source(file.path("CASPIAN","R","plotCASPIAN.R"))
+source(file.path("CASPIAN","R","ParMatrix.R"))
+source(file.path("CASPIAN","R","InitializeWaterSpread.R"))
+source(file.path("CASPIAN","R","getCoordExtent.R"))
+source(file.path("CASPIAN","R","getConfigFile.R"))
+source(file.path("CASPIAN","R","f_natural.R"))
+source(file.path("CASPIAN","R","f_natural_riverside.R"))
+source(file.path("CASPIAN","R","f_natural_water.R"))
+source(file.path("CASPIAN","R","f_hullfouling.R"))
+source(file.path("CASPIAN","R","f_container.R"))
+source(file.path("CASPIAN","R","f_ballast.R"))
+source(file.path("CASPIAN","R","combID.R"))
+source(file.path("CASPIAN","R","Attachment_kernel.R"))
+source(file.path("CASPIAN","R","Airflow_kernel.R"))
+source(file.path("CASPIAN","R","combID.R"))
+source(file.path("CASPIAN","R","createMixWithDefaults.R"))
+source(file.path("CASPIAN","R","evaluateCASPIAN.R"))
+source(file.path("CASPIAN","R","calibrateCASPIAN.R"))
+
+source(file.path("CASPIAN","R","prepareOccurrencesCalibration.R"))
+
+
+

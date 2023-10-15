@@ -13,7 +13,7 @@
 
 get_sMon_occurrences <- function(TaxonName=TaxonName,
                                  sMon_Verzeichnis=sMon_Verzeichnis,
-                                 sMon_Wahrscheinlichkeit=0.7){
+                                 sMon_Wahrscheinlichkeit){
   
   # sMon_Verzeichnis <- file.path("..","..","Storage_large","Species","sMon")
   # # TaxonName <- "Campanula cervicaria"

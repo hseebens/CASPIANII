@@ -35,16 +35,16 @@ Container_netw_data<- fread(file.path(path2data,"ContainerFlow.csv")) # file con
 ####################################################################
 ## General model settings ##########################################
 
-makeplot<-TRUE # should model results be plotted as maps at steps of iter_save_?
-save_plot<-FALSE # If TRUE, plots are created in the newly created folder as .png files. If FALSE, an x11() device is opened. Only considered if makeplot=TRUE.
+makeplot<- FALSE
+save_plot<- FALSE
 linewidth=5 # line width for drawing lines on the map; sparse networks lwd=3; dense networks lwd=1
 
-export_results=c("csv") #"txt",,"shp" #Should results be exported in the newly created folder? Supported values are "csv","txt",and "shp for ESRI Shapefiles.
+export_results<- c()
 #This will create one file per each iteration saved.
 #For "csv" and "txt", the spatial information (e.g. links coordinates) will NOT be retained.
 
-initialize<-TRUE  # Whether the model should be initialized.
-save_init<-TRUE # if initialize=TRUE, should the initialization file be saved?
+initialize<- FALSE
+save_init<- FALSE
 file_init<- "init_data.Rdata" # if initialize=TRUE, the name of the file to be created by InitializeSpread().
 #   in the newly created folder (default  "init_data.rData" if save_init=TRUE). If initialize=FALSE, the FULL path
 #   of the file to be read in (created by InitializeSpread() or ModelSpread() ). MUST BE an .Rdata file.
@@ -67,15 +67,15 @@ incl_pallets      <-FALSE #if pallets flow should be considered.
 incl_riverside    <-TRUE #if spread along riverside of water ways should be considered (Note that this can only run in isolation. Other pathways will be ignored.)
 
 ## simulation: set simulation setting ################################
-num_iter_T<- max(as.numeric(as.character(unique(data_coords$iter)))) # Calculated automatically based on data. simulation steps. Terrestrial model only. 
-iter_save_T <- as.numeric(as.character(unique(data_coords$iter))) # Calculated automatically based on data. time steps at which results should be stored. Terrestrial model only.
+num_iter_T <- 108
+iter_save_T <- 108
 
 netw_type <- c("A","B","L") # types of network considered : "Rail" "A"    "B"    "L"    "S"    "K"    "F"    "G"    "X"    "R"    "k"
 traffic_type_T <- c("all") # types of traffic considered : "cargo" (trucks and cargo trains), "passengers" (cars and passenger trains),   "all"
 
 ## initial conditions ################################################
 ## load data set of initial distribution of species
-init_coords_T <-data.frame(Long=data_coords[iter==1,Longitude],Lat=data_coords[iter==1,Latitude],Iter=1) # Calculated automatically based on data. initial coordinates of invasion. Terrestrial model only
+init_coords_T <-data.frame(Long=data_coords[iter==1,Laengengrad],Lat=data_coords[iter==1,Breitengrad],Iter=1) # Calculated automatically based on data. initial coordinates of invasion. Terrestrial model only
 
 max_dist_T<-10^4 # Maximum distance (m) from initial coordinates for a segment to be considered infected. Terrestrial model only.
 
@@ -108,8 +108,8 @@ par_air2 <- 0.724 # parameter a in Von Der Lippe et al. 2013, Lognormal.
 ## natural dispersal kernel parameter
 par_nat1 <- 1.06 # González-Martínez et al. 2006. Always >0
 par_nat2 <- 4.813674e-01 # González-Martínez et al . 2006.   >1: thin-tailed ; <1: fat-tailed. Values for b generally found from 0.3 to 0.6 (Nathan et al. 2012)
-par_nat_riverside1 <- 1.06 # González-Martínez et al. 2006. Always >0
-par_nat_riverside2 <- 4.813674e-01 # González-Martínez et al . 2006.   >1: thin-tailed ; <1: fat-tailed. Values for b generally found from 0.3 to 0.6 (Nathan et al. 2012)
+par_nat_riverside1 <- 1.06
+par_nat_riverside2 <- 0.4813674
 
 
 ## parameter for introduction by container
@@ -154,7 +154,7 @@ traffic_type_W <- c("all") # types of traffic considered : "Motorized", "Non-mot
 
 ## initial conditions ################################################
 ## load data set of initial distribution of species
-init_coords_W <-data.frame(Long=data_coords[iter==1,Longitude],Lat=data_coords[iter==1,Latitude],Iter=1) # Calculated automatically based on data. initial coordinates of invasion.  Acquatic Model
+init_coords_W <-data.frame(Long=data_coords[iter==1,Laengengrad],Lat=data_coords[iter==1,Breitengrad],Iter=1) # Calculated automatically based on data. initial coordinates of invasion.  Acquatic Model
 max_dist_W<-10^3 # Maximum distance (m) from initial coordinates for a segment to be considered infected. Acquatic model only.
 
 ######################################################################

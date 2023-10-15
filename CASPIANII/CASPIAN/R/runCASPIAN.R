@@ -27,7 +27,7 @@ runCASPIAN<-function(configFile,path2data=path2data){
     species_preferences<- data.table(LC_cat_ID= 1:5,Species_preferences=c(Urban_areas,Arable_land,Pastures,Forests,Wetlands))
 
     # running model:
-    dir.name_T <- file.path(getwd(),paste0("CASPIAN_Terrestrial_",format(Sys.time(), "%d-%b-%Y %H-%M-%S")))
+    dir.name_T <- file.path(getwd(),"CASPIAN",paste0("CASPIAN_Terrestrial_",format(Sys.time(), "%d-%b-%Y %H-%M-%S")))
     dir.create(dir.name_T)
 
     # Model initialization
@@ -87,7 +87,7 @@ runCASPIAN<-function(configFile,path2data=path2data){
 
     print(proc.time() - tmp)
 
-    cat("\n Output files being created in ", dir.name_T, "\n")
+    # cat("\n Output files being created in ", dir.name_T, "\n")
 
     if ("csv"%in%export_results) {
       cat("\n Exporting Terrestrial results in .csv files \n")
@@ -122,7 +122,7 @@ runCASPIAN<-function(configFile,path2data=path2data){
     species_preferences<- data.table(specTemp,specCond)
 
     #running model:
-    dir.name_W<-file.path(getwd(),paste0("CASPIAN_Aquatic_",format(Sys.time(), "%d-%b-%Y %H-%M-%S")))
+    dir.name_W<-file.path(getwd(),"CASPIAN",paste0("CASPIAN_Aquatic_",format(Sys.time(), "%d-%b-%Y %H-%M-%S")))
     dir.create(dir.name_W)
 
     #Model initialization

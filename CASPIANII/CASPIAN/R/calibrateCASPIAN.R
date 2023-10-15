@@ -2,9 +2,14 @@
 # Uses constrOptim() with Nelder-Mead algorithm as optimizer.
 # Calls evaluateCASPIAN() to calculate the goodness-of-fit
 
-calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0.9,
+calibrateCASPIAN<- function( path2data, 
+                             # configFile, 
+                             TaxonName, 
+                             database=c("sMon"),
+                             # thresholdData=0.9,
                              networkType, #either "aquatic" or "terrestrial". No default
-                             yearToCalibrate, ParametersToCalibrate, 
+                             yearToCalibrate, 
+                             ParametersToCalibrate, 
                              ParameterRange= data.frame(name=c("S_att0", "R_att0","att1","att2","att3","S_air0","R_air0", "air1","air2","nat1","nat2","estT",
                                                                "nat_riverside1","nat_riverside2",
                                                                "nat_a","nat_b","ball1","beta","c3","estW"),
@@ -15,12 +20,12 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
                                                                150,50,
                                                                13,3.5, 10^5,3.15,3,0.99)
                                                         ),
-                             trace=6,maxit=500,lmm=10,ndeps=rep(10,length(ParametersToCalibrate)),fnscale=c(-1)  # constrOptim() options
-#                              ...
-) {# add more options
+                             trace=6,maxit=100,lmm=10,ndeps=rep(10,length(ParametersToCalibrate)),fnscale=c(-1)  # constrOptim() options
+  #                              ...
+  ) {
   
   #delete existing CASPIAN results 
-  unlink(dir(mainDir, pattern = "CASPIAN_", full.names = TRUE), recursive = TRUE)
+  # unlink(dir(mainDir, pattern = "CASPIAN_", full.names = TRUE), recursive = TRUE)
   
   #get current subfolders, needed to retrieve the initialization file once CASPIAN is initialized
   Old_dirs<-list.dirs()
@@ -29,109 +34,122 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   # and formats them in a way easier to match with CASPIAN output.
   
   # reading data and first formatting
-  Impatient_data<-read.table(speciesData,sep=",",header=T)
-  Impatient_data<-Impatient_data[,c(1,4,5,7,8)]
-  Impatient_data$Zeitpunkt<-str_sub(Impatient_data$Period,-4)
-  Impatient_data$Zeitpunkt<-as.numeric(Impatient_data$Zeitpunkt)
-  Impatient_data<-as.data.table(Impatient_data)
+  occ_data <- prepareOccurrencesCalibration(TaxonName=TaxonName,database)
+  
+  # Impatient_data<-read.table(speciesData,sep=",",header=T)
+  # Impatient_data<-Impatient_data[,c(1,4,5,7,8)]
+  # Impatient_data$Zeitpunkt<-str_sub(Impatient_data$Period,-4)
+  # Impatient_data$Zeitpunkt<-as.numeric(Impatient_data$Zeitpunkt)
+  # occ_data <- as.data.table(Impatient_data)
   
   # Set Threshold probability for sMon dataset
-  Impatient_data<-Impatient_data[OP>=thresholdData,]
+  # occ_data <- occ_data[OP>=thresholdData,]
   
-  #get initial simulation year
-  init_year<-min(Impatient_data$Zeitpunkt)
+  # get initial simulation year
+  init_year <- min(occ_data$Jahr)
   
-  #get coordinates for invaded locations and match them to time periods and probabilities
-  data_Locations<-Impatient_data[Zeitpunkt>=init_year,
-                                 c("Zeitpunkt","Longitude","Latitude","OP")]
+  # get coordinates for invaded locations and match them to time periods and probabilities
+  data_coordinates <- as.data.table(occ_data[, c("Jahr","Laengengrad","Breitengrad","Aufenthaltsw")])
   
-  
-  #calculate numbers of iterations for CASPIAN on a monthly time step
-  IterToEvaluate<-(data_Locations$Zeitpunkt-init_year)*12
+  # calculate numbers of iterations for CASPIAN on a monthly time step
+  IterToEvaluate <- (data_coordinates$Jahr-init_year)*12
   
   # associate the correct number of iterations to invaded locations
-  data_Locations[,iter:=IterToEvaluate]
+  data_coordinates[,iter:=IterToEvaluate]
   
-  #get model iteration to evaluate for calibration
-  stepToCalibrate<-which(unique(data_Locations$Zeitpunkt) %in% yearToCalibrate)
+  # get model iteration to evaluate for calibration
+  stepToCalibrate <- which(sort(unique(data_coordinates$Jahr)) %in% yearToCalibrate)
   
   ################## gathering data part to be changed ends here
-  
-  
+
   
   #rename columns and set starting iteration to 1
-  data_coords<- data_Locations[,c("Longitude","Latitude","iter","OP")]
-  data_coords$iter[data_coords$iter==0]<-1
+  data_coords <- data_coordinates[,c("Laengengrad","Breitengrad","iter","Aufenthaltsw")]
+  data_coords$iter[data_coords$iter==0] <- 1
   assign(x="data_coords", value = data_coords, envir = .GlobalEnv)
   
   #Next section: get the corresponding network links for the invaded locations
   
   #create empty list to store invaded links (matching the list output of CASPIAN)
-  CompleteInvasionData<-list()
+  CompleteInvasionData <- list()
   
   #reading in starting configuration file to provide network data and other information to initialize CASPIAN
+  #set pre-uploaded configuration file, specific for calibration
+  configFile <- file.path("CASPIAN","Calibration","PreCalibration_configFile.R")
+  
   source(configFile)
   
   #build land cover species preference matrix
   species_preferences<- data.table(LC_cat_ID= 1:5,Species_preferences=c(Urban_areas,Arable_land,Pastures,Forests,Wetlands))
   
   #Calculate invaded links for each time step
-  if (runAquaticModel==TRUE) max_dist<-max_dist_W
-  if (runTerrestrialModel==TRUE) max_dist<-max_dist_T
-  if (networkType=="aquatic") netwToUse<-Water_netw_data
-  if (networkType=="terrestrial")  netwToUse<-Terrestrial_netw_data
+  if (runAquaticModel==TRUE) max_dist <- max_dist_W
+  if (runTerrestrialModel==TRUE) max_dist <- max_dist_T
+  if (networkType=="aquatic") netwToUse <- Water_netw_data
+  if (networkType=="terrestrial")  netwToUse <- Terrestrial_netw_data
   
-  for (i in sort(unique(data_coords$iter))) {
+  for (i in sort(unique(data_coords$iter))[1:stepToCalibrate]) {
+    
     cat("\n", i ,"\n")
+    
     #calculate invaded links as in the CASPIAN initialization
     invisible(capture.output(
-      ID<-getNeighbourSegmCoord(netwToUse,init_coords = data_coords[iter==i,1:2],max_dist = max_dist)
+      ID <- getNeighbourSegmCoord(netwToUse,init_coords = data_coords[iter==i,1:2],max_dist = max_dist)
     ))
+    
     # associate data probability to invaded links as maximum of the location probabilities
-    linkProb<-data.frame(Pinv_obs=max(data_coords$OP[data_coords$iter<=i]),ID)
+    linkProb <- data.frame(Pinv_obs=max(data_coords$Aufenthaltsw[data_coords$iter<=i]),ID)
+    
     #add to the empty list
-    CompleteInvasionData[[as.character(i)]]<-linkProb
+    CompleteInvasionData[[as.character(i)]] <- linkProb
   }
+
+  # saveRDS(CompleteInvasionData,file=file.path(new_dir,"CompleteInvasionData.rds"))
+  # CompleteInvasionData <- readRDS(file=file.path("CASPIAN","Calibration","CompleteInvasionData.rds"))
   
   # select list element(s) on which the calibration should be performed
-  InvasionData<-CompleteInvasionData[stepToCalibrate]
+  InvasionData <- CompleteInvasionData[stepToCalibrate]
   
   # initialize CASPIAN to avoid repeating the process for every model evaluation
   
   cat("\n Initializing CASPIAN \n")
   invisible(capture.output(
-    init_data<-runCASPIAN(configFile=configFile,path2data=path2data)
+    init_data <- runCASPIAN(configFile=configFile,path2data=path2data)
   ))
   rm(init_data)
   
   # get current subfolders, identify the new one with CASPIAN results, and copy the initialization file to the main working directory to be used at a later stage
-  cat("\n Copying initialization file to current working directory \n")
-  New_dirs<-list.dirs()
-  file.copy(from = file.path(New_dirs[which(New_dirs %in% Old_dirs == FALSE)], file_init),to=file_init,overwrite = TRUE)
+  # cat("\n Copying initialization file to current working directory \n")
+  
+  new_dirs <- list.dirs()
+  new_dir <- new_dirs[which(new_dirs %in% Old_dirs == FALSE)]
+  
+  # file.copy(from = file.path(new_dir, file_init),to=file_init,overwrite = TRUE)
   
   #save progress so far in .rData file
   cat("\n Saving Pre-Calibration file \n")
-  save.image("PreCalibration.Rdata")
+  # save.image(file.path(new_dir,"PreCalibration.Rdata"))
   
   #######################################
   # build general calibration configFile HERE. Changes plot options, number of iterations, and initialization options.
-  tx  <- readLines(configFile)
-  tx[grep("makeplot<-",tx)]<-"makeplot<- FALSE"
-  tx[grep("save_plot<-",tx)]<-"save_plot<- FALSE"
-  tx[grep("initialize<-",tx)]<-"initialize<- FALSE"
-  tx[grep("save_init<-",tx)]<-"save_init<- FALSE"
+  tx  <- readLines(file.path(configFile))
+  tx[grep("makeplot<-",tx)] <- "makeplot<- FALSE"
+  tx[grep("save_plot<-",tx)] <- "save_plot<- FALSE"
+  tx[grep("initialize<-",tx)] <- "initialize<- FALSE"
+  tx[grep("save_init<-",tx)] <- "save_init<- FALSE"
+  tx[grep("export_results<-",tx)] <- "export_results<- c()"
   if (runTerrestrialModel==TRUE){
-  tx[grep("num_iter_T",tx)]<-paste0("num_iter_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
-  tx[grep("iter_save_T",tx)]<-paste0("iter_save_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+    tx[grep("num_iter_T",tx)] <- paste0("num_iter_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+    tx[grep("iter_save_T",tx)] <- paste0("iter_save_T <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
   }
   if (runAquaticModel==TRUE){
-    tx[grep("num_iter_W",tx)]<-paste0("num_iter_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
-    tx[grep("iter_save_W",tx)]<-paste0("iter_save_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+    tx[grep("num_iter_W",tx)] <- paste0("num_iter_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
+    tx[grep("iter_save_W",tx)] <- paste0("iter_save_W <- ",as.numeric(as.character(unique(data_coords$iter)))[stepToCalibrate])
   }
   
   # assign name to optimized config file and write to file
   calib_ConfigFile<-"Calibration_configFile.R"
-  writeLines(tx, con=calib_ConfigFile)
+  writeLines(tx, con=file.path(new_dir,calib_ConfigFile))
   
   #######################################
   
@@ -152,14 +170,17 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   
   # identify parameters to calibrate indexes and their default parameter names and values
   parSel <- c()
-  for (i in parNames) parSel <- c(parSel, grep(i, colnames(defaultValues)))
+  for (i in parNames){
+    parSel <- c(parSel, grep(i, colnames(defaultValues)))
+  } 
   parValues <- c(defaultValues[parSel])
   
   # get number of parameters to calibrate
   npar <- length(parValues)
   
   # define calibrated parameters range
-  parRange<-ParameterRange[ParameterRange$name %in% ParametersToCalibrate,]
+  parRange <- ParameterRange[ParameterRange$name %in% ParametersToCalibrate,]
+  parRange[1,2] <- 0
   
   #### setup constrOptim()
   
@@ -177,9 +198,12 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   assign(x="opt_ci", value=opt_ci, envir = .GlobalEnv)
   assign(x="file_init", value=file_init, envir = .GlobalEnv)
   assign(x="parNames", value=parNames, envir = .GlobalEnv)
-  
+  assign(x="new_dir", value=new_dir, envir = .GlobalEnv)
+  assign(x="networkType", value=networkType, envir = .GlobalEnv)
+
   #run optimizer
-  sink("constroptim_log.txt")
+  sink(file.path(new_dir,"constroptim_log.txt"))
+  # pars <- parValues
   opt_Nelder2<-constrOptim(theta=parValues, f=evaluateCASPIAN, grad=NULL, ui=opt_ui,ci=opt_ci
                            ,method="Nelder-Mead"
                            # ,method = "L-BFGS-B"
@@ -188,15 +212,17 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
   
   sink()
   
-  sink("Optimizer_Results.txt")
+  sink(file.path(new_dir,"Optimizer_Results.txt"))
   print(opt_Nelder2)
   sink()
+  
+  closeAllConnections()
   
   ### calculate model output with best parameter values
   cat("\n Calculating model output with optimized parameter values \n")
   
   #read configFile and replace default values with optimized ones
-  tx  <- readLines(calib_ConfigFile)
+  tx  <- readLines(file.path(new_dir,calib_ConfigFile))
   
   for (i in 1:length(opt_Nelder2$par)){
     tx[grep(parNames[i],tx)]<-paste0("par_",parNames[i]," <- ",opt_Nelder2$par[i])
@@ -217,14 +243,16 @@ calibrateCASPIAN<- function( path2data, configFile, speciesData, thresholdData=0
     tx[grep("iter_save_W",tx)]<-paste0("iter_save_W <- ,c(",paste(unique(data_coords$iter),collapse=","),")")
   }
   # assign name to optimized config file and write to file
-  opt_ConfigFile<-"Optimized_configFile.R"
+  opt_ConfigFile<-file.path(new_dir,"Optimized_configFile.R")
   writeLines(tx, con=opt_ConfigFile)
   
   #run CASPIAN with optimized parameter values
   optOutputCASPIAN<-runCASPIAN(configFile=opt_ConfigFile,path2data=path2data)
   
   #save .Rdata file with the entire session
-  save.image("PostCalibration.rData")
+  # save.image(file.path(new_dir,"PostCalibration.rData"))
+  
+  closeAllConnections()
   
   cat("\n Done \n")
   

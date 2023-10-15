@@ -71,35 +71,37 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
       if (TaxonName%in%sMon_taxa$Taxon){ # check if TaxonName is a synonym in sMon
         
         # cat(paste(TaxonName,"found in sMon database as",sMon_taxa$Taxon_orig[sMon_taxa$Taxon==TaxonName],"\n"))
-        cat(paste(TaxonName,"in sMon Datenbank gefunden als",sMon_taxa$Taxon_orig[sMon_taxa$Taxon==TaxonName],"\n"))
+        cat(paste("\n",TaxonName,"in sMon Datenbank gefunden als",sMon_taxa$Taxon_orig[sMon_taxa$Taxon==TaxonName],"\n"))
         
         TaxonName_new <- sMon_taxa$Taxon_orig[sMon_taxa$Taxon==TaxonName]
         
         ## get occurrence records #####
-        occ_dat <- get_sMon_occurrences(TaxonName_new,sMon_Verzeichnis)
+        occ_dat <- get_sMon_occurrences(TaxonName_new,sMon_Verzeichnis,sMon_Wahrscheinlichkeit)
         
         ## prepare output #############
-        occ_dat <- occ_dat[,c("TaxonName","Longitude","Latitude","Period")]
+        occ_dat <- occ_dat[,c("TaxonName","Longitude","Latitude","Period","OP")]
+        
+        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Aufenthaltsw")
+        
         occ_dat$Datenbank <- "sMon"
-        
-        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
-        
+
         x <- x + 1
         all_records[[x]] <- occ_dat
         
       } else if (TaxonName%in%sMon_taxa$Taxon_orig){ # take direct match
         
         # cat(paste(TaxonName,"found in sMon database"))
-        cat(paste(TaxonName,"in sMon Datenbank gefunden"))
+        cat(paste("\n",TaxonName,"in sMon Datenbank gefunden"))
         
         ## get occurrence records #####
-        occ_dat <- get_sMon_occurrences(TaxonName,sMon_Verzeichnis)
+        occ_dat <- get_sMon_occurrences(TaxonName,sMon_Verzeichnis,sMon_Wahrscheinlichkeit)
         
         ## prepare output #############
-        occ_dat <- occ_dat[,c("TaxonName","Longitude","Latitude","Period")]
-        occ_dat$Datenbank <- "sMon"
+        occ_dat <- occ_dat[,c("TaxonName","Longitude","Latitude","Period","OP")]
         
-        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
+        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Aufenthaltsw")
+        
+        occ_dat$Datenbank <- "sMon"
         
         x <- x + 1
         all_records[[x]] <- occ_dat
@@ -107,10 +109,10 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
 
       if (x==0){
         # cat(paste("No records found in sMon for",TaxonName,"\n"))
-        cat(paste("Keine Eintraege in sMon fuer",TaxonName,"\n"))
+        cat(paste("\n Keine Eintraege in sMon fuer",TaxonName,"\n"))
       } else {
         
-        cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in sMon gefunden\n"))
+        cat(paste("\n",nrow(occ_dat),"Eintraege von",TaxonName,"in sMon gefunden\n"))
         
       }
     }
@@ -136,14 +138,14 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     ## prepare output #############
     if (!is.null(occ_dat)){
         
-      cat(paste(TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
+      cat(paste("\n",TaxonName,"in GBIF gefunden als",unique(occ_dat$scientificName),"\n"))
       
       if (nrow(occ_dat)==max_limit){
         # cat("Maximum limit of records per GBIF request reached. Either increase \n the limit within this function or download directly from GBIF.")
-        cat("\nMaximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
+        cat("\n Maximum Limit von Eintraegen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhoehen oder Daten direkt von der GBIF Webseite laden.\n")
       }
       
-      cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden\n"))
+      cat(paste("\n",nrow(occ_dat),"Eintraege von",TaxonName,"in GBIF gefunden\n"))
 
       if ("eventDate"%in%colnames(occ_dat)){
         occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude","eventDate")]
@@ -151,16 +153,17 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
         occ_dat <- occ_dat[,c("species","decimalLongitude","decimalLatitude")]
         occ_dat$eventDate <- NA
       }
+      
+      colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")
+      occ_dat$Aufenthaltsw <- 1
       occ_dat$Datenbank <- "GBIF"
-      
-      colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
-      
+            
       x <- x + 1
       all_records[[x]] <- as.data.table(occ_dat)
       
     } else { ## no output
       # cat(paste("No records found for",TaxonName,"in GBIF\n"))
-      cat(paste("Keine Eintraege in GBIF fuer",TaxonName,"\n"))
+      cat(paste("\n","Keine Eintraege in GBIF fuer",TaxonName,"\n"))
     }
   } 
   
@@ -181,21 +184,24 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     
     if (nrow(occ_dat)>0){
       
-      cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in iNaturalist gefunden\n"))
+      cat(paste("\n",nrow(occ_dat),"Eintraege von",TaxonName,"in iNaturalist gefunden\n"))
       
       ## prepare output #############
       occ_dat <- occ_dat[,c("name","longitude","latitude","date")]
-      occ_dat$Datenbank <- "iNat"
       occ_dat$date <- as.character(occ_dat$date)
       
-      colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
-      
+      colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")
+
+      occ_dat$Aufenthaltsw <- 1
+      occ_dat$Datenbank <- "iNat"
+
+            
       x <- x + 1
       all_records[[x]] <- as.data.table(occ_dat)
       
     } else {
       # cat(paste("No records found in iNaturalist for",TaxonName,"\n"))
-      cat(paste("Keine Eintraege in iNaturalist fuer",TaxonName,"\n"))
+      cat(paste("\n Keine Eintraege in iNaturalist fuer",TaxonName,"\n"))
     }
   }
   
@@ -219,7 +225,7 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
       if (nrow(occ_dat)>0){
         
         # cat(paste(nrow(occ_dat),"records of",TaxonName,"found in OBIS\n"))
-        cat(paste(nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden\n"))
+        cat(paste("\n",nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden\n"))
         
         ## prepare output #############
         if ("date"%in%colnames(occ_dat)){
@@ -228,17 +234,20 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
           occ_dat <- occ_dat[,c("scientificName","decimalLongitude","decimalLatitude")]
           occ_dat$date <- NA
         }
-        occ_dat$Datenbank <- "OBIS"
         occ_dat$date <- as.character(occ_dat$date)
         
-        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt","Datenbank")
+        colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")
         
+        occ_dat$Aufenthaltsw <- 1
+        occ_dat$Datenbank <- "OBIS"
+
+                
         x <- x + 1
         all_records[[x]] <- as.data.table(occ_dat)
         
       } else {
         # cat(paste("No records found in OBIS for",TaxonName,"\n"))
-        cat(paste("Keine Eintraege in OBIS fuer",TaxonName,"\n"))
+        cat(paste("\n Keine Eintraege in OBIS fuer",TaxonName,"\n"))
       }
     }
   }
@@ -277,15 +286,15 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
     } 
     
     ## save data to disk
-    fwrite(all_output, file.path("Vorkommen","Data",paste0("Vorkommen_",TaxonName,".csv"))) # stores the final occurrence file on the users computer
+    fwrite(all_output, file.path("Vorkommen","Daten",paste0("Vorkommen_",TaxonName,".csv"))) # stores the final occurrence file on the users computer
     
-    cat(paste0("\nVorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'WP1/Data' gespeichert.\n") ) # notification for the user
+    cat(paste0("\n Vorkommensdaten wurden als 'Vorkommen_",TaxonName,".csv' im Verzeichnis 'WP1/Data' gespeichert.\n") ) # notification for the user
     
     return(all_output)
     
   } else {
     
-    cat(paste("\nKeine ausreichenden Eintraege fuer",TaxonName,"gefunden.\n")) 
+    cat(paste("\n Keine ausreichenden Eintraege fuer",TaxonName,"gefunden.\n")) 
     
   }
 }
