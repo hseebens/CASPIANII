@@ -35,7 +35,7 @@ Container_netw_data<- fread(file.path(path2data,"ContainerFlow.csv")) # file con
 ####################################################################
 ## General model settings ##########################################
 
-makeplot<-TRUE # should model results be plotted as maps at steps of iter_save_?
+makeplot<-FALSE # should model results be plotted as maps at steps of iter_save_?
 save_plot<-FALSE # If TRUE, plots are created in the newly created folder as .png files. If FALSE, an x11() device is opened. Only considered if makeplot=TRUE.
 linewidth=5 # line width for drawing lines on the map; sparse networks lwd=3; dense networks lwd=1
 
