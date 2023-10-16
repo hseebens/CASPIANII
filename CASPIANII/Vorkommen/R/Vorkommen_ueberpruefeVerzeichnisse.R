@@ -12,9 +12,9 @@ ueberpruefe_Datenverzeichnis <- function (){
   x <- 0 # dummy variable 
   
   ## create output folder #####
-  if (!file.exists(file.path("Vorkommen","Data"))){
-    dir.create("SDM","Data")
-    cat("\n Verzeichnis 'Vorkommen/Data' erstellt.\n") # notification for the user
+  if (!file.exists(file.path("Vorkommen","Daten"))){
+    dir.create("Vorkommen","Daten")
+    cat("\n Verzeichnis 'Vorkommen/Daten' erstellt.\n") # notification for the user
     x <- 1
   }
   
