@@ -32,7 +32,7 @@ Datenbank <- c("sMon")
 
 ##########################################################################
 ## Name zum Verzeichnis, in dem Netzwerkdaten für CASPIAN gespeichert sind 
-# path2data <- file.path("..","..","EBAspread","Data","FinalDataFiles")
+path2data <- file.path("..","..","EBAspread","Data","FinalDataFiles")
 # path2data <- file.path("CASPIAN","Daten")
 
 

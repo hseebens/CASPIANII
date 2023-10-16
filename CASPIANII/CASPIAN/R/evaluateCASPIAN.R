@@ -64,7 +64,7 @@ evaluateCASPIAN <- function(pars) {
       if (networkType=="terrestrial"){
         InitLinks<-which(llobj$ID%in%init_obj$init_segm)
       }
-      if (length(InitLinks)!=0) { llobj<-llobj[-InitLinks,]}
+      # if (length(InitLinks)!=0) { llobj<-llobj[-InitLinks,]}
       
       #Calculate goodness of fit based on PCC and presence/absence
       # # options(warn = -1)

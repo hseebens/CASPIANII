@@ -119,12 +119,12 @@ calibrateCASPIAN<- function( path2data,
   rm(init_data)
   
   # get current subfolders, identify the new one with CASPIAN results, and copy the initialization file to the main working directory to be used at a later stage
-  # cat("\n Copying initialization file to current working directory \n")
+  cat("\n Copying initialization file to current working directory \n")
   
   new_dirs <- list.dirs()
   new_dir <- new_dirs[which(new_dirs %in% Old_dirs == FALSE)]
   
-  # file.copy(from = file.path(new_dir, file_init),to=file_init,overwrite = TRUE)
+  file.copy(from = file.path(new_dir, file_init),to=file_init,overwrite = TRUE)
   
   #save progress so far in .rData file
   cat("\n Saving Pre-Calibration file \n")
@@ -136,6 +136,7 @@ calibrateCASPIAN<- function( path2data,
   tx[grep("makeplot<-",tx)] <- "makeplot<- FALSE"
   tx[grep("save_plot<-",tx)] <- "save_plot<- FALSE"
   tx[grep("initialize<-",tx)] <- "initialize<- FALSE"
+  # tx[grep("file_init<-",tx)] <- paste0("file_init<-",file.path(new_dir,"init_data.Rdata"))
   tx[grep("save_init<-",tx)] <- "save_init<- FALSE"
   tx[grep("export_results<-",tx)] <- "export_results<- c()"
   if (runTerrestrialModel==TRUE){
