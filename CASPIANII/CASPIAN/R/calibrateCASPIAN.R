@@ -7,7 +7,7 @@ calibrateCASPIAN<- function( path2data,
                              TaxonName, 
                              database=c("sMon"),
                              # thresholdData=0.9,
-                             networkType, #either "aquatic" or "terrestrial". No default
+                             networkType, #either "waterways" or "terrestrial". No default
                              yearToCalibrate, 
                              ParametersToCalibrate, 
                              ParameterRange= data.frame(name=c("S_att0", "R_att0","att1","att2","att3","S_air0","R_air0", "air1","air2","nat1","nat2","estT",
@@ -85,7 +85,7 @@ calibrateCASPIAN<- function( path2data,
   #Calculate invaded links for each time step
   if (runAquaticModel==TRUE) max_dist <- max_dist_W
   if (runTerrestrialModel==TRUE) max_dist <- max_dist_T
-  if (networkType=="aquatic") netwToUse <- Water_netw_data
+  if (networkType=="waterways") netwToUse <- Water_netw_data
   if (networkType=="terrestrial")  netwToUse <- Terrestrial_netw_data
   
   for (i in sort(unique(data_coords$iter))[1:stepToCalibrate]) {

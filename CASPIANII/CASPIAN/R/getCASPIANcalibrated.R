@@ -12,10 +12,10 @@ graphics.off()
 ## "CASPIANII.Rproj" festgelegt (Verzeichnis, in dem die Datei CASPIANII.Rproj
 ## vorliegt) und muss daher nicht extra spezifiziert werden.
 
-# setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
+setwd("C:/Hanno/Bioinvasion/CASPIANII/CASPIANII")
 
 
-##########################################################################
+#########################################################################
 ## Artname 
 ## Fuer diese Art werden Vorkommensdaten aus dem Verzeichnis "Vorkommen ->
 ## Daten" geladen. Diese Datei muss vorher durch die Anwendung des 
@@ -59,7 +59,7 @@ calibrateCASPIAN(path2data = path2data,
                  # configFile = configFile, 
                  TaxonName = TaxonName,
                  database=Datenbank,
-                 networkType="aquatic", # "aquatic" oder "terrestrial"
+                 networkType="waterways", # "waterways" oder "terrestrial"
                  ParametersToCalibrate = ParametersToCalibrate,
                  yearToCalibrate=1996)
 

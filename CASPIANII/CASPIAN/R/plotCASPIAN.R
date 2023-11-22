@@ -88,11 +88,13 @@ plotCASPIAN<-function(list_results,shapeObj,variable,save_plot,save_dir,lwd=1){
     op <- par(mar=c(0.1,0.2,0.1,0.2))
 
     # plot(st_geometry(shapeObj_full),col="lightgray")
-    plot(st_geometry(Not_inv),  xlim = st_bbox(shapeObj)[c(1, 3)], ylim = st_bbox(shapeObj)[c(2, 4)],
-         axes=F,col="darkgray",lwd=lwd
+    plot(st_geometry(Germany_borders),  xlim = st_bbox(Germany_borders)[c(1, 3)], ylim = st_bbox(Germany_borders)[c(2, 4)],
+         axes=F
          # ,panel.first=rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4])
          )
+    plot(st_geometry(Not_inv),col="darkgray",add=T,lwd=lwd)
     plot(st_geometry(Inv),add=T,col=Inv$color,lwd=lwd)
+    
     legend("topleft",c(paste0("Iter. #",names(list_results)[i])),box.col = "white",bg = "white")
 
     if (save_plot==T) dev.off()

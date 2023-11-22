@@ -31,6 +31,7 @@ Commodities_shape_data<- st_read(dsn=file.path(path2data),layer="Cargo_shp") # A
 Pallets_netw_data<-   fread(file.path(path2data,"PalletsFlow.csv")) # file containing iformation about cargo pallets flow
 Container_netw_data<- fread(file.path(path2data,"ContainerFlow.csv")) # file containing iformation about container flow
 
+Germany_borders <- st_read(dsn=file.path(path2data), layer="gadm41_DEU_0") # shapefile of German borders
 
 ####################################################################
 ## General model settings ##########################################

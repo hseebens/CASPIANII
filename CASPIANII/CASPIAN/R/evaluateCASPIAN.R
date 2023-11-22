@@ -58,7 +58,7 @@ evaluateCASPIAN <- function(pars) {
       colnames(llobj)<-c("ID","Observed","CASPIAN")
       
       #remove links invaded as starting points
-      if (networkType=="aquatic"){
+      if (networkType=="waterways"){
         InitLinks<-which(llobj$ID%in%init_obj$init_segm_water)
       }
       if (networkType=="terrestrial"){
