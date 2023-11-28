@@ -167,7 +167,8 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   }
 
   ## remove occurrence points without environmental data
-  occenv <- occenv[complete.cases(occenv),] 
+  occenv <- as.data.frame(occenv,stringsAsFactors=F)
+  occenv <- occenv[complete.cases(occenv[,-which(colnames(occenv)=="Zeitpunkt")]),] 
 
   ## check for missing data
   if (nrow(occenv)<50){
@@ -176,6 +177,9 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
 
     ## write status to log file
     status_species$Status[ind_species] <- "Keine Habitatmodellierung, da keine ausreichende Überschneidung von Daten zum Vorkommen und Umweltvariablen vorliegt."
+    
+    ## export status of species list
+    write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
     
     return()
     
@@ -190,10 +194,10 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     ## output  
     fwrite(occenv, file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
     
+    ## export status of species list
+    write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
+    
     return(occenv) 
   }
-  
-  ## export status of species list
-  write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
   
 } ## end of main function

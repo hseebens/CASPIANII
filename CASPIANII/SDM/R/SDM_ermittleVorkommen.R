@@ -63,7 +63,7 @@ ermittleVorkommen <- function(TaxonName=NULL,
       } else {
         
         eigeneDaten <- eigeneDaten[,c("Taxon", "Laengengrad", "Breitengrad")]
-        eigeneDaten$Vorkommen <- 1
+        # eigeneDaten$Vorkommen <- 1
         eigeneDaten$Zeitpunkt <- NA
         eigeneDaten$Datenbank <- "eigene Daten"
         
@@ -116,6 +116,7 @@ ermittleVorkommen <- function(TaxonName=NULL,
     }
     
     Vorkommen_alle <- do.call("rbind",Vorkommen_alle)
+    Vorkommen_alle <- unique(Vorkommen_alle)
     
     if (!is.null(Vorkommen_alle)){
       

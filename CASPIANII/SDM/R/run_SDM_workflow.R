@@ -37,7 +37,7 @@ Max_Anzahl_GBIF_DE <- 10000 # sollte 20000 nicht ueberschreiten
 ## Parameter zur Modellierung ############################################################################
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
-identifier <- "160823" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+identifier <- "Test" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 ## Variablen zur Vorhersage der Habitate ##########################################
 
@@ -129,7 +129,7 @@ status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModell
 
 ##########################################################################################################
 ## Schleife ueber alle Arten zur Berechnung der Habitateignung
-for (i in 100:length(Artenliste)){ #
+for (i in 1:length(Artenliste)){ #
 
   ## Auswahl einer Art ###################################################################################
   TaxonName <- Artenliste[i]  ## Taxonname

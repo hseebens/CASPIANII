@@ -102,6 +102,7 @@ sammleVorkommenOnline <- function(TaxonName=TaxonName,
                ,has_coords=T
     )
     occ_dat <- occ2df(out)
+    occ_dat <- subset(occ_dat,name==TaxonName)
     
     if (nrow(occ_dat)>0){
       

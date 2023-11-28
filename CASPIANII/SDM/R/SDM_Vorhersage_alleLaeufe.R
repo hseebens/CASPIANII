@@ -11,7 +11,7 @@
 Vorhersage_alleLaeufe <- function(TaxonName,
                           Modelllaeufe,
                           Ausschnitt=NULL,
-                          speichern=T,
+                          speichern=TRUE,
                           identifier=NULL) { ## start of main function
   
   cat(paste0("\n*** Extrapolation der Vorhersagen für ",TaxonName," ***\n") ) # notification for the user
