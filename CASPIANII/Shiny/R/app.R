@@ -18,8 +18,8 @@ library(sf)
 library(DT)
 
 library(leaflet)
-library(rgdal)
-library(rmapshaper)
+# library(rgdal)
+# library(rmapshaper)
 library(sf)
 
 library(dplyr)
@@ -334,3 +334,6 @@ shinyApp(ui = ui, server = server)
 
 # Run the app-----
 # runApp("C:/Users/yanis/Documents/scripts/caspian-app/shiny-app")
+
+
+# shiny::runGitHub(repo="CASPIANII", subdir="CASPIANII/Shiny/R",username= "hseebens")
