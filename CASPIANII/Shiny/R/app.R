@@ -1,17 +1,8 @@
 rm(list=ls())
 
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-# Resources used: https://www.paulamoraga.com/book-geospatial/sec-shinyexample.html
 
 library(shiny)
 #library(shinycssloaders)
-#library(shinybusy)
 library(shinybusy)
 
 library(sf)
@@ -20,16 +11,13 @@ library(DT)
 library(leaflet)
 # library(rgdal)
 # library(rmapshaper)
-library(sf)
+# library(sf)
 
 library(dplyr)
 library(tidyr)
 library(data.table)
 
-# source('C:/Users/yanis/Documents/scripts/checks_taxotools.R')
 
-# # dir
-# data_dir = 'C:/Users/yanis/Documents/scripts/caspian-app/data'
 # 
 # # Prep data----
 # 
@@ -185,17 +173,9 @@ server <- function(input, output){
 
   # render the output table
   output$table <- renderDT(
-    # show only species in the selected municipality
-    # cbind(all_pot_spec[[input$Gemeinde_Daten]],1)
-    
+
     test_data[RegionName%in%input$Gemeinde_Daten &  Art%in%all_pot_spec[[input$Gemeinde_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
 
-    # # common names
-    # common_names[common_names$Taxon_wissensch%in%all_pot_spec[[input$Gemeinde_Daten]], ]
-    # data_filtered[,c("Taxon_wissensch","Taxon_deutsch")]
-    # data[RegionName==input$GemeindeDaten &  ,] #& Taxon%in%pot_spec
-    # out <- data[RegionName==input$GemeindeDaten & Taxon%in%pot_spec],
-    # out
   )
   output$ListeNeobiota <- renderDT(
     # show only species in the selected municipality
@@ -329,11 +309,8 @@ server <- function(input, output){
   
 }
 
-# shinyApp()
-shinyApp(ui = ui, server = server)
-
 # Run the app-----
-# runApp("C:/Users/yanis/Documents/scripts/caspian-app/shiny-app")
+shinyApp(ui = ui, server = server)
 
 
 # shiny::runGitHub(repo="CASPIANII", subdir="CASPIANII/Shiny/R",username= "hseebens")
