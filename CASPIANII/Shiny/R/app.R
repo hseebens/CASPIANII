@@ -169,24 +169,25 @@ ui <- fluidPage(
 # server function (server <- function(input, output){})
 server <- function(input, output){
   
-  test_data <- merge(data,common_names,by.x="Art", by.y="Taxon_wissensch")
+  region_lists <- merge(data,common_names,by.x="Art", by.y="Taxon_wissensch")
 
-  # render the output table
-  output$table <- renderDT(
+  # render the output table ###########
+  output$table <- renderDT({
 
-    test_data[RegionName%in%input$Gemeinde_Daten &  Art%in%all_pot_spec[[input$Gemeinde_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
-
+    region_list_sub <- region_lists[RegionName%in%input$Gemeinde_Daten &  Art%in%all_pot_spec[[input$Gemeinde_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
+    region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
+  }
   )
   output$ListeNeobiota <- renderDT(
     # show only species in the selected municipality
     
-    test_data[RegionName%in%input$Gemeinde_Daten & Ist=="x", c("Art","Deutscher Artname")]
+    region_lists[RegionName%in%input$Gemeinde_Daten & Ist=="x", c("Art","Deutscher Artname")]
 
   )
   
   ## region download #######################
   data_regs <- reactive({
-    test_data[RegionName%in%input$Gemeinde_Daten & Ist=="x", c("RegionName","Art","Deutscher Artname")]
+    region_lists[RegionName%in%input$Gemeinde_Daten & Ist=="x", c("RegionName","Art","Deutscher Artname")]
   })
   
   output$download_ist <- downloadHandler(
@@ -200,7 +201,7 @@ server <- function(input, output){
   
   ## pot species download ##################
   data_potspec <- reactive({
-    test_data[RegionName%in%input$Gemeinde_Daten &  Art%in%all_pot_spec[[input$Gemeinde_Daten]],c("RegionName","Art","Deutscher Artname","Habitateignung (0-1)")]
+    region_lists[RegionName%in%input$Gemeinde_Daten &  Art%in%all_pot_spec[[input$Gemeinde_Daten]],c("RegionName","Art","Deutscher Artname","Habitateignung (0-1)")]
   })
 
   output$download_pot <- downloadHandler(
