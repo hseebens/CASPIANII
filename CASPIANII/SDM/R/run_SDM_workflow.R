@@ -37,7 +37,7 @@ Max_Anzahl_GBIF_DE <- 10000 # sollte 20000 nicht ueberschreiten
 ## Parameter zur Modellierung ############################################################################
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
-identifier <- "Test" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+identifier <- "160823" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 ## Variablen zur Vorhersage der Habitate ##########################################
 
@@ -259,7 +259,8 @@ if (length(Artenliste)==1){
 ## Verzeichnis mit Datensaetzen zum Vorkommen der Arten (Export von 'ermittle_vorkommen()' )
 
 ## Schritt 7a: integriere Vorkommen aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("SDM","Data","Input"),
+erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("E:","CASPIANII","CASPIANII","SDM","Data","Input"),
+                               # VorkommenVerzeichnis=file.path("SDM","Data","Input"),
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,
@@ -267,7 +268,8 @@ erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("SDM","Data","Inpu
                                max_nTaxa=300)
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("SDM","Data","Output"),
+erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("E:","CASPIANII","CASPIANII","SDM","Data","Output"),
+                               # VorhersageVerzeichnis=file.path("SDM","Data","Output"),
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,

@@ -15,7 +15,9 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   ## Load data #########################################################
   ## load maps of Germany
   # regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_4",quiet=T)
-  regions <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_3")
+  regions3 <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_3", quiet=TRUE)
+  regions2 <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_2", quiet=TRUE)
+  regions2$CC_2[regions2$NAME_2=="Bodensee"] <- "001" # missing
   germany_border <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="gadm41_DEU_1",quiet=T)
   # regions$ID <- 1:nrow(regions)
   
@@ -41,7 +43,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   values(all_rasters) <- 0
   values(new_raster) <- 0
   
-  all_TaxonName <- all_maxSuits <- all_meanSuits <- list()
+  all_TaxonName <- all_meanSuits_CC2 <- all_meanSuits_CC3 <- all_maxSuits_CC2 <- all_maxSuits_CC3 <- list()
   n_species <- length(all_files)
   for (i in 1:n_species){ #length(all_files)
 
@@ -49,7 +51,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
 
     ## load suitabilities
     HabitatEignung <- fread(file=file.path(VorhersageVerzeichnis, all_files[i]))
-    
+
     if (all(is.na(HabitatEignung$HabitatEignung_mittel))) next
     
     ## transform to spatial object
@@ -70,15 +72,19 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
 
     ## extract mean values per polygon
     meanSuit_rast <- terra::rast(meanSuit_coords,type="xyz")
-    meanSuits_regs <- terra::extract(meanSuit_rast,regions,fun=mean)
-    meanSuits_regs$CC_3 <- regions$CC_3
-    meanSuits_regs <- meanSuits_regs[,c("CC_3","HabitatEignung_mittel")]
+    meanSuits_regs2 <- terra::extract(meanSuit_rast,regions2,fun=mean,na.rm=T)
+    meanSuits_regs2$CC_2 <- regions2$CC_2
+    meanSuits_regs2 <- meanSuits_regs2[,c("CC_2","HabitatEignung_mittel")]
+    meanSuits_regs3 <- terra::extract(meanSuit_rast,regions3,fun=mean,na.rm=T)
+    meanSuits_regs3$CC_3 <- regions3$CC_3
+    meanSuits_regs3 <- meanSuits_regs3[,c("CC_3","HabitatEignung_mittel")]
 
     ## subset to suitable habitats
-    maxSuitSpec <- subset(meanSuits_regs,HabitatEignung_mittel>0.7)
+    maxSuitSpec2 <- subset(meanSuits_regs2,HabitatEignung_mittel>0.7)
+    maxSuitSpec3 <- subset(meanSuits_regs3,HabitatEignung_mittel>0.7)
     # maxSuitSpec <- subset(meanSuits_regs,HabitatEignung_mittel>0.9) # max
     
-    if (nrow(maxSuitSpec)==0){
+    if (nrow(maxSuitSpec3)==0 | nrow(maxSuitSpec2)==0){
       cat(paste0(" Keine ausreichenden Daten zur Vorhersage fuer ",TaxonName,"\n"))
       next
     }
@@ -95,26 +101,41 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     rasterData_all <- rasterData_all + raster_aliens
 
     ## prepare output polygon data
-    meanSuits_regs$HabitatEignung_mittel <- round(meanSuits_regs$HabitatEignung_mittel,3)
-    meanSuits_regs$Taxon <- TaxonName
-    colnames(meanSuits_regs) <- c("CC_3","HabitatEignung","Taxon")
-
-    maxSuitSpec$HabitatEignung_mittel <- round(maxSuitSpec$HabitatEignung_mittel,3)
-    maxSuitSpec$Taxon <- TaxonName
-    colnames(maxSuitSpec) <- c("CC_3","HabitatEignung","Taxon")
-
+    meanSuits_regs2$HabitatEignung_mittel <- round(meanSuits_regs2$HabitatEignung_mittel,3)
+    meanSuits_regs3$HabitatEignung_mittel <- round(meanSuits_regs3$HabitatEignung_mittel,3)
+    meanSuits_regs2$Taxon <- TaxonName
+    meanSuits_regs3$Taxon <- TaxonName
+    colnames(meanSuits_regs2) <- c("CC_2","HabitatEignung","Taxon")
+    colnames(meanSuits_regs3) <- c("CC_3","HabitatEignung","Taxon")
+    
+    # if (any(is.na(meanSuits_regs2$CC_2))) stop()
+    # if (any(is.na(meanSuits_regs2$HabitatEignung))) stop()
+    
+    maxSuitSpec2$HabitatEignung_mittel <- round(maxSuitSpec2$HabitatEignung_mittel,3)
+    maxSuitSpec3$HabitatEignung_mittel <- round(maxSuitSpec3$HabitatEignung_mittel,3)
+    maxSuitSpec2$Taxon <- TaxonName
+    maxSuitSpec3$Taxon <- TaxonName
+    colnames(maxSuitSpec2) <- c("CC_2","HabitatEignung","Taxon")
+    colnames(maxSuitSpec3) <- c("CC_3","HabitatEignung","Taxon")
+    
     all_TaxonName[[i]] <- strsplit(all_files[i],"_")[[1]][[2]]
 
-    all_meanSuits[[i]] <- meanSuits_regs
-
-    all_maxSuits[[i]] <- maxSuitSpec
+    all_meanSuits_CC2[[i]] <- meanSuits_regs2
+    all_meanSuits_CC3[[i]] <- meanSuits_regs3
+    
+    all_maxSuits_CC2[[i]] <- maxSuitSpec2
+    all_maxSuits_CC3[[i]] <- maxSuitSpec3
   }
 
-  all_maxSuits_df <- do.call("rbind",all_maxSuits)
-  all_meanSuits_df <- do.call("rbind",all_meanSuits)
+  all_maxSuits_df_CC2 <- do.call("rbind",all_maxSuits_CC2)
+  all_meanSuits_df_CC2 <- do.call("rbind",all_meanSuits_CC2)
+  all_maxSuits_df_CC3 <- do.call("rbind",all_maxSuits_CC3)
+  all_meanSuits_df_CC3 <- do.call("rbind",all_meanSuits_CC3)
   
-  all_maxSuits_df <- all_maxSuits_df[all_maxSuits_df$CC_3!="NA",]
-  all_meanSuits_df <- all_meanSuits_df[all_meanSuits_df$CC_3!="NA",]
+  all_maxSuits_df_CC2 <- all_maxSuits_df_CC2[all_maxSuits_df_CC2$CC_2!="NA",]
+  all_meanSuits_df_CC2 <- all_meanSuits_df_CC2[all_meanSuits_df_CC2$CC_2!="NA",]
+  all_maxSuits_df_CC3 <- all_maxSuits_df_CC3[all_maxSuits_df_CC3$CC_3!="NA",]
+  all_meanSuits_df_CC3 <- all_meanSuits_df_CC3[all_meanSuits_df_CC3$CC_3!="NA",]
   
   ## crop raster to German borders
   terra::crs(rasterData_all) <- "epsg:4326"
@@ -124,18 +145,29 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   
   
   ## output ############################################################
-  all_maxSuits_df <- all_maxSuits_df[order(all_maxSuits_df$CC_3,all_maxSuits_df$HabitatEignung,decreasing = T),]
-
+  all_maxSuits_df_CC2 <- all_maxSuits_df_CC2[order(all_maxSuits_df_CC2$CC_2,all_maxSuits_df_CC2$HabitatEignung,decreasing = T),]
+  all_meanSuits_df_CC2 <- all_meanSuits_df_CC2[order(all_meanSuits_df_CC2$CC_2,all_meanSuits_df_CC2$HabitatEignung,decreasing = T),]
+  all_maxSuits_df_CC3 <- all_maxSuits_df_CC3[order(all_maxSuits_df_CC3$CC_3,all_maxSuits_df_CC3$HabitatEignung,decreasing = T),]
+  all_meanSuits_df_CC3 <- all_meanSuits_df_CC3[order(all_meanSuits_df_CC3$CC_3,all_meanSuits_df_CC3$HabitatEignung,decreasing = T),]
+  
   if (!is.null(Artgruppe)){
-    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_GADM3_",identifier,".gz")))
-    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_GADM3_",identifier,".gz")))
+    
+    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Kreise_",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Kreise_",identifier,".gz")))
+    
+    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Gemeinden_",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Gemeinden_",identifier,".gz")))
     
     terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_EignungSumme_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
     terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_Eignung07_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
     
   } else {
-    fwrite(all_maxSuits_df,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_GADM3_",identifier,".gz")))
-    fwrite(all_meanSuits_df,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_GADM3_",identifier,".gz")))
+    
+    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Kreise_",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Kreise_",identifier,".gz")))
+    
+    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Gemeinden_",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Gemeinden_",identifier,".gz")))
     
     terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_EignungSumme_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
     terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_Eignung07_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
@@ -149,10 +181,14 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   # rdist.earth(x1=HabitatEignung[10000,c("x","y")],x2=HabitatEignung[10001,c("x","y")],miles=F)
   
   ## plot all taxa with suitable habitats ##################################
-  all_maxSuits_split <- split(all_maxSuits_df,f=all_maxSuits_df$CC_3)
-  nSpec <- unlist(lapply(all_maxSuits_split,nrow))
-  regs_spec <- cbind.data.frame(names(all_maxSuits_split),as.integer(nSpec))
-  colnames(regs_spec) <- c("CC_3","potAnzahlNeobiota")
+  all_maxSuits_split_CC3 <- split(all_maxSuits_df_CC3,f=all_maxSuits_df_CC3$CC_3)
+  all_maxSuits_split_CC2 <- split(all_maxSuits_df_CC2,f=all_maxSuits_df_CC2$CC_2)
+  nSpec2 <- unlist(lapply(all_maxSuits_split_CC2,nrow))
+  nSpec3 <- unlist(lapply(all_maxSuits_split_CC3,nrow))
+  regs_spec2 <- cbind.data.frame(names(all_maxSuits_split_CC2),as.integer(nSpec2))
+  regs_spec3 <- cbind.data.frame(names(all_maxSuits_split_CC3),as.integer(nSpec3))
+  colnames(regs_spec2) <- c("CC_2","potAnzahlNeobiota")
+  colnames(regs_spec3) <- c("CC_3","potAnzahlNeobiota")
   # hist(unlist(nSpec),50)
 
   
@@ -161,32 +197,70 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     
     cat("\n Erstelle Karten...\n")
     
-    regions_plot <- merge(regions,regs_spec,by="CC_3",all=T)
-
+    ## Gemeinden (municipalities)
+    regions_plot3 <- merge(regions3,regs_spec3,by="CC_3",all=T)
+    regions_plot3$potAnzahlNeobiota[is.na(regions_plot3$potAnzahlNeobiota)] <- 0
+    
     ## plot presence-absence (suit > 0.7) ##############
     if (!is.null(Artgruppe)){
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Gemeinden_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Gemeinden",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions_plot,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
+    mf_choro(regions_plot3,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
+    plot(st_geometry(germany_border),add=T,lwd=0.5)
+    dev.off()
+
+    
+    ## Landkreise:
+    
+    regions_plot2 <- merge(regions2,regs_spec2,by="CC_2",all=T)
+    regions_plot2$potAnzahlNeobiota[is.na(regions_plot2$potAnzahlNeobiota)] <- 0
+    
+    ## plot presence-absence (suit > 0.7) ##############
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Kreise_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
+    } else {
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Kreise",identifier,".png")),unit="in",width=8,height=8,res=300)
+    }
+    mf_choro(regions_plot2,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
     
+    
     ## plot all suitabilities summed up #########
-
-    all_meanSuits_agg <- aggregate(HabitatEignung ~ CC_3, data=all_meanSuits_df,sum)
+    
+    ## Gemeinden (municipalities)
+    
+    all_meanSuits_agg3 <- aggregate(HabitatEignung ~ CC_3, data=all_meanSuits_df_CC3,sum,na.rm=T)
     
     # regions$ID <- 1:nrow(regions)
-    regions_plot <- merge(regions,all_meanSuits_agg,by="CC_3")
+    regions_plot3 <- merge(regions3,all_meanSuits_agg3,by="CC_3")
     
     if (!is.null(Artgruppe)){
-      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_GADM3_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Gemeinden_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     } else {
-      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_GADM3",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Gemeinden",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     }
-    mf_choro(regions_plot,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
+    mf_choro(regions_plot3,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
+    plot(st_geometry(germany_border),add=T,lwd=0.5)
+    dev.off()
+    
+    
+    ## Kreise:
+    
+    all_meanSuits_agg2 <- aggregate(HabitatEignung ~ CC_2, data=all_meanSuits_df_CC2,function(x) sum(x,na.rm=T))
+    
+    # regions$ID <- 1:nrow(regions)
+    regions_plot2 <- merge(regions2,all_meanSuits_agg2,by="CC_2")
+    
+    if (!is.null(Artgruppe)){
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Kreise_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+    } else {
+      png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Kreise",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
+    }
+    mf_choro(regions_plot2,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
