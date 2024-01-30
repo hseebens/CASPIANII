@@ -28,7 +28,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   col_names <- c(Klima_var,Landbedeck_var)
   
   ## Extent of selection
-  ext_stack <- extent(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
+  ext_stack <- ext(c(Ausschnitt[1],Ausschnitt[3],Ausschnitt[2],Ausschnitt[4]))
   
   predictor_stack <- list()
   
@@ -50,7 +50,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     ## check availability of land cover files
     if (any(file.exists(file.path("SDM","Data","Input","WorldClim",filenames))==FALSE)){
       ind <- which(file.exists(file.path("SDM","Data","Input","WorldClim",filenames))==FALSE)
-    cat("\n Datensatz ",filenames[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","WorldClim"),". Bitte ergaenzen.\n")
+      cat("\n Datensatz ",filenames[ind]," fehlt im Verzeichnis",file.path("SDM","Data","Input","WorldClim"),". Bitte ergaenzen.\n")
     }
 
     envstack <- rast(file.path("SDM","Data","Input","WorldClim",filenames)) # workstation
@@ -103,10 +103,10 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
     new_raster <- envstack[[1]]
     values(new_raster) <- NA
     LCStack_2 <- list()
-    for (i in 1:nlyr(LCStack)){
-      new_LC <- resample(LCStack[[i]],new_raster,method="bilinear")
+    for (j in 1:nlyr(LCStack)){
+      new_LC <- terra::resample(LCStack[[j]],new_raster)
       new_LC[new_LC<0] <- 0 # method may produce negative proportions
-      LCStack_2[[i]] <- new_LC
+      LCStack_2[[j]] <- new_LC
     }
     LCStack <- rast(LCStack_2)
     
