@@ -92,7 +92,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     
     # all_TaxonName[[i]] <- strsplit(all_files[i],"_")[[1]][[2]]
     
-    # really_all_coords[[i]] <- all_coords
+    really_all_coords[[i]] <- all_coords
     
     all_sites_CC3[[i]] <- unique(cbind.data.frame(TaxonName,polys3))
     all_sites_CC2[[i]] <- unique(cbind.data.frame(TaxonName,polys2))
@@ -100,7 +100,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   
   all_sites_CC3_df <- do.call("rbind",all_sites_CC3)
   all_sites_CC2_df <- do.call("rbind",all_sites_CC2)
-  # all_coords_df <- do.call("rbind",really_all_coords)
+  all_coords_df <- do.call("rbind",really_all_coords)
 
   colnames(all_sites_CC3_df) <- c("Taxon","CC_3")
   colnames(all_sites_CC2_df) <- c("Taxon","CC_2")
@@ -108,10 +108,12 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
   if (!is.null(Artgruppe)){
     fwrite(all_sites_CC3_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Gemeinden_",Artgruppe,identifier,".gz")))
     fwrite(all_sites_CC2_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Kreise_",Artgruppe,identifier,".gz")))
+    fwrite(all_coords_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten_",Artgruppe,identifier,".gz")))
     terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Artgruppe,identifier,".tif")), overwrite=TRUE, filetype = "GTiff")
   } else {
     fwrite(all_sites_CC3_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Gemeinden_",identifier,".gz")))
     fwrite(all_sites_CC2_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Kreise_",identifier,".gz")))
+    fwrite(all_coords_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten_",identifier,".gz")))
     writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
     # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3",identifier,".gz")))
     # all_rasters <- raster(file.path("Grafiken","RasterAllOccurrences_191222"))
