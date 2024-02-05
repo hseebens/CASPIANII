@@ -37,7 +37,7 @@ Max_Anzahl_GBIF_DE <- 10000 # sollte 20000 nicht ueberschreiten
 ## Parameter zur Modellierung ############################################################################
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
-identifier <- "160823" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+identifier <- "281123" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 ## Variablen zur Vorhersage der Habitate ##########################################
 
@@ -97,6 +97,12 @@ LadePakete()
 
 ueberpruefe_Verzeichnisse()
 
+
+## check identifier separator
+if (strtrim(identifier,1)!="_"){
+  identifier <- paste0("_",identifier)
+}
+
 ###########################################################################################################
 ## Ueberpruefe Datensaetze (Artenliste und Daten der Vorhersagevariablen) #################################
 
@@ -109,12 +115,6 @@ ueberpruefe_Datensaetze(Klima_var=Klima_var,
 
 Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
                                    Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE)
-
-
-## check identifier separator
-if (strtrim(identifier,1)!="_"){
-  identifier <- paste0("_",identifier)
-}
 
 ###########################################################################################################
 ## Generiere Tabelle zum Stand der Modellierung fuer jede Art #############################################

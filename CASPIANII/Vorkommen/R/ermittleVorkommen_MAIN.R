@@ -42,8 +42,8 @@ ueberpruefe_Datenverzeichnis()
 ##########################################################################
 ## Parameter zur Spezifizierung der Suche ################################
 
-# TaxonName <- "Crassostrea gigas"
-TaxonName <- "Impatiens glandulifera"
+TaxonName <- "Crassostrea gigas"
+# TaxonName <- "Impatiens glandulifera"
 
 ## Verzeichnis der sMon Datensaetze (optional)
 sMon_Verzeichnis <- "C:/Hanno/Storage_large/Species/sMon"

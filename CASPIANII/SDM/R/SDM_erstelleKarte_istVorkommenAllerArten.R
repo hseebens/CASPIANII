@@ -63,7 +63,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     all_coords <- Vorkommen[,c("Laengengrad", "Breitengrad", "Taxon")] # prepare raster file with the mean predictions for plotting
     
     # Transform to sf object
-    coords_sf <- st_as_sf(all_coords,coords=c("Laengengrad","Breitengrad"),crs=st_crs(regions))
+    coords_sf <- st_as_sf(all_coords,coords=c("Laengengrad","Breitengrad"),crs=st_crs(regions2))
     
     ## get occurrences per polygon (municipality)
     pts_regs3 <- st_join(coords_sf,regions3)
@@ -111,13 +111,16 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     fwrite(all_coords_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten_",Artgruppe,identifier,".gz")))
     terra::writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",Artgruppe,identifier,".tif")), overwrite=TRUE, filetype = "GTiff")
   } else {
-    fwrite(all_sites_CC3_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Gemeinden_",identifier,".gz")))
-    fwrite(all_sites_CC2_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Kreise_",identifier,".gz")))
-    fwrite(all_coords_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten_",identifier,".gz")))
-    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster_",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
+    fwrite(all_sites_CC3_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Gemeinden",identifier,".gz")))
+    fwrite(all_sites_CC2_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Kreise",identifier,".gz")))
+    fwrite(all_coords_df,file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten",identifier,".gz")))
+    writeRaster(all_rasters,file.path("SDM","Data","Output",paste0("istVorkommenAlleArten_Raster",identifier,".tif")), overwrite=TRUE, filetype="GTiff")
     # all_sites_df <- fread(file.path("SDM","Data","Output", paste0("VorkommenAlleArten_GADM3",identifier,".gz")))
     # all_rasters <- raster(file.path("Grafiken","RasterAllOccurrences_191222"))
   }
+  # all_sites_CC3_df <- fread(file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Gemeinden",identifier,".gz")), colClasses=c("character","character"))
+  # all_sites_CC2_df <- fread(file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Kreise",identifier,".gz")), colClasses=c("character","character"))
+  # all_coords_df <- fread(file.path("SDM","Data","Output", paste0("istVorkommenAlleArten_Koordinaten",identifier,".gz")))
   
   cat(paste0(" Vorkommen von ",length(unique(all_sites_CC3_df$Taxon)), " Arten integriert."))
 
@@ -137,9 +140,9 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     if (!is.null(Artgruppe)){
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Raster_max",max_nTaxa,"_",Artgruppe,identifier,".png")),unit="in",width=8,height=8,res=300)
     } else {
-      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Raster_max",max_nTaxa,"_",identifier,".png")),unit="in",width=8,height=8,res=300)
+      png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Raster_max",max_nTaxa,identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    plot(aliens_masked,col=rev(hcl.colors(10,pal="Mint")))
+    plot(aliens_masked,col=rev(hcl.colors(12,pal="Mint")))
     plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
@@ -173,7 +176,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Gemeinden_max",max_nTaxa,identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions3,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty") #,breaks="pretty"
+    mf_choro(regions3,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty", pal=rev(hcl.colors(15,pal="Mint"))) #,breaks="pretty"
     plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.85,y=53,xpd=NA)
     dev.off()
@@ -190,7 +193,7 @@ erstelleKarte_istVorkommenAlle <- function(VorkommenVerzeichnis=VorkommenVerzeic
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_VorkommenAlle_Kreise_max",max_nTaxa,identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions2,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty") #,breaks="pretty"
+    mf_choro(regions2,var="Taxon",leg_title="Anzahl Neobiota",border=NA,breaks="pretty", pal=rev(hcl.colors(15,pal="Mint"))) #,breaks="pretty"
     plot(st_geometry(germany_border),add=TRUE,lwd=0.5)
     text(">",x=17.85,y=53,xpd=NA)
     dev.off()

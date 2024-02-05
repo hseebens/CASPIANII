@@ -152,25 +152,25 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
   
   if (!is.null(Artgruppe)){
     
-    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Kreise_",identifier,".gz")))
-    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Kreise_",identifier,".gz")))
+    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Kreise",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Kreise",identifier,".gz")))
     
-    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Gemeinden_",identifier,".gz")))
-    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Gemeinden_",identifier,".gz")))
+    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_",Artgruppe,"_Eignung07_Gemeinden",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_",Artgruppe,"_EignungSumme_Gemeinden",identifier,".gz")))
     
-    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_EignungSumme_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
-    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_Eignung07_raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_EignungSumme_raster",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_",Artgruppe,"_Eignung07_raster",identifier,".tif")),overwrite=T,filetype="GTiff")
     
   } else {
     
-    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Kreise_",identifier,".gz")))
-    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Kreise_",identifier,".gz")))
+    fwrite(all_maxSuits_df_CC2,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Kreise",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC2,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Kreise",identifier,".gz")))
     
-    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Gemeinden_",identifier,".gz")))
-    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Gemeinden_",identifier,".gz")))
+    fwrite(all_maxSuits_df_CC3,file.path("SDM","Data","Output",  paste0("potVorkommen_alleArten_Eignung07_Gemeinden",identifier,".gz")))
+    fwrite(all_meanSuits_df_CC3,file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_EignungSumme_Gemeinden",identifier,".gz")))
     
-    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_EignungSumme_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
-    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_Eignung07_Raster_",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_all_masked,file.path("SDM","Data","Output",paste0("potVorkommen_EignungSumme_Raster",identifier,".tif")),overwrite=T,filetype="GTiff")
+    terra::writeRaster(rasterData_max07_masked,file.path("SDM","Data","Output",paste0("potVorkommen_Eignung07_Raster",identifier,".tif")),overwrite=T,filetype="GTiff")
   }
 
   # all_maxSuits_df <- fread(file=file.path("SDM","Data","Output", paste0("potVorkommen_alleArten_Eignung07_GADM3_",identifier,".gz")))
@@ -207,7 +207,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Gemeinden",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions_plot3,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
+    mf_choro(regions_plot3,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
 
@@ -223,7 +223,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Kreise",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    mf_choro(regions_plot2,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel")))
+    mf_choro(regions_plot2,var="potAnzahlNeobiota",leg_title="Pot. Anzahl Neobiota",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
@@ -243,7 +243,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Gemeinden",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     }
-    mf_choro(regions_plot3,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
+    mf_choro(regions_plot3,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="Mint"))) #
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
@@ -260,7 +260,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken", paste0("KarteDeutschland_HabitateignungSumme_Kreise",identifier,".png")),unit="in",width=8,height=8,res=300) # plot without occurrences
     }
-    mf_choro(regions_plot2,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="OrYel"))) #
+    mf_choro(regions_plot2,var="HabitatEignung",leg_title="Habitateignung",border=NA,breaks="pretty",pal=rev(hcl.colors(12,pal="Mint"))) #OrYel
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     dev.off()
     
@@ -272,7 +272,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_HabitateignungSumme_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    plot(rasterData_all_masked,col=rev(hcl.colors(12,pal="OrYel")))
+    plot(rasterData_all_masked,col=rev(hcl.colors(12,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     # text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
@@ -283,7 +283,7 @@ erstelleKarte_potVorkommenAlle <- function(VorhersageVerzeichnis=VorhersageVerze
     } else {
       png(file.path("SDM","Grafiken",paste0("KarteDeutschland_PotNArten07_Raster",identifier,".png")),unit="in",width=8,height=8,res=300)
     }
-    plot(rasterData_max07_masked,col=rev(hcl.colors(12,pal="OrYel")))
+    plot(rasterData_max07_masked,col=rev(hcl.colors(12,pal="Mint")))
     plot(st_geometry(germany_border),add=T,lwd=0.5)
     # text(">",x=17.9,y=53.08,xpd=NA)
     dev.off()
