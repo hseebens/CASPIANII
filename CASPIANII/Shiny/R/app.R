@@ -16,6 +16,7 @@ library(dplyr)
 library(tidyr)
 library(data.table)
 library(units)
+library(RColorBrewer)
 
 # setwd(file.path("Shiny","R"))
 
@@ -55,6 +56,13 @@ spec_istpot_regs_eu <- merge(spec_istpot_eu,all_regs, by="CC_2", all=T)
 # species occurrences
 point_data <- fread(file.path("..","Daten","Vorkommen_alleArten.gz"))
 uni_spec <- unique(point_data$Taxon)
+
+point_data$DBcols <- as.numeric(as.factor(point_data$Datenbank))
+all_cols <- c( 'blue','black','red')
+all_cols <- brewer.pal(3, "Set1")
+all_DBs <- sort(unique(point_data$Datenbank))
+
+
 
 ## potential new arrivals
 all_pot_spec <- readRDS(file.path("..","Daten","Liste_PotSpez_Kreise.rds"))
@@ -179,7 +187,7 @@ server <- function(input, output){
     region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten &  Art%in%all_pot_spec[[input$Kreise_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
     region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
   })
-  output$ListeNeobiota <- renderDT(# show only species in the selected municipality
+  output$ListeNeobiota <- renderDT(# show only species in the selected region
     subdata$region_lists[RegionName%in%input$Kreise_Daten & Ist=="x", c("Art","Deutscher Artname")]
   )
   
@@ -232,6 +240,11 @@ server <- function(input, output){
   
   
   # render interactive map ##################
+  pal <- colorNumeric(
+    palette = all_cols,
+    domain = sort(unique(point_data$DBcols))
+  )
+  
   output$map <- renderLeaflet({
     
     # add data to map
@@ -281,29 +294,40 @@ server <- function(input, output){
     
     spfiltered <- point_data[which(point_data$Taxon == input$Art_Daten), ]
 
+    uni_col_DB <- unique(cbind.data.frame(spfiltered$Datenbank,pal(spfiltered$DBcols)))
+    
     # select subset of records to increase performance
     if(input$Kreise_Daten == "Keine"){ # for Germany-wide presentation
-      if (nrow(spfiltered)>1000){ # select only a random set of 1000 records
-        spfiltered <- spfiltered[sample(1:nrow(spfiltered),1000)]
+      if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
+        spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
+        NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
       }
-    } else { # for selctions of individual regions select only records within a buffer distance of dist_buff
+    } else { # for selections of individual regions select only records within a buffer distance of dist_buff
       map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ]
       ext <- st_bbox(st_buffer(map_sub,dist_buff))
       spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin)
     }
-
+    
     leafletProxy("map", data = spfiltered) %>%
       clearMarkers() %>% 
       clearGroup(group="occurrences") %>%
+      clearControls() %>%
       addCircleMarkers(
         lat = spfiltered$Breitengrad,
         lng = spfiltered$Laengengrad,
         group="occurrences",
         # color = "#000000",
+        color=pal(spfiltered$DBcols),
+        fillOpacity = 0.5,
         # fillColor = "#000000",
         weight = 5,
         radius = 5
+      ) %>%
+      addLegend("bottomright", colors=uni_col_DB[,2] ,labels=uni_col_DB[,1],
+                title = "Datenbank",
+                opacity = 1
       )
+    
     # addCircles(
     #   lat = spfiltered$Breitengrad,
     #   lng = spfiltered$Laengengrad,

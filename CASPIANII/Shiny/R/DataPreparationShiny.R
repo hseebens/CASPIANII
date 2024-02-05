@@ -13,6 +13,11 @@ library(openxlsx)
 
 setwd(file.path("C:","Hanno","Bioinvasion","CASPIANII","CASPIANII"))
 
+
+## Verzeichnis der Vorkommensdaten (z.B. SDM/Data/Input)
+path <- file.path("E:","CASPIANII","CASPIANII","SDM","Data","Input")
+
+
 ### generate Neobiota_AllOccurrences.gz !!!!!!!!
 ## and crop to Germany
 
@@ -36,7 +41,7 @@ setwd(file.path("C:","Hanno","Bioinvasion","CASPIANII","CASPIANII"))
 
 
 ## Name des Durchlaufs
-identifier <- "160823"
+identifier <- "281123"
 
 ## check identifier separator
 if (strtrim(identifier,1)!="_"){
@@ -302,11 +307,10 @@ saveRDS(all_pot_spec_eu,file.path("Shiny","Daten","Liste_PotSpez_Kreise_EUIAS.rd
 ##########################################################################################################
 ## Sammle alle Vorkommen #################################################################################
 
-ident <- "_281123"
-path <- file.path("E:","CASPIANII","CASPIANII","SDM","Data","Input")
+# identifier <- "_281123"
 
 all_Vorkommen <- list.files(path)
-all_Vorkommen <- all_Vorkommen[grep(ident, all_Vorkommen)]
+all_Vorkommen <- all_Vorkommen[grep(identifier, all_Vorkommen)]
 all_Vorkommen <- all_Vorkommen[grep(".csv", all_Vorkommen)]
 
 ## Pufferzone um Regionen
@@ -323,7 +327,7 @@ for (i in 1:length(all_Vorkommen)){
   
   dat <- fread(file.path(path,all_Vorkommen[i]))
   dat[,Zeitpunkt:=NULL]
-  dat[,Datenbank:=NULL]
+  # dat[,Datenbank:=NULL]
   
   dat <- subset(dat, Laengengrad<ext_reg$xmax & Laengengrad>ext_reg$xmin & Breitengrad<ext_reg$ymax & Breitengrad>ext_reg$ymin)
   
@@ -336,6 +340,7 @@ for (i in 1:length(all_Vorkommen)){
   
   colnames(dat_germ) <- c("Laengengrad","Breitengrad")
   dat_germ[, Taxon:=pts_germ$Taxon]
+  dat_germ[, Datenbank:=pts_germ$Datenbank]
   
   dat_all[[i]] <- dat_germ
   
