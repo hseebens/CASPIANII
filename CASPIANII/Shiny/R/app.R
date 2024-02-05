@@ -58,8 +58,8 @@ point_data <- fread(file.path("..","Daten","Vorkommen_alleArten.gz"))
 uni_spec <- unique(point_data$Taxon)
 
 point_data$DBcols <- as.numeric(as.factor(point_data$Datenbank))
-all_cols <- c( 'blue','black','red')
-all_cols <- brewer.pal(3, "Set1")
+all_cols <- c('royalblue3','firebrick1','skyblue1')
+# all_cols <- rev(brewer.pal(3, "Set1"))
 all_DBs <- sort(unique(point_data$Datenbank))
 
 
@@ -319,25 +319,15 @@ server <- function(input, output){
         # color = "#000000",
         color=pal(spfiltered$DBcols),
         fillOpacity = 0.5,
-        # fillColor = "#000000",
-        weight = 5,
+        fillColor = NA,
+        weight = 1,
         radius = 5
       ) %>%
       addLegend("bottomright", colors=uni_col_DB[,2] ,labels=uni_col_DB[,1],
                 title = "Datenbank",
                 opacity = 1
       )
-    
-    # addCircles(
-    #   lat = spfiltered$Breitengrad,
-    #   lng = spfiltered$Laengengrad,
-    #   color = "#000000",
-    #   fillColor = "#000000",
-    #   weight = 5
-    # )
-    
   })
-  
 }
 
 # Run the app-----
