@@ -281,10 +281,10 @@ server <- function(input, output){
           color = NA,
           dashArray = "3",
           fillOpacity = 0.7,
-          label = labels)
-      leaflet::addLegend(
-        pal = pal, values = ~nSpez,
-        opacity = 0.7, title = "Anzahl Neobiota")
+          label = labels) #%>%
+      # leaflet::addLegend(
+      #   pal = pal, values = ~nSpez,
+      #   opacity = 0.7, title = "Anzahl Neobiota")
     }
   })
   
