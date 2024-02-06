@@ -58,7 +58,7 @@ point_data <- fread(file.path("..","Daten","Vorkommen_alleArten.gz"))
 uni_spec <- unique(point_data$Taxon)
 
 point_data$DBcols <- as.numeric(as.factor(point_data$Datenbank))
-all_cols <- c('royalblue3','firebrick1','skyblue1')
+all_cols <- c('royalblue3','darkgreen','skyblue1')
 # all_cols <- rev(brewer.pal(3, "Set1"))
 all_DBs <- sort(unique(point_data$Datenbank))
 
@@ -282,9 +282,9 @@ server <- function(input, output){
           dashArray = "3",
           fillOpacity = 0.7,
           label = labels)
-      # leaflet::addLegend(
-      #   pal = pal, values = ~nSpez,
-      #   opacity = 0.7, title = "Anzahl Neobiota")
+      leaflet::addLegend(
+        pal = pal, values = ~nSpez,
+        opacity = 0.7, title = "Anzahl Neobiota")
     }
   })
   
