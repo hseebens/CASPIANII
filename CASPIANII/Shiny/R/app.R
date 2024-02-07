@@ -16,7 +16,8 @@ library(dplyr)
 library(tidyr)
 library(data.table)
 library(units)
-library(RColorBrewer)
+
+# install.packages(c("shiny","shinybusy","sf","DT","leaflet","dplyr","tidyr","data.table","units"))
 
 # setwd(file.path("Shiny","R"))
 
@@ -59,7 +60,6 @@ uni_spec <- unique(point_data$Taxon)
 
 point_data$DBcols <- as.numeric(as.factor(point_data$Datenbank))
 all_cols <- c('royalblue3','darkgreen','skyblue1')
-# all_cols <- rev(brewer.pal(3, "Set1"))
 all_DBs <- sort(unique(point_data$Datenbank))
 
 
@@ -183,13 +183,25 @@ server <- function(input, output){
   
   
   # render the output table ###########
-  output$table <- renderDT({
+  # potential species
+  pot_spec_tab <- reactive({
     region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten &  Art%in%all_pot_spec[[input$Kreise_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
     region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
   })
-  output$ListeNeobiota <- renderDT(# show only species in the selected region
+  output$table <- renderDT({ 
+    df <- pot_spec_tab()
+    DT::datatable(df)
+    # region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten &  Art%in%all_pot_spec[[input$Kreise_Daten]],c("Art","Deutscher Artname","Habitateignung (0-1)")]
+    # region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
+  }, selection = 'single')
+  # occurring species
+  occ_spec_tab <- reactive({
     subdata$region_lists[RegionName%in%input$Kreise_Daten & Ist=="x", c("Art","Deutscher Artname")]
-  )
+  })
+  output$ListeNeobiota <- renderDT({# show only species in the selected region
+    df <- occ_spec_tab()
+    DT::datatable(df)
+  }, selection = 'single')
   
   ## region download #######################
   data_regs <- reactive({
@@ -247,12 +259,16 @@ server <- function(input, output){
   
   output$map <- renderLeaflet({
     
+
     # add data to map
     if(input$Kreise_Daten == "Keine"){
       mapfiltered <- mapdata$map_simp
     } else {
       mapfiltered <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ]
     }
+    # if (length(s1)!=0){
+    #   mapfiltered <- map_fine[which(map_fine$Taxon == pot_spec_tab()$Taxon[s1]), ]
+    # }
     
     # create leaflet
     pal <- colorBin("YlOrRd", domain = mapfiltered$nSpez, bins = 7)
@@ -328,6 +344,96 @@ server <- function(input, output){
                 opacity = 1
       )
   })
+  
+  # s1 <- input$table_rows_selected
+  
+  
+  ## observe input to table of existing neobiota and plot records of selected species on map
+  observe({
+    
+    selRow <- occ_spec_tab()[input$ListeNeobiota_rows_selected,]
+    # print(selRow$Art)
+    
+    spfiltered <- point_data[which(point_data$Taxon == selRow$Art), ]
+    
+    uni_col_DB <- unique(cbind.data.frame(spfiltered$Datenbank,pal(spfiltered$DBcols)))
+    
+    ## subset to records in vicinity
+    map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ]
+    ext <- st_bbox(st_buffer(map_sub,dist_buff))
+    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin)
+    ## if still too many points select randomly
+    if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
+      spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
+      NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
+    }
+    
+    leafletProxy("map", data = spfiltered) %>%
+      clearMarkers() %>%
+      clearGroup(group="occurrences") %>%
+      clearControls() %>%
+      addCircleMarkers(
+        lat = spfiltered$Breitengrad,
+        lng = spfiltered$Laengengrad,
+        group="occurrences",
+        # color = "#000000",
+        color=pal(spfiltered$DBcols),
+        fillOpacity = 0.5,
+        fillColor = NA,
+        weight = 1,
+        radius = 5
+      ) %>%
+      addLegend("bottomright", colors=uni_col_DB[,2] ,labels=uni_col_DB[,1],
+                title = "Datenbank",
+                opacity = 1
+      )
+  })
+  
+  
+  
+  
+  ## observe input to table of potential neobiota and plot records of selected species on map
+  observe({
+    
+    selRow <- pot_spec_tab()[input$table_rows_selected,]
+    # print(selRow$Art)
+    
+    spfiltered <- point_data[which(point_data$Taxon == selRow$Art), ]
+
+    uni_col_DB <- unique(cbind.data.frame(spfiltered$Datenbank,pal(spfiltered$DBcols)))
+
+    ## subset to records in vicinity
+    map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ]
+    ext <- st_bbox(st_buffer(map_sub,dist_buff))
+    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin)
+    ## if still too many points select randomly
+    if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
+      spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
+      NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
+    }
+
+    leafletProxy("map", data = spfiltered) %>%
+      clearMarkers() %>%
+      clearGroup(group="occurrences") %>%
+      clearControls() %>%
+      addCircleMarkers(
+        lat = spfiltered$Breitengrad,
+        lng = spfiltered$Laengengrad,
+        group="occurrences",
+        # color = "#000000",
+        color=pal(spfiltered$DBcols),
+        fillOpacity = 0.5,
+        fillColor = NA,
+        weight = 1,
+        radius = 5
+      ) %>%
+      addLegend("bottomright", colors=uni_col_DB[,2] ,labels=uni_col_DB[,1],
+                title = "Datenbank",
+                opacity = 1
+      )
+  })
+  
+  
 }
 
 # Run the app-----
