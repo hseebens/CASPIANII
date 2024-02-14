@@ -123,11 +123,4 @@ beziehePfadDaten()
 cat("\nSchritt 5: Ermittlung der Anzahl an sMon Eintraege\n")
 ermittlesMonDaten(sMon_Verzeichnis)
 
-# ##########################################################################
-# ## Schritt 6: Identifiziere Arten mit starkem Anstieg an Eintraegen
-# ######## ????????????????????????? 
-# 
-# cat("\nSchritt 6: Ermittlung der Anzahl an sMon Eintraege\n")
-# ermittlesMonDaten(sMon_Verzeichnis)
-# 
 

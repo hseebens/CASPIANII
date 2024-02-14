@@ -3,7 +3,7 @@
 # The function loads the species table and adds pathways information to each species. Pathway 
 # information is taken from Saul et al. 2017, which is based on comprehensive alien species
 # database (i.e., GISD and DAISIE)
-
+#
 # Saul, W.-C., Roy, H. E., Booy, O., Carnevali, L., Chen, H.-J., Genovesi, P., … Jeschke, J. M. (2017). Assessing patterns in introduction pathways of alien species by linking major invasion data bases. Journal of Applied Ecology, 54(2), 657–669. https://doi.org/10.1111/1365-2664.12819
 # 
 # Project: CASPIAN II
@@ -17,7 +17,11 @@ beziehePfadDaten <- function(){
 
   dat <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
 
+  ## get translation table
+  path_translate <- read.xlsx(file.path("ListeNeobiota","Data","Input","PfadUebersetzung.xlsx"),sheet=1)
+
   ## Prepare pathway data ###################################################################
+  
   ## Pathway data from Saul et al. (2017) JAE 54, 657–669, doi: 10.1111/1365-2664.12819
   pathways <- read.table(file.path("ListeNeobiota","Data","Input","INTRODUCTION_PATHWAYS.csv"),sep=";",stringsAsFactors = F,header=T)
   colnames(pathways)[4] <- c("PathwayMain")
@@ -56,19 +60,48 @@ beziehePfadDaten <- function(){
   new_rows <- do.call("rbind",new_rows)
   
   pathway_dataset <- rbind(pathways_noDupl,new_rows)
+
   
   ## merge pathway information with species table ##########################################
   dat_path <- merge(dat,pathway_dataset,by.x="Taxon",by.y="Species.name",all.x=T)
+  
+  
+  ## EASIN paths #############################################################
+  pathsEASIN <- read.xlsx(file.path("ListeNeobiota","Data","Input","Pfadangaben_EASIN.xlsx"),sheet=1)
+  
+  ## translate paths to standard
+  pathsEASIN$path_EASIN <- NA
+  
+  all_paths <- colnames(pathsEASIN)[-(1:2)]
+  all_paths <- (unique(all_paths[!is.na(all_paths)]))
+  all_paths <- all_paths[grep("RELEASE|TRANSPORT|ESCAPE|CORRIDOR|UNAIDED|UNKNOWN",all_paths)]
+  # all_paths_spaces <- gsub("\\."," ",all_paths)
+  for (j in 1:length(all_paths)){ #
+    
+    spec_row_ind <- which(!is.na(pathsEASIN[,all_paths[j]])) # relevant entries of species with the respective pathway in the species table
+    trans_row_ind <- grep(all_paths[j],path_translate[,"EASIN_Germany"],fixed=T) # respective row in translation table 
+    
+    pathsEASIN$path_EASIN[spec_row_ind] <- paste(pathsEASIN$path_EASIN[spec_row_ind],path_translate[trans_row_ind,1],sep="; ")
+    pathsEASIN$path_EASIN <- gsub("; $","",pathsEASIN$path_EASIN)
+  }
+  pathsEASIN$path_EASIN <- gsub("NA; ","",pathsEASIN$path_EASIN)
+  pathsEASIN$path_EASIN[is.na(pathsEASIN$path_EASIN)] <- ""
+  
+  pathsEASIN <- pathsEASIN[,c("Taxon","path_EASIN")]
+  
+  
+  ## merge pathway information with species table ##########################################
+  dat_path <- merge(dat_path,pathsEASIN,by="Taxon",all.x=T)
+  
+  
+  ### merge all pathway information ###########################
 
-  ## CBD pathways to species table
-  dat_path$pathway <- paste(dat_path$pathway,dat_path$PathwaySub,sep = "; ")
+  ## all pathways to species table
+  dat_path$pathway <- paste(dat_path$Pfad, dat_path$pathway, dat_path$PathwaySub, dat_path$path_EASIN , sep = "; ")
   # dat_path$pathway[is.na(dat_path$pathway) | dat_path$pathway==""] <- dat_path$PathwaySub[is.na(dat_path$pathway) | dat_path$pathway==""]
   # unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
   
-  ## standardise  pathway names ###################################################
   
-  ## get translation table
-  path_translate <- read.xlsx(file.path("ListeNeobiota","Data","Input","PfadUebersetzung.xlsx"),sheet=1)
   
   ## replace CBD pathway names
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
@@ -92,13 +125,17 @@ beziehePfadDaten <- function(){
   dat_path$pathway <- gsub("; NA","",dat_path$pathway)
   dat_path$pathway <- gsub("NA; ","",dat_path$pathway)
   dat_path$pathway <- gsub("^; ","",dat_path$pathway)
+  dat_path$pathway <- gsub("; $","",dat_path$pathway)
   dat_path$pathway <- gsub("NA","",dat_path$pathway)
   dat_path$pathway <- gsub("; Unbekannt","",dat_path$pathway)
   dat_path$pathway <- gsub("Unbekannt; ","",dat_path$pathway)
+  dat_path$pathway <- gsub("; ;",";",dat_path$pathway)
+  
   
   ## generate output ######################################################################
   dat_path <- dat_path[order(dat_path$ArtGruppe,dat_path$wissenschaftlicherName),] # sort output
   
+  dat_path <- dat_path[, - which(colnames(dat_path)=="Pfad")]
   colnames(dat_path)[colnames(dat_path)=="pathway"] <- "Pfad"
   
   dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]

@@ -85,7 +85,7 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
       if (sheet_names[i]=="EASIN_Germany"){
         
         dat$Pfad <- NA
-        ind_trans <- which(colnames(path_translate)%in%sheet_names[i]) # column number in translation table
+        # ind_trans <- which(colnames(path_translate)%in%sheet_names[i]) # column number in translation table
         
         all_paths <- colnames(dat)[-(1:2)]
         all_paths <- (unique(all_paths[!is.na(all_paths)]))
