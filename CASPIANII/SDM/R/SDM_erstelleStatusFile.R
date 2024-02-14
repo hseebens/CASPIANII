@@ -26,6 +26,7 @@ erstelleStatusFile <- function(Name_Artenliste=NULL,
       cat("\n Da ueberschreiben=TRUE wird Datei zum Status der Modellierung ueberschrieben.")
       
       status_species <- as.data.frame(read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)[,c("Taxon","Eintraege_GBIF_DE")])
+      status_species <- unique(status_species)
       
       status_species$Status <- "Bisher keine Habitatmodellierung durchgefuehrt."
       

@@ -15,12 +15,16 @@ fit_SDMs <- function(TaxonName=NULL,
                      n_Modelllaeufe=5,
                      identifier=NULL) { ## start of main function
   
-  load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
+  # load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
+  # 
+  # VorkommenUmweltPA <- PAlist
   
-  VorkommenUmweltPA <- PAlist
-    
   cat(paste0("\n*** Fit Modell für ",TaxonName," ***\n") ) # notification for the user
   cat("\nDas Fitten des Modells an Daten kann einige Zeit (Minuten bis Stunden) in Anspruch nehmen.\n")
+  
+  ## load status file for reporting 
+  status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
+  ind_species <- which(status_species$Taxon==TaxonName)
   
   ## fit GAM model for different sets of pseudo absences and different random selections of 30/70 splits
   ## For example, 5 sets of pseudo absences and 5 random selections results in 25 model runs.
@@ -74,7 +78,7 @@ fit_SDMs <- function(TaxonName=NULL,
   cl <- makeCluster(cores[1]-1) #not to overload your computer
   registerDoParallel(cl)
   
-  modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence"), .errorhandling = "remove") %dopar% {
+  modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence","R.utils"), .errorhandling = "remove") %dopar% {
   # modelruns <- list()
   # for (i in 1:length(data_all_runs)){
     
@@ -86,7 +90,8 @@ fit_SDMs <- function(TaxonName=NULL,
     test_data <- data_single_run$test_data
 
     ## fit model to training block
-    possibleError <- tryCatch(model1 <- gam(formula_model, family=family_model, data=fit_data, method = "REML"), 
+    possibleError <- tryCatch(withTimeout(model1 <- gam(formula_model, family=family_model, data=fit_data, method = "REML"),
+                                          timeout = 300),  # set maximum time to 5 minutes each
                               error=function(e) e)
     
     if(!inherits(possibleError, "error")){ # check if gam fit worked
@@ -111,7 +116,20 @@ fit_SDMs <- function(TaxonName=NULL,
 
   ## stop cluster  
   stopCluster(cl)
-
+  
+  ## no results
+  if (is.null(unlist(modelruns))){
+    cat("\n Warnung: Fitten der Modelle abgebrochen, da die maximale Zeit ueberschritten wurde. Keine Modellergebenisse.")
+    
+    ## write status to log file
+    status_species$Status[ind_species] <- "Keine Habitatmodellierung, da keine Modelle gefittet werden konnten."
+    
+    ## export status of species list
+    write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
+    
+    return()
+  }
+  
   ## save output to disk
   save(modelruns,file=file.path("SDM","Data","Output", paste0("ModelFit_",TaxonName,identifier,".RData")))
   # load(file=file.path("Data","Output", paste0("ModelFit_",TaxonName,identifier,".RData")))

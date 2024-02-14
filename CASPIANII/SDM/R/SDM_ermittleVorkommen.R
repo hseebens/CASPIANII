@@ -77,41 +77,58 @@ ermittleVorkommen <- function(TaxonName=NULL,
       
       cat("\n Der Download von Daten kann einige Minuten in Anspruch nehmen.\n") # notification for user
       
-      Vorkommen <- suppressMessages(suppressWarnings(
-        sammleVorkommenOnline(TaxonName=TaxonName,
+      Vorkommen <- try(suppressMessages(suppressWarnings(
+                        sammleVorkommenOnline(TaxonName=TaxonName,
                               Datenbank=Datenbank,
                               Ausschnitt=Ausschnitt,
-                              max_limit=max_limit)))
+                              max_limit=max_limit))), silent=T)
       
-      # remove wrong coordinates
-      ind <- (Vorkommen$Laengengrad>90 | Vorkommen$Laengengrad< -90) |  (Vorkommen$Breitengrad>180 | Vorkommen$Breitengrad< -180)
-      Vorkommen <- Vorkommen[!ind,]
-      
-      # remove inprecise coordinates
-      ind <- nchar(sub('[0-9]+\\.', '', Vorkommen$Laengengrad))<3
-      Vorkommen <- Vorkommen[!ind,]
-      ind <- nchar(sub('[0-9]+\\.', '', Vorkommen$Breitengrad))<3
-      Vorkommen <- Vorkommen[!ind,]
-      
-      if (nrow(Vorkommen)>0){
+      if (any(class(Vorkommen)=="try-error")){
         
-        ## clean records
-        cat("\n Bereinigen der Vorkommensdaten...\n")
+        ## load status file for reporting 
+        status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")),sheet=1)
+        ind_species <- which(status_species$Taxon==TaxonName)
         
-        country_borders <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="ne_50m_land",quiet=T)
-        Vorkommen_cleaned <- suppressMessages(suppressWarnings(clean_coordinates(Vorkommen, lon = "Laengengrad",
-                                                                                 lat = "Breitengrad",
-                                                                                 value ="clean",
-                                                                                 # countries = "countryCode",
-                                                                                 species = "Taxon",
-                                                                                 tests = c( "centroids", "equal", "gbif", "institutions", "outliers",
-                                                                                            "zeros"), # remove "capitals" and "seas"
-                                                                                 country_ref=country_borders
-        ))) 
+        ## write status to log file
+        status_species$Status[ind_species] <- "Keine Habitatmodellierung, da Ermittlung der Vorkommensdaten von online Plattformen fehlschlug."
         
-        ## prepare output
-        x <- x + 1
-        Vorkommen_alle[[x]] <- Vorkommen_cleaned
+        ## export status of species list
+        write.xlsx(status_species,file=file.path("SDM","Data","Output",paste0("StatusModellierung",identifier,".xlsx",sep="")))
+        
+        print(paste0("Ermittlung der Vorkommensdaten von online Plattformen schlug fehl fuer ", TaxonName,". Der Vorgang sollte wiederholt werden."))        
+        
+      } else {      
+        
+        # remove wrong coordinates
+        ind <- (Vorkommen$Laengengrad>90 | Vorkommen$Laengengrad< -90) |  (Vorkommen$Breitengrad>180 | Vorkommen$Breitengrad< -180)
+        Vorkommen <- Vorkommen[!ind,]
+        
+        # remove inprecise coordinates
+        ind <- nchar(sub('[0-9]+\\.', '', Vorkommen$Laengengrad))<3
+        Vorkommen <- Vorkommen[!ind,]
+        ind <- nchar(sub('[0-9]+\\.', '', Vorkommen$Breitengrad))<3
+        Vorkommen <- Vorkommen[!ind,]
+        
+        if (nrow(Vorkommen)>0){
+          
+          ## clean records
+          cat("\n Bereinigen der Vorkommensdaten...\n")
+          
+          country_borders <- st_read(dsn=file.path("SDM","Data","Input","Shapefiles"),layer="ne_50m_land",quiet=T)
+          Vorkommen_cleaned <- suppressMessages(suppressWarnings(clean_coordinates(Vorkommen, lon = "Laengengrad",
+                                                                                   lat = "Breitengrad",
+                                                                                   value ="clean",
+                                                                                   # countries = "countryCode",
+                                                                                   species = "Taxon",
+                                                                                   tests = c( "centroids", "equal", "gbif", "institutions", "outliers",
+                                                                                              "zeros"), # remove "capitals" and "seas"
+                                                                                   country_ref=country_borders
+          ))) 
+          
+          ## prepare output
+          x <- x + 1
+          Vorkommen_alle[[x]] <- Vorkommen_cleaned
+        }
       }
     }
     
@@ -122,7 +139,7 @@ ermittleVorkommen <- function(TaxonName=NULL,
       
       if (nrow(Vorkommen_alle) < 50) { # check, whether the number of occurrences is sufficient
 
-        cat(paste("\nWarnung: Die Anzahl an Datenpunkten ist <50. Es kann keine Habitatmodellierung fuer",TaxonName,"durchgeführt werden.")) 
+        cat(paste("\nDie Anzahl an Datenpunkten ist <50. Es kann keine Habitatmodellierung fuer",TaxonName,"durchgeführt werden.")) 
         
         ## write status to log file
         status_species$Status[ind_species] <- "Nach Bereinigung Datenmenge zu gering zur Habitatmodellierung."

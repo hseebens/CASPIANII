@@ -37,7 +37,7 @@ Max_Anzahl_GBIF_DE <- 10000 # sollte 20000 nicht ueberschreiten
 ## Parameter zur Modellierung ############################################################################
 
 ## Name des jeweiligen Modelllaufs (frei vom Nutzer zu waehlen)
-identifier <- "281123" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
+identifier <- "Test" # eine eindeutige Kennzeichnung des Modelllaufs (z.B. Datum)
 
 ## Variablen zur Vorhersage der Habitate ##########################################
 
@@ -114,7 +114,8 @@ ueberpruefe_Datensaetze(Klima_var=Klima_var,
 ## Lade Artenliste ########################################################################################
 
 Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
-                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE)
+                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
+                                   Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE)
 
 ###########################################################################################################
 ## Generiere Tabelle zum Stand der Modellierung fuer jede Art #############################################
@@ -141,7 +142,7 @@ for (i in 1:length(Artenliste)){ #
   ## Ueberpruefe ob Modellierung bereits durchgefuehrt wurde. Wenn ja, springe zur nächsten Art
   ind_species <- which(status_species$Taxon==TaxonName)
 
-  if (status_species[ind_species,3]!="Bisher keine Habitatmodellierung durchgefuehrt."){ 
+  if (status_species[ind_species,3]=="Habitatmodellierung ausgefuehrt."){ 
     
     cat(paste0("\n************* Bearbeitung von ",TaxonName," bereits durchgefuehrt ***** \n") ) 
     
@@ -187,10 +188,11 @@ for (i in 1:length(Artenliste)){ #
                                          plot_predictors=FALSE)
 
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,"_",identifier,".csv"))) # stores the final occurrence file on the users computer
+  # VorkommenUmwelt <- fread(file.path("SDM","Data","Input",paste0("VorkommenUmweltdaten_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
 
 
   if (!is.data.frame(VorkommenUmwelt)){
+    cat(paste0("\n************* Bearbeitung von ",TaxonName," beendet ************* \n") ) # notification for the user
     next # falls keine VorkommenUmwelt Daten bezogen werden konnten, ueberspringe diese Art
   }
 
@@ -203,7 +205,7 @@ for (i in 1:length(Artenliste)){ #
                                             identifier=identifier)
 
   ## Alternativ: Lade existierende Datei von Festplatte:
-  # load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,"_",identifier,".RData"))) # load file 'PAlist'
+  # load(file=file.path("SDM","Data","Input", paste0("PAlist_",TaxonName,identifier,".RData"))) # load file 'PAlist'
   # VorkommenUmweltPA <- PAlist
 
 
@@ -224,7 +226,12 @@ for (i in 1:length(Artenliste)){ #
 
   ##########################################################################################################
   ### Bearbeitung der Ergebnisse ###########################################################################
-
+  
+  if (!is.list(Modelllaeufe)){  # falls keine Modelle gefittet werden konnten, ueberspringe diese Art
+    cat(paste0("\n************* Bearbeitung von ",TaxonName," beendet ************* \n") ) 
+    next
+  }
+  
   ## Schritt 5: generiere Vorhersage #######################################################################
 
   HabitatEignung <- Vorhersage_alleLaeufe(TaxonName=TaxonName,

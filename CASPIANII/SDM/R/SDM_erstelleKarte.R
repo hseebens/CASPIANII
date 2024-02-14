@@ -48,7 +48,7 @@ erstelleKarteHabitatEignung <- function(HabitatEignung=NULL,
  
   # pdf(file.path("Grafiken", paste0("KarteHabitatEignungVorkommen_",TaxonName,identifier,".pdf"))) # plot with occurrences
   png(file.path("SDM","Grafiken", paste0("KarteHabitatEignungVorkommen_",TaxonName,identifier,".png")),units="in",res=300,width=8,height=8) # plot with occurrences
-  plot(rastpreds, col=rev(magma(100)))
+  plot(rastpreds, col=rev(hcl.colors(10,pal="Mint")))
   if (!is.null(GermanShapefile)) plot(st_geometry(GermanShapefile),add=T,border=gray(0.1))
   points(Vorkommen, pch=1, cex=0.5)
   dev.off()

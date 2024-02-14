@@ -13,11 +13,23 @@
 
 
 importiereArtenliste <- function(Name_Artenliste=NULL,
-                                 Min_Anzahl_GBIF_DE=50
+                                 Min_Anzahl_GBIF_DE=50,
+                                 Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE
                                  ){
  
   Artenliste <- read.xlsx(file.path("SDM","Data","Input",Name_Artenliste),sheet=1)
   
+  ListeVieleDaten <- subset(Artenliste,Eintraege_GBIF_DE>Max_Anzahl_GBIF_DE)$Taxon
+  
+  if (length(ListeVieleDaten)>0){
+    cat(c("\n Einige Arten haben sehr viele Eintraege und. Die Vorkommen dieser Arten 
+          sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+          run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+          Arten_mit_vielen_Eintraegen.csv gespeichert.\n"))
+    
+    fwrite(ListeVieleDaten,file.path("SDM","Data","Input","Liste_Arten_mit_vielen_Eintraegen.csv"))
+  } 
+
   Artenliste <- unique(subset(Artenliste,Eintraege_GBIF_DE>Min_Anzahl_GBIF_DE)$Taxon)
   
   return(Artenliste)
