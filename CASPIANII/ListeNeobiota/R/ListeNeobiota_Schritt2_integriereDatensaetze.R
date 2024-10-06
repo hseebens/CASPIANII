@@ -26,7 +26,11 @@ integriereDatensaetze <- function(){
     if (!"Erstnachweis"%in%colnames(dat)){
       dat$Erstnachweis <- NA
     }      
-    dat_sub <- cbind.data.frame(dat[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich","Status","Erstnachweis","Pfad")],sheet_names[i])
+    if (sheet_names[i]=="BfN"){
+      dat_sub <- cbind.data.frame(dat[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich","Status","Erstnachweis","Pfad","BfNlisten")],sheet_names[i])
+    } else {
+      dat_sub <- cbind.data.frame(dat[,c("Taxon","wissenschaftlicherName","Gattung","Familie","Klasse","Ordnung","Phylum","Reich","Status","Erstnachweis","Pfad")],BfNlisten=NA, sheet_names[i])
+    }
     
     all_dat_sub[[i]] <- dat_sub
   }  
@@ -125,6 +129,7 @@ integriereDatensaetze <- function(){
   nonexisting$Status <- ""
   nonexisting$Erstnachweis <- ""
   nonexisting$Pfad <- ""
+  nonexisting$BfNlisten <- ""
   nonexisting$Datenbank <- ""
   nonexisting$EU_Anliegen <- "x"
 
@@ -169,7 +174,7 @@ integriereDatensaetze <- function(){
   # final_dataset[is.na(final_dataset$ArtGruppe),]
     
   final_dataset <- final_dataset[order(final_dataset$ArtGruppe,final_dataset$wissenschaftlicherName),]
-  final_dataset <- final_dataset[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Datenbank")]
+  final_dataset <- final_dataset[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","BfNlisten","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Datenbank")]
   
   ## Create Workbook object and add worksheets #######################################################
   wb <- createWorkbook()

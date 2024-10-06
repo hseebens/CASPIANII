@@ -97,13 +97,14 @@ beziehePfadDaten <- function(){
   ### merge all pathway information ###########################
 
   ## all pathways to species table
-  dat_path$pathway <- paste(dat_path$Pfad, dat_path$pathway, dat_path$PathwaySub, dat_path$path_EASIN , sep = "; ")
+  dat_path$pathway <- paste(dat_path$Pfad, dat_path$PathwaySub, dat_path$path_EASIN , sep = "; ")
   # dat_path$pathway[is.na(dat_path$pathway) | dat_path$pathway==""] <- dat_path$PathwaySub[is.na(dat_path$pathway) | dat_path$pathway==""]
   # unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
+  dat_path$pathway <- gsub("; NA","",dat_path$pathway)
+  dat_path$pathway <- gsub("NA; ","",dat_path$pathway)
   
-  
-  
-  ## replace CBD pathway names
+
+  ## replace CBD pathway names, sub-category
   all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwaySub,"; ")))
   all_paths_CBD <- all_paths_CBD[!is.na(all_paths_CBD)]
   for (i in 1:length(all_paths_CBD)){
@@ -113,6 +114,23 @@ beziehePfadDaten <- function(){
     # dat_path[spec_ind,]$pathway
     
     ind_new_name <- grep(all_paths_CBD[i],path_translate[,which(colnames(path_translate)=="CBD_Sub")],fixed=T) # position of translated pathway name
+    if (length(ind_new_name)>1) print(i)
+    if (length(ind_new_name)>0){
+      dat_path$pathway[spec_ind] <- gsub(all_paths_CBD[i],path_translate[,1][ind_new_name],dat_path$pathway[spec_ind],fixed=T)
+    }
+  }
+  # table(unlist(strsplit(dat_path$pathway,"; ")))
+  
+  ## replace CBD pathway names, main category (only in BfN documents used)
+  all_paths_CBD <- unique(unlist(strsplit(dat_path$PathwayMain,"; ")))
+  all_paths_CBD <- all_paths_CBD[!is.na(all_paths_CBD)]
+  for (i in 1:length(all_paths_CBD)){
+    
+    ## find CBD pathway in species table
+    spec_ind <- grep(all_paths_CBD[i],dat_path$pathway,fixed=T)
+    # dat_path[spec_ind,]$pathway
+    
+    ind_new_name <- grep(all_paths_CBD[i],path_translate[,which(colnames(path_translate)=="CBD_Main")],fixed=T) # position of translated pathway name
     if (length(ind_new_name)>1) print(i)
     if (length(ind_new_name)>0){
       dat_path$pathway[spec_ind] <- gsub(all_paths_CBD[i],path_translate[,1][ind_new_name],dat_path$pathway[spec_ind],fixed=T)
@@ -138,7 +156,7 @@ beziehePfadDaten <- function(){
   dat_path <- dat_path[, - which(colnames(dat_path)=="Pfad")]
   colnames(dat_path)[colnames(dat_path)=="pathway"] <- "Pfad"
   
-  dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank")]
+  dat_path <- dat_path[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Datenbank","BfNlisten")]
 
   # table(dat_path$pathway=="" |dat_path$pathway=="Unbekannt")
   # ind <- grep("Unbekannt",dat_path$pathway)

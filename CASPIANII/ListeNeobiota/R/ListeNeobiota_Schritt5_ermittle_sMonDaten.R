@@ -104,7 +104,7 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   alienspecies_nRecords$Kommentar <- gsub("^; ","",alienspecies_nRecords$Kommentar)
   alienspecies_nRecords$Kommentar <- gsub("^;","",alienspecies_nRecords$Kommentar)
   
-  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Eintraege_sMon","Kommentar","Datenbank")]
+  alienspecies_nRecords <- alienspecies_nRecords[,c("Taxon","wissenschaftlicherName","ArtGruppe","EU_Anliegen","Status","Erstnachweis","Pfad","BfNlisten","Gattung","Familie","Ordnung","Klasse","Phylum","Reich","Eintraege_GBIF_DE","Eintraege_GBIF_Global","Eintraege_sMon","Kommentar","Datenbank")]
 
   ## Create Workbook object and add worksheets for output ##############################################
   wb <- createWorkbook()

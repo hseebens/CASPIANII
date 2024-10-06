@@ -154,6 +154,17 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
     if (!"Pfad"%in%colnames(dat) & !"pathway"%in%colnames(dat)){
       dat$Pfad <- NA
     }
+
+    # ## export species action lists by BfN
+    # if (sheet_names[i]=="BfN"){
+    #   if (any("Liste"==colnames(dat))){
+    #     lists_data <- dat[,c("Wissenschaftlicher_Name","Artgruppe","Liste")]
+    #     lists_data <- lists_data[!is.na(lists_data$Liste),]
+    #     lists_data <- lists_data[order(lists_data$Liste,lists_data$Artgruppe),]
+    #     
+    #     write.table(lists_data,file.path("ListeNeobiota","Data","BfN_InvasiveArtenListen.csv"), row.names = F)
+    #   }
+    # }
     
     ## get taxonomic information from GBIF and add to data set #######################################################
     new_names <- CheckGBIFTax(dat)
@@ -172,6 +183,7 @@ standardisiereDaten <- function(Pfad_Datensaetze=Pfad_Datensaetze){
     colnames(DB)[colnames(DB)=="class"] <- "Klasse"
     colnames(DB)[colnames(DB)=="phylum"] <- "Phylum"
     colnames(DB)[colnames(DB)=="kingdom"] <- "Reich"
+    colnames(DB)[colnames(DB)=="Liste"] <- "BfNliste"
     
     ## store data on single sheets in workbook
     addWorksheet(wb, sheet_names[i])
