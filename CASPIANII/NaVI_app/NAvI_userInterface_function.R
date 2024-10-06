@@ -1,14 +1,16 @@
-###########################################################################################################
+################################################################################
 #
 # Shiny App NaVI - Funktion 'user interface'
 #
-# Die Funktion 'user interface' stellt das 'frontend' der Shiny App dar und liefert damit das Layout der
-# Oberfläche, die fuer den Nutzer zu sehen und zu bedienen ist.
+# Die Funktion 'user interface' stellt das 'frontend' der Shiny App dar und 
+# liefert damit das Layout der Oberflaeche, die fuer den Nutzer zu sehen und zu 
+# bedienen ist.
 #
-# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum diese Funktion aufruft.
+# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum 
+# diese Funktion aufruft.
 #
 # Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
-##########################################################################################################
+################################################################################
 
 
 
@@ -17,7 +19,8 @@ ui <- fluidPage(
   ### General stuff
   add_busy_bar(centered=TRUE, color = "#FF0000"),
   tags$head(tags$style(HTML("hr {border-top: 1px solid #000000;}"))),
-  titlePanel(div(h1("NaVI - Neobiota an Verkehrswegen Informationssystem"),align="left",style="color:darkgreen")),
+  titlePanel(div(h1("NaVI - Neobiota an Verkehrswegen Informationssystem"),
+                 align="left",style="color:darkgreen")),
   
   ### Layout #########################
   sidebarLayout(

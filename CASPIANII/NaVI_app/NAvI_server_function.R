@@ -1,23 +1,23 @@
-###########################################################################################################
+################################################################################
 #
 # Shiny App NaVI - Funktion 'server'
 #
-# Die server Funktion stellt das 'backend' der Shiny App dar und liefert die Inhalte, die in der Shiny
-# App zur Verfuegung gestellt werden.
+# Die server Funktion stellt das 'backend' der Shiny App dar und liefert die 
+# Inhalte, die in der Shiny App zur Verfuegung gestellt werden.
 #
-# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum die Server Funktion aufruft.
-# Die Daten, die in der Shiny App zur Verfuegung gestellt werden, werden mit der Funktion 
-# 'DataPreparationShiny.R' aufbereitet.
+# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum die 
+# Server Funktion aufruft. Die Daten, die in der Shiny App zur Verfuegung 
+# gestellt werden, werden mit der Funktion 'DataPreparationShiny.R' aufbereitet.
 #
 # Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
-##########################################################################################################
+################################################################################
 
 
 
 
 server <- function(input, output){
   
-  ## prepare data and maps depending on selections ##############################
+  ## prepare data and maps depending on selections #############################
   
   ## select base data set (all neobiota or IAS) and make those reactive
   subdata <- reactiveValues(data = NULL)
@@ -27,7 +27,7 @@ server <- function(input, output){
   mapdata$map_simp <- map_simp # default
   mapdata$map_fine <- map_fine # default
   
-  ## select map depending on the outcome of action buttons to subset the species list
+  ## select map depending on the outcome of action buttons to subset species list
   
   ## observe action button 'dataNeobiota'
   observeEvent(input$dataNeobiota, {
@@ -69,9 +69,11 @@ server <- function(input, output){
   ## prepare (render) the output table ###########
   
   ## for potentially establishing species
-  pot_spec_tab <- reactive({ # make table reactive that the user can select from the table directly the map points
+  # make table reactive that user can select from the table directly the map points
+  pot_spec_tab <- reactive({
     region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten &  
-                                              Art%in%all_pot_spec[[input$Kreise_Daten]],c("Art", "Deutscher Artname", "Gruppe", "Habitateignung (0-1)")]
+                                              Art%in%all_pot_spec[[input$Kreise_Daten]],
+                                            c("Art", "Deutscher Artname", "Gruppe", "Habitateignung (0-1)")]
     region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
   })
   output$table <- renderDT({ # render DT table from reactive object
@@ -80,7 +82,8 @@ server <- function(input, output){
   }) 
   
   ## for occurring species
-  occ_spec_tab <- reactive({ # make table reactive that the user can select from the table directly the map points
+  # make table reactive that user can select from the table directly the map points
+  occ_spec_tab <- reactive({
     subdata$region_lists[RegionName%in%input$Kreise_Daten & 
                            Ist=="x", c("Art","Deutscher Artname", "Gruppe")]
   })
@@ -92,9 +95,11 @@ server <- function(input, output){
   
   ## prepare data for region download ##########################################
   
-  data_regs <- reactive({ # make reactive that the table can be modified when making a selection
+  # make reactive that the table can be modified when making a selection
+  data_regs <- reactive({
     subdata$region_lists[RegionName%in%input$Kreise_Daten & 
-                           Ist=="x", c("RegionName", "Art", "Deutscher Artname", "Gruppe")]
+                           Ist=="x", c("RegionName", "Art", "Deutscher Artname", 
+                                       "Gruppe")]
   })
   
   ## for all species
@@ -110,7 +115,8 @@ server <- function(input, output){
   ## for potential species 
   data_potspec <- reactive({
     subdata$region_lists[RegionName%in%input$Kreise_Daten & 
-                           Art%in%all_pot_spec[[input$Kreise_Daten]],c("NAME_2","Art","Deutscher Artname", "Gruppe","Habitateignung (0-1)")]
+                           Art%in%all_pot_spec[[input$Kreise_Daten]],c("NAME_2",
+                          "Art","Deutscher Artname", "Gruppe","Habitateignung (0-1)")]
   })
   
   ## add to download
@@ -124,7 +130,7 @@ server <- function(input, output){
   )
   
   
-  ## prepare data for species download ##########################################
+  ## prepare data for species download #########################################
   
   data_spec <- reactive({ # make reactive
     subset(point_data, Taxon==input$Art_Daten)
@@ -168,7 +174,7 @@ server <- function(input, output){
     } else {
       
       mapfiltered <- mapdata$map_simp # full map
-      mapfiltered <- mapfiltered[which(mapfiltered$NAME_2 == input$Kreise_Daten), ] #
+      mapfiltered <- mapfiltered[which(mapfiltered$NAME_2 == input$Kreise_Daten), ]
       
       ## text for mouse-over
       labels <- sprintf("%s: %g", mapfiltered$NAME_2, mapfiltered$nSpez) %>%
@@ -225,13 +231,16 @@ server <- function(input, output){
         spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
         
         ## produce a warning that not all records are shown
-        NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
+        NotID <- showNotification("Warnung: Grosser Datensatz. Nicht alle Daten werden angezeigt.", 
+                                  duration=15)
       }
     } else { # for selections of individual regions select only records within a buffer distance of dist_buff
       
       map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ] # subset to focal region
       ext <- st_bbox(st_buffer(map_sub,dist_buff)) # identify box around the focal region
-      spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin) # subset to records in the vicinity
+      spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
+                             Laengengrad>ext$xmin & Breitengrad<ext$ymax & 
+                             Breitengrad>ext$ymin) # subset to records in the vicinity
     }
     
     ## add the point records to the map
@@ -256,8 +265,9 @@ server <- function(input, output){
     # )
   })
   
-  ## add records of species selected in table of all species ################################
-  ## observe input to table of existing neobiota and plot records of selected species on map
+  ## add records of species selected in table of all species ###################
+  ## observe input to table of existing neobiota and plot records of selected 
+  ## species on map
   
   observe({
     
@@ -271,7 +281,11 @@ server <- function(input, output){
     ## subset to records in vicinity to increase performance
     map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ] # subset to region
     ext <- st_bbox(st_buffer(map_sub,dist_buff))
-    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin)
+    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
+                           Laengengrad>ext$xmin & 
+                           Breitengrad<ext$ymax & 
+                           Breitengrad>ext$ymin)
+    
     ## if still too many points select randomly
     if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
       spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
@@ -301,8 +315,10 @@ server <- function(input, output){
   })
   
   
-  ## add records of species selected in table of potential species ################################
-  ## observe input to table of existing neobiota and plot records of selected species on map
+  ## add records of species selected in table of potential species #############
+  ## observe input to table of existing neobiota and plot records of selected 
+  ## species on map
+  
   observe({
     
     selRow <- pot_spec_tab()[input$table_rows_selected,] # keep row of selection
@@ -315,7 +331,11 @@ server <- function(input, output){
     ## subset to records in vicinity
     map_sub <- map_fine[which(map_fine$NAME_2 == input$Kreise_Daten), ]
     ext <- st_bbox(st_buffer(map_sub,dist_buff))
-    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & Laengengrad>ext$xmin & Breitengrad<ext$ymax & Breitengrad>ext$ymin)
+    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
+                           Laengengrad>ext$xmin & 
+                           Breitengrad<ext$ymax & 
+                           Breitengrad>ext$ymin)
+    
     ## if still too many points select randomly and spill out warning message
     if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
       spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
@@ -331,16 +351,10 @@ server <- function(input, output){
         lat = spfiltered$Breitengrad,
         lng = spfiltered$Laengengrad,
         group="occurrences",
-        # color = "#000000",
-        # color="royalblue3", #pal(spfiltered$DBcols),
         fillOpacity = 0.5,
         fillColor = NA,
         weight = 1,
         radius = 5
       ) #%>%
-    # addLegend("bottomright", colors=uni_col_DB[,2] ,labels=uni_col_DB[,1],
-    #           title = "Datenbank",
-    #           opacity = 1
-    # )
   })
 }

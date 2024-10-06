@@ -1,19 +1,20 @@
-###########################################################################################################
+################################################################################
 #
 # Shiny App "NaVI - Neobiota an Verkehrswegen Informationssystem"
 #
-# Das Skript laedt und startet die Shiny App NaVI. Das Skript die folgenden Skripte auf:
+# Das Skript laedt und startet die Shiny App NaVI. 
+# Das Skript die folgenden Skripte auf:
 #
 # 1. NAvI_global_function.R: Laden der notwendigen R Pakete und Datensaetze
 # 2. NAvI_server_function.R: Laden des 'backends' der Shiny App
 # 3. NAvI_userInterface_function.R: Laden des 'frontends' der Shiny App
 #
-# Die Shiny App NaVI dient der Darstellung und Bereitstellung von Datensaetzen und Karten von 
-# gebietsfremden und invasiven Arten. Die zugrundliegenden Datensaetze können mit der Funktion
-# 'DataPreparationShiny.R' erzeugt werden.
+# Die Shiny App NaVI dient der Darstellung und Bereitstellung von Datensaetzen 
+# und Karten von gebietsfremden und invasiven Arten. Die zugrundliegenden 
+# Datensaetze können mit der Funktion 'DataPreparationShiny.R' erzeugt werden.
 #
 # Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
-##########################################################################################################
+################################################################################
 
 
 

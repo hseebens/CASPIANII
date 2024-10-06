@@ -1,13 +1,15 @@
-###########################################################################################################
+################################################################################
 #
 # Shiny App NaVI - Funktion 'global'
 #
-# Die global Funktion lädt R Pakete und Datensätze, die zur Darstellung der Shiny App NaVI notwendig sind.
+# Die global Funktion lädt R Pakete und Datensätze, die zur Darstellung der 
+# Shiny App NaVI notwendig sind.
 #
-# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum diese Funktion aufruft.
+# Die Shiny App muss über die Funktion ... aufgerufen werden, die wiederum 
+# diese Funktion aufruft.
 #
 # Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung
-##########################################################################################################
+################################################################################
 
 
 global <- function(){
@@ -51,49 +53,67 @@ global <- function(){
   map_simp_akt <<- st_read("AnzahlNeobiota_ist_Kreise_simpl_AktL.shp")
   
   
-  ## Species lists by region #####################################################
+  ## Species lists by region ###################################################
   
   ## All neobiota ###############
   spec_istpot <- fread("Neobiota_IstPot_Liste_Kreise.gz", 
-                       colClasses=c("character","character","character","character","character","character","numeric"))
+                       colClasses=c("character","character","character",
+                                    "character","character","character",
+                                    "numeric"))
   setorderv(spec_istpot,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+  colnames(spec_istpot) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot",
+                             "Habitateignung (0-1)")
   spec_istpot_regs <- merge(spec_istpot,all_regs, by="CC_2", all=T)
   
   
   ## EU IAS list ################
   spec_istpot_eu <- fread("Neobiota_IstPot_Liste_Kreise_EUIAS.gz", 
-                          colClasses=c("character","character","character","character","character","character","numeric"))
+                          colClasses=c("character","character","character",
+                                       "character","character","character",
+                                       "numeric"))
   setorderv(spec_istpot_eu,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot_eu) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+  colnames(spec_istpot_eu) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot",
+                                "Habitateignung (0-1)")
   spec_istpot_regs_eu <- merge(spec_istpot_eu,all_regs, by="CC_2", all=T)
   
   ## Handlungsliste ################
   spec_istpot_han <- fread("Neobiota_IstPot_Liste_Kreise_HanL.gz", 
-                           colClasses=c("character","character","character","character","character","character","numeric"))
+                           colClasses=c("character","character","character",
+                                        "character","character","character",
+                                        "numeric"))
   setorderv(spec_istpot_han,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot_han) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+  colnames(spec_istpot_han) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot",
+                                 "Habitateignung (0-1)")
   spec_istpot_regs_han <- merge(spec_istpot_han,all_regs, by="CC_2", all=T)
   
   ## Beobachtungsliste ################
   spec_istpot_beo <- fread("Neobiota_IstPot_Liste_Kreise_BeoL.gz", 
-                           colClasses=c("character","character","character","character","character","character","numeric"))
+                           colClasses=c("character","character","character",
+                                        "character","character","character",
+                                        "numeric"))
   setorderv(spec_istpot_beo,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot_beo) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+  colnames(spec_istpot_beo) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot",
+                                 "Habitateignung (0-1)")
   spec_istpot_regs_beo <- merge(spec_istpot_beo,all_regs, by="CC_2", all=T)
   
   ## Aktionsliste ################
   spec_istpot_akt <- fread("Neobiota_IstPot_Liste_Kreise_AktL.gz", 
-                           colClasses=c("character", "character","character","character","character","character","numeric"))
+                           colClasses=c("character", "character","character",
+                                        "character","character","character",
+                                        "numeric"))
   setorderv(spec_istpot_akt,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot_akt) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+  colnames(spec_istpot_akt) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot",
+                                 "Habitateignung (0-1)")
   spec_istpot_regs_akt <- merge(spec_istpot_akt,all_regs, by="CC_2", all=T)
   
   ## Managementliste ################
   spec_istpot_man <- fread("Neobiota_IstPot_Liste_Kreise_ManL.gz", 
-                           colClasses=c("character", "character", "character", "character", "character", "character", "numeric"))
+                           colClasses=c("character", "character", "character", 
+                                        "character", "character", "character", 
+                                        "numeric"))
   setorderv(spec_istpot_man,cols=c("NAME_2","HabitatEignung"),order=-1)
-  colnames(spec_istpot_man) <- c("NAME_2", "CC_2", "Art", "Gruppe", "Ist", "Pot", "Habitateignung (0-1)")
+  colnames(spec_istpot_man) <- c("NAME_2", "CC_2", "Art", "Gruppe", "Ist", 
+                                 "Pot", "Habitateignung (0-1)")
   spec_istpot_regs_man <- merge(spec_istpot_man,all_regs, by="CC_2", all=T)
   
   
@@ -115,11 +135,17 @@ global <- function(){
   common_names <- fread("Tabelle_DeutscheName.csv")
   colnames(common_names) <- c("Deutscher Artname", "Taxon_wissensch")
   
-  region_lists <<- merge(spec_istpot_regs,common_names,by.x="Art", by.y="Taxon_wissensch")
-  region_lists_eu <<- merge(spec_istpot_regs_eu,common_names,by.x="Art", by.y="Taxon_wissensch")
-  region_lists_han <<- merge(spec_istpot_regs_han,common_names,by.x="Art", by.y="Taxon_wissensch")
-  region_lists_beo <<- merge(spec_istpot_regs_beo,common_names,by.x="Art", by.y="Taxon_wissensch")
-  region_lists_akt <<- merge(spec_istpot_regs_akt,common_names,by.x="Art", by.y="Taxon_wissensch")
-  region_lists_man <<- merge(spec_istpot_regs_man,common_names,by.x="Art", by.y="Taxon_wissensch")
+  region_lists <<- merge(spec_istpot_regs,common_names,by.x="Art", 
+                         by.y="Taxon_wissensch")
+  region_lists_eu <<- merge(spec_istpot_regs_eu,common_names,by.x="Art", 
+                            by.y="Taxon_wissensch")
+  region_lists_han <<- merge(spec_istpot_regs_han,common_names,by.x="Art", 
+                             by.y="Taxon_wissensch")
+  region_lists_beo <<- merge(spec_istpot_regs_beo,common_names,by.x="Art", 
+                             by.y="Taxon_wissensch")
+  region_lists_akt <<- merge(spec_istpot_regs_akt,common_names,by.x="Art", 
+                             by.y="Taxon_wissensch")
+  region_lists_man <<- merge(spec_istpot_regs_man,common_names,by.x="Art", 
+                             by.y="Taxon_wissensch")
   
 }
