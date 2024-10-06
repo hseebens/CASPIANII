@@ -25,20 +25,10 @@ rm(list=ls())
 
 
 ################################################################################
-## Laden der notwendigen Skripte ###############################################
+## Laden der notwendigen R Pakete und Datensaetze ##############################
 
 ## Lade Funktion 'global' zum Laden von R Paketen und Datensaetzen
 source("NAvI_global_function.R")
-
-## Lade Server Funktion ('backend') der Shiny App
-source("NAvI_server_function.R")
-
-## Lade user interface Funktion ('frontend') der Shiny App
-source("NAvI_userInterface_function.R")
-
-
-################################################################################
-## Laden der notwendigen R Pakete und Datensaetze ##############################
 
 ## Lade R Pakete und Datensaetze
 global()
@@ -46,6 +36,12 @@ global()
 
 ################################################################################
 ## Laden der Shiny App #########################################################
+
+## Lade Server Funktion ('backend') der Shiny App
+source("NAvI_server_function.R")
+
+## Lade user interface Funktion ('frontend') der Shiny App
+source("NAvI_userInterface_function.R")
 
 ## Lade Shiny App
 shinyApp(ui = ui, server = server)
