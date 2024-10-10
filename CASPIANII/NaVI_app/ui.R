@@ -95,7 +95,8 @@ ui <- fluidPage(
                  h4("Neobiota/IAS mit hohem Potenzial zur Etablierung im Landkreis"),
                  DTOutput(outputId = "table")
         ),
-        tabPanel("über NaVI", includeHTML("NaVIdetails.html"))
+        tabPanel("über NaVI", includeMarkdown("details.md"))
+        # tabPanel("über NaVI", includeHTML("NaVIdetails.html"))
         # tabPanel("über NaVI", htmlOutput("about", height = 600, width = 600))
       )
     )
