@@ -97,6 +97,9 @@ ui <- fluidPage(
         ),
         
         tabPanel("über NaVI", includeMarkdown("details.md"))
+
+        # tabPanel("über NaVI", includeMarkdown("details.md"))
+        # tabPanel("über NaVI", htmlOutput("about", height = 600, width = 600))
       )
     )
   )
