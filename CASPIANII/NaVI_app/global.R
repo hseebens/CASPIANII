@@ -30,6 +30,4 @@ library(units)
 
 load(file="All_data_for_NaVI.RData")
 
-dist_buff <- 100
-units(dist_buff) <- as_units("km")
 
