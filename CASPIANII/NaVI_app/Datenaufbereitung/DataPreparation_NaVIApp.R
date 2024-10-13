@@ -350,7 +350,7 @@ for (i in 1:length(uni_Kreise)){
   ext <- st_bbox(poly_buff)
   
   ## Identifiziere potenzielle Arten
-  abs_spec <- subset(potist,RegionName==uni_Kreise[i] & !is.na(HabitatEignung) & Ist!="x")
+  abs_spec <- subset(potist,NAME_2==uni_Kreise[i] & !is.na(HabitatEignung) & is.na(Ist))
   abs_spec <- subset(abs_spec,HabitatEignung>0.7)
   
   ## subset of coordinates
@@ -399,38 +399,38 @@ colnames(all_regs) <- c("RegionName","CC_2")
 ## All neobiota ###############
 spec_istpot <- all_ist_pot
 setorderv(spec_istpot,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+colnames(spec_istpot) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung")
 spec_istpot_regs <- merge(spec_istpot,all_regs, by="CC_2", all=T)
 
 
 ## EU IAS list ################
 spec_istpot_eu <- all_ist_pot_eu
 setorderv(spec_istpot_eu,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot_eu) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+colnames(spec_istpot_eu) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung")
 spec_istpot_regs_eu <- merge(spec_istpot_eu,all_regs, by="CC_2", all=T)
 
 ## Handlungsliste ################
 spec_istpot_han <- all_ist_pot_han
 setorderv(spec_istpot_han,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot_han) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+colnames(spec_istpot_han) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung")
 spec_istpot_regs_han <- merge(spec_istpot_han,all_regs, by="CC_2", all=T)
 
 ## Beobachtungsliste ################
 spec_istpot_beo <- all_ist_pot_beo
 setorderv(spec_istpot_beo,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot_beo) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+colnames(spec_istpot_beo) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung")
 spec_istpot_regs_beo <- merge(spec_istpot_beo,all_regs, by="CC_2", all=T)
 
 ## Aktionsliste ################
 spec_istpot_akt <- all_ist_pot_akt
 setorderv(spec_istpot_akt,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot_akt) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung (0-1)")
+colnames(spec_istpot_akt) <- c("NAME_2","CC_2","Art","Gruppe","Ist","Pot","Habitateignung")
 spec_istpot_regs_akt <- merge(spec_istpot_akt,all_regs, by="CC_2", all=T)
 
 ## Managementliste ################
 spec_istpot_man <- all_ist_pot_man
 setorderv(spec_istpot_man,cols=c("NAME_2","HabitatEignung"),order=-1)
-colnames(spec_istpot_man) <- c("NAME_2", "CC_2", "Art", "Gruppe", "Ist", "Pot", "Habitateignung (0-1)")
+colnames(spec_istpot_man) <- c("NAME_2", "CC_2", "Art", "Gruppe", "Ist", "Pot", "Habitateignung")
 spec_istpot_regs_man <- merge(spec_istpot_man,all_regs, by="CC_2", all=T)
 
 

@@ -75,10 +75,8 @@ server <- function(input, output){
   ## for potentially establishing species
   # make table reactive that user can select from the table directly the map points
   pot_spec_tab <- reactive({
-    region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten &  
-                                              Art%in%all_pot_spec[[input$Kreise_Daten]],
-                                            c("Art", "Deutscher Artname", "Gruppe", "Habitateignung (0-1)")]
-    region_list_sub <- region_list_sub[order(region_list_sub[,3], decreasing=TRUE)]
+    region_list_sub <- subdata$region_lists[RegionName%in%input$Kreise_Daten & Art%in%all_pot_spec[[input$Kreise_Daten]], c("Art", "Deutscher Artname", "Gruppe", "Habitateignung")]
+    region_list_sub <- region_list_sub[order(region_list_sub$Habitateignung, decreasing=TRUE)]
   })
   output$table <- renderDT({ # render DT table from reactive object
     df <- pot_spec_tab()
@@ -88,8 +86,7 @@ server <- function(input, output){
   ## for occurring species
   # make table reactive that user can select from the table directly the map points
   occ_spec_tab <- reactive({
-    subdata$region_lists[RegionName%in%input$Kreise_Daten & 
-                           Ist=="x", c("Art","Deutscher Artname", "Gruppe")]
+    subdata$region_lists[RegionName%in%input$Kreise_Daten & Ist=="x", c("Art","Deutscher Artname", "Gruppe")]
   })
   output$ListeNeobiota <- renderDT({ # render DT table from reactive object
     df <- occ_spec_tab()
@@ -120,7 +117,7 @@ server <- function(input, output){
   data_potspec <- reactive({
     subdata$region_lists[RegionName%in%input$Kreise_Daten & 
                            Art%in%all_pot_spec[[input$Kreise_Daten]],c("NAME_2",
-                          "Art","Deutscher Artname", "Gruppe","Habitateignung (0-1)")]
+                          "Art","Deutscher Artname", "Gruppe","Habitateignung")]
   })
   
   ## add to download
