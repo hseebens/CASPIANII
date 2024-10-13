@@ -27,8 +27,14 @@ bereinigeListe <- function(){
   alienspecies <- alienspecies[!alienspecies$Taxon%in%einheimisch_stand[[1]]$Taxon,]
   # alienspecies$wissenschaftlicherName[alienspecies$wissenschaftlicherName%in%einheimisch$VOLLNAME]
   
-  # alienspecies[alienspecies$Taxon%in%einheimisch_stand$WISS_NAME,]
+  ## entferne andere einheimische Arten aus Liste
+  alienspecies <- alienspecies[!alienspecies$Taxon=="Capra ibex",] # Alpen-Steinbock
+  alienspecies <- alienspecies[!alienspecies$Taxon=="Chrysoperla carnea",] # 
+  alienspecies <- alienspecies[!alienspecies$Taxon=="Labia minor",] # 
   
+  
+  # alienspecies[alienspecies$Taxon%in%einheimisch_stand$WISS_NAME,]
+
   ## Create Workbook object and add worksheets for output ##############################################
   wb <- createWorkbook()
   hs2 <- createStyle(halign = "center", valign = "center", textDecoration = "bold",border = "Bottom")
