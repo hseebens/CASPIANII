@@ -124,3 +124,10 @@ cat("\nSchritt 5: Ermittlung der Anzahl an sMon Eintraege\n")
 ermittlesMonDaten(sMon_Verzeichnis)
 
 
+##########################################################################
+## Schritt 6 - deutsche Artnamen: Ermittlung deutscher Artnamen von GBIF
+
+cat("\nSchritt 6: Ermittlung der deutschen Artnamen von GBIF\n")
+ermittleDeutscheNamen()
+
+

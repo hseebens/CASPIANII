@@ -82,4 +82,5 @@ Vorkommen <- Vorkommen_bezieheDaten(TaxonName=TaxonName,
 ## Darstellung der Vorkommen auf einer Karte #############################
 
 Vorkommen_erstelleKarte(Vorkommen)
+# Vorkommen_erstelleKarte(Vorkommen, Jahr=2010:2015)
 

@@ -32,6 +32,7 @@ bereinigeListe <- function(){
   alienspecies <- alienspecies[!alienspecies$Taxon=="Chrysoperla carnea",] # 
   alienspecies <- alienspecies[!alienspecies$Taxon=="Labia minor",] # 
   
+  alienspecies <- unique(alienspecies)
   
   # alienspecies[alienspecies$Taxon%in%einheimisch_stand$WISS_NAME,]
 

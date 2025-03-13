@@ -228,13 +228,13 @@ Vorkommen_bezieheDaten <- function(TaxonName=TaxonName,
         cat(paste("\n",nrow(occ_dat),"Eintraege von",TaxonName,"in OBIS gefunden\n"))
         
         ## prepare output #############
-        if ("date"%in%colnames(occ_dat)){
-          occ_dat <- occ_dat[,c("scientificName","decimalLongitude","decimalLatitude","date_start")]
+        if ("eventDate"%in%colnames(occ_dat)){
+          occ_dat <- occ_dat[,c("scientificName","decimalLongitude","decimalLatitude","eventDate")]
         } else {
           occ_dat <- occ_dat[,c("scientificName","decimalLongitude","decimalLatitude")]
-          occ_dat$date <- NA
+          occ_dat$eventDate <- NA
         }
-        occ_dat$date <- as.character(occ_dat$date)
+        occ_dat$eventDate <- as.character(occ_dat$eventDate)
         
         colnames(occ_dat) <- c("Taxon","Laengengrad","Breitengrad","Zeitpunkt")
         

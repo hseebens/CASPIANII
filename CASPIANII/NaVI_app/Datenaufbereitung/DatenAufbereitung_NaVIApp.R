@@ -15,6 +15,7 @@ setwd(file.path("C:","Hanno","Bioinvasion","CASPIANII","CASPIANII","NaVI_app","D
 
 
 
+
 ## Name des Durchlaufs
 identifier <- "281123"
 
@@ -37,7 +38,7 @@ colnames(liste_artgruppen) <- c("Taxon", "Gruppe")
 
 
 ## Kurzformen der Pfade
-paths_short <- read.xlsx(file.path("Daten","Pfade_Kurzformen.xlsx"))
+# paths_short <- read.xlsx(file.path("Daten","Pfade_Kurzformen.xlsx"))
 
 
 
@@ -305,39 +306,39 @@ dist_buff <- 100
 units(dist_buff) <- as_units("km")
 
 ## Lade Koordinaten
-coords <- fread(file.path("Daten","Neobiota_AllOccurrences.gz"))
-coords <- subset(coords, Taxon %in% unique(list_aliens$Taxon)) # remove some entries listed in the ListeNeobiota...xlsx
+point_data <- fread(file.path("Daten","Neobiota_AllOccurrences.gz"))
+point_data <- subset(point_data, Taxon %in% unique(list_aliens$Taxon)) # remove some entries listed in the ListeNeobiota...xlsx
 
 potist <- all_ist_pot # fread(file.path("Daten","Neobiota_IstPot_Liste_Kreise.gz"), colClasses = c("character","character","character","character","character","character","numeric"))
 potist <- merge(potist, all_regions, by="CC_2", all=T)
 
 
-
-## Ermittle deutsche Namen von GBIF ##########################################
-
-cat("\n Ermittle deutsche Namen von GBIF.\n\n")
-
-uni_spec <- unique(coords$Taxon)
-all_common_names <- list()
-for (i in 1:length(uni_spec)){
-  spec_dat <- name_backbone(uni_spec[i])
-  try({
-    all_names <- name_usage(spec_dat$usageKey, data="vernacularNames")
-    all_germans <- all_names$data[all_names$data$language=="deu",]
-    common_name <- names(sort(table(all_germans$vernacularName), decreasing=T)[1])
-    all_common_names[[i]] <- common_name
-  }, silent=TRUE)
-  if (i%%100==0) print(paste(round(i/length(uni_spec)*100),"%"))
-}
-ind_miss <- unlist(lapply(all_common_names,length))==0
-all_common_names[ind_miss] <- NA
-scientific_common <- cbind.data.frame(unlist(all_common_names),uni_spec)
-colnames(scientific_common) <- c("Taxon_deutsch","Taxon_wissensch")
-
-## Export
-fwrite(scientific_common,file.path("Daten","Tabelle_DeutscheName.csv"))
-
-
+# 
+# ## Ermittle deutsche Namen von GBIF ##########################################
+# 
+# cat("\n Ermittle deutsche Namen von GBIF.\n\n")
+# 
+# uni_spec <- unique(point_data$Taxon)
+# all_common_names <- list()
+# for (i in 1:length(uni_spec)){
+#   spec_dat <- name_backbone(uni_spec[i])
+#   try({
+#     all_names <- name_usage(spec_dat$usageKey, data="vernacularNames")
+#     all_germans <- all_names$data[all_names$data$language=="deu",]
+#     common_name <- names(sort(table(all_germans$vernacularName), decreasing=T)[1])
+#     all_common_names[[i]] <- common_name
+#   }, silent=TRUE)
+#   if (i%%100==0) print(paste(round(i/length(uni_spec)*100),"%"))
+# }
+# ind_miss <- unlist(lapply(all_common_names,length))==0
+# all_common_names[ind_miss] <- NA
+# scientific_common <- cbind.data.frame(unlist(all_common_names),uni_spec)
+# colnames(scientific_common) <- c("Taxon_deutsch","Taxon_wissensch")
+# 
+# ## Export
+# fwrite(scientific_common,file.path("Daten","Tabelle_DeutscheName.csv"))
+# 
+scientific_common <- fread()
 
 cat("\n Ermittle potenzielle Arten.\n\n") #########################################
 
@@ -354,7 +355,7 @@ for (i in 1:length(uni_Kreise)){
   abs_spec <- subset(abs_spec,HabitatEignung>0.7)
   
   ## subset of coordinates
-  coords_sub <- subset(coords,Laengengrad>ext$xmin & Laengengrad<ext$xmax)
+  coords_sub <- subset(point_data,Laengengrad>ext$xmin & Laengengrad<ext$xmax)
   coords_sub <- subset(coords_sub,Breitengrad>ext$ymin & Breitengrad<ext$ymax)
   coords_sub <- subset(coords_sub,Taxon%in%abs_spec$Taxon)
   
@@ -436,8 +437,8 @@ spec_istpot_regs_man <- merge(spec_istpot_man,all_regs, by="CC_2", all=T)
 
 
 # species occurrences
-point_data <- fread(file.path("Daten","Vorkommen_alleArten.gz"))
-point_data <- subset(point_data, Taxon %in% unique(list_aliens$Taxon)) # remove some entries listed in the ListeNeobiota...xlsx
+# point_data <- fread(file.path("Daten","Vorkommen_alleArten.gz"))
+# point_data <- subset(point_data, Taxon %in% unique(list_aliens$Taxon)) # remove some entries listed in the ListeNeobiota...xlsx
 
 uni_spec <- unique(point_data$Taxon)
 
@@ -448,8 +449,8 @@ all_DBs <- sort(unique(point_data$Datenbank))
 
 
 ## common names
-common_names <- fread(file.path("Daten","Tabelle_DeutscheName.csv"))
-colnames(common_names) <- c("Deutscher Artname", "Taxon_wissensch")
+common_names <- list_aliens[, c("Taxon", "Artname")]
+colnames(common_names) <- c("Taxon_wissensch", "Deutscher Artname")
 
 region_lists <- merge(spec_istpot_regs,common_names,by.x="Art", by.y="Taxon_wissensch")
 region_lists_eu <- merge(spec_istpot_regs_eu,common_names,by.x="Art", by.y="Taxon_wissensch")

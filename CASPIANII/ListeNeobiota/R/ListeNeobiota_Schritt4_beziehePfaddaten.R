@@ -68,6 +68,7 @@ beziehePfadDaten <- function(){
   
   ## EASIN paths #############################################################
   pathsEASIN <- read.xlsx(file.path("ListeNeobiota","Data","Input","Pfadangaben_EASIN.xlsx"),sheet=1)
+  pathsEASIN <- pathsEASIN[!duplicated(pathsEASIN$Taxon),]
   
   ## translate paths to standard
   pathsEASIN$path_EASIN <- NA

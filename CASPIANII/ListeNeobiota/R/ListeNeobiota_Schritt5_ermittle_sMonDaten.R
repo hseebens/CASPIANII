@@ -51,6 +51,7 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   
   alienspecies <- read.xlsx(file.path("ListeNeobiota","Data","Output","ListeGebietsfremderArten_gesamt_standardisiert.xlsx"),sheet=1)
   # alienspecies <- alienspecies[,-which(colnames(alienspecies)=="Eintraege_sMon")] # in case column exist from former runs
+  alienspecies <- unique(alienspecies)
   
   ## standardise sMon species names for comparison ################
   
@@ -92,15 +93,16 @@ ermittlesMonDaten <- function(sMon_Verzeichnis=NULL){
   alienspecies_nRecords$Kommentar[alienspecies_nRecords$database=="GRIIS" & alienspecies_nRecords$Eintraege_GBIF_DE<100 & alienspecies_nRecords$phylum=="Tracheophyta"] <- "moeglicherweise nicht etabliert"
   
   ## data availability
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<500] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<500],"geringe GBIF Datendichte",sep="; ")
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<10000 & alienspecies_nRecords$Eintraege_GBIF_DE>500] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<10000 & alienspecies_nRecords$Eintraege_GBIF_DE>500],"mittlere GBIF Datendichte",sep=";")
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<100] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<100],"geringe GBIF Datendichte",sep="; ")
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<10000 & alienspecies_nRecords$Eintraege_GBIF_DE>100] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE<10000 & alienspecies_nRecords$Eintraege_GBIF_DE>100],"mittlere GBIF Datendichte",sep=";")
   alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE>10000 & alienspecies_nRecords$Eintraege_GBIF_Global>10000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE>10000 & alienspecies_nRecords$Eintraege_GBIF_Global>10000],"gute GBIF Datendichte",sep=";")
-  
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 10000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 10000],"gute sMon Datendichte",sep="; ")
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon < 1000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon < 1000],"geringe sMon Datendichte",sep="; ")
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 1000 & alienspecies_nRecords$Eintraege_sMon < 10000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 1000 & alienspecies_nRecords$Eintraege_sMon < 10000],"mittlere sMon Datendichte",sep="; ")
-  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE > 10000 & alienspecies_nRecords$Eintraege_sMon > 10000] <- "sehr gute Datendichte in GBIF und sMon"
 
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 10000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 10000],"gute sMon Datendichte",sep="; ")
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon < 100] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon < 100],"geringe sMon Datendichte",sep="; ")
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 100 & alienspecies_nRecords$Eintraege_sMon < 10000] <- paste(alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_sMon > 100 & alienspecies_nRecords$Eintraege_sMon < 10000],"mittlere sMon Datendichte",sep="; ")
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE > 10000 & alienspecies_nRecords$Eintraege_sMon > 10000] <- "gute Datendichte in GBIF und sMon"
+  alienspecies_nRecords$Kommentar[alienspecies_nRecords$Eintraege_GBIF_DE < 100 & alienspecies_nRecords$Eintraege_sMon < 100] <- "geringe Datendichte in GBIF und sMon"
+  
   alienspecies_nRecords$Kommentar <- gsub("^; ","",alienspecies_nRecords$Kommentar)
   alienspecies_nRecords$Kommentar <- gsub("^;","",alienspecies_nRecords$Kommentar)
   

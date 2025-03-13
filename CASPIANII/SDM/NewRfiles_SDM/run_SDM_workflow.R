@@ -97,12 +97,6 @@ LadePakete()
 
 ueberpruefe_Verzeichnisse()
 
-
-## check identifier separator
-if (strtrim(identifier,1)!="_"){
-  identifier <- paste0("_",identifier)
-}
-
 ###########################################################################################################
 ## Ueberpruefe Datensaetze (Artenliste und Daten der Vorhersagevariablen) #################################
 
@@ -114,8 +108,13 @@ ueberpruefe_Datensaetze(Klima_var=Klima_var,
 ## Lade Artenliste ########################################################################################
 
 Artenliste <- importiereArtenliste(Name_Artenliste=Name_Artenliste,
-                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE,
-                                   Max_Anzahl_GBIF_DE=Max_Anzahl_GBIF_DE)
+                                   Min_Anzahl_GBIF_DE=Min_Anzahl_GBIF_DE)
+
+
+## check identifier separator
+if (strtrim(identifier,1)!="_"){
+  identifier <- paste0("_",identifier)
+}
 
 ###########################################################################################################
 ## Generiere Tabelle zum Stand der Modellierung fuer jede Art #############################################
@@ -130,7 +129,7 @@ status_species <- read.xlsx(file.path("SDM","Data","Output",paste0("StatusModell
 
 ##########################################################################################################
 ## Schleife ueber alle Arten zur Berechnung der Habitateignung
-for (i in 51:length(Artenliste)){ #
+for (i in 1:length(Artenliste)){ #
 
   ## Auswahl einer Art ###################################################################################
   TaxonName <- Artenliste[i]  ## Taxonname
@@ -169,6 +168,7 @@ for (i in 51:length(Artenliste)){ #
                                    Ausschnitt=Ausschnitt_ModellFit,
                                    identifier=identifier,
                                    max_limit=Max_Anzahl_GBIF_DE)
+    
   }
   ## Alternativ: Lade existierende Datei von Festplatte:
   # Vorkommen <- fread(file.path("SDM","Data","Input",paste0("Vorkommen_",TaxonName,identifier,".csv"))) # stores the final occurrence file on the users computer
@@ -226,7 +226,7 @@ for (i in 51:length(Artenliste)){ #
 
   ##########################################################################################################
   ### Bearbeitung der Ergebnisse ###########################################################################
-  
+
   if (!is.list(Modelllaeufe)){  # falls keine Modelle gefittet werden konnten, ueberspringe diese Art
     cat(paste0("\n************* Bearbeitung von ",TaxonName," beendet ************* \n") ) 
     next
@@ -259,11 +259,6 @@ for (i in 51:length(Artenliste)){ #
 ## Schritt 7: Synthesekarten zum Vorkommen und Vorhersage #################################################
 ## Nur moeglich wenn mehrere Arten simuliert wurden (length(Artenliste)>1) !
 
-VorkommenVerzeichnis=file.path("E:","CASPIANII","CASPIANII","SDM","Data","Input")
-
-VorhersageVerzeichnis=file.path("E:","CASPIANII","CASPIANII","SDM","Data","Output")
-
-
 if (length(Artenliste)==1){
   warning("\nWarnung: Es koennen keine Synthesekarten erstellt werden, da nur eine Art vorliegt.") 
 }
@@ -271,8 +266,7 @@ if (length(Artenliste)==1){
 ## Verzeichnis mit Datensaetzen zum Vorkommen der Arten (Export von 'ermittle_vorkommen()' )
 
 ## Schritt 7a: integriere Vorkommen aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=VorkommenVerzeichnis,
-                               # VorkommenVerzeichnis=file.path("SDM","Data","Input"),
+erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=file.path("SDM","Data","Input"),
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,
@@ -280,8 +274,7 @@ erstelleKarte_istVorkommenAlle(VorkommenVerzeichnis=VorkommenVerzeichnis,
                                max_nTaxa=300)
 
 ## Schritt 7b: integriere Habitateignung aller Arten; exportiere Daten und erstelle Karte
-erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=VorhersageVerzeichnis,
-                               # VorhersageVerzeichnis=file.path("SDM","Data","Output"),
+erstelleKarte_potVorkommenAlle(VorhersageVerzeichnis=file.path("SDM","Data","Output"),
                                identifier,
                                Name_Artenliste=Name_Artenliste,
                                Ausschnitt=Ausschnitt_Extrapolation,

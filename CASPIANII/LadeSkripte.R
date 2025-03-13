@@ -35,8 +35,11 @@ source(file.path("ListeNeobiota","R","ListeNeobiota_Schritt4_beziehePfaddaten.R"
 ## function to extract sMon records (Eichenberg et al. 2021)
 source(file.path("ListeNeobiota","R","ListeNeobiota_Schritt5_ermittle_sMonDaten.R"))
 
-## function to extract sMon records (Eichenberg et al. 2021)
+## function to check the required folder structure
 source(file.path("ListeNeobiota","R","ListeNeobiota_ueberpruefeDatenVerzeichnisse.R"))
+
+## function to extract German common names
+source(file.path("ListeNeobiota","R","ListeNeobiota_Schritt6_ermittleDeutscheArtnamen.R"))
 
 
 

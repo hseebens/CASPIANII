@@ -9,8 +9,11 @@
 
 
 
-Vorkommen_erstelleKarte <- function(records){
+Vorkommen_erstelleKarte <- function(records, Jahr=NA){
 
+  if (!any(is.na(Jahr))){
+    records <- records[year(records$Zeitpunkt) %in% Jahr, ]
+  }
   records$col <- as.numeric(as.factor(records$Datenbank))
   all_cols <- c('red', 'orange','black', 'blue')
   all_DBs <- sort(unique(records$Datenbank))

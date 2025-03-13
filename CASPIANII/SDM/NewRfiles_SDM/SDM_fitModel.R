@@ -81,7 +81,7 @@ fit_SDMs <- function(TaxonName=NULL,
   modelruns <- foreach(i=1:length(data_all_runs), .packages=c("mgcv","PresenceAbsence","R.utils"), .errorhandling = "remove") %dopar% {
   # modelruns <- list()
   # for (i in 1:length(data_all_runs)){
-    
+
     data_single_run <- data_all_runs[[i]]
 
     formula_model <- data_single_run$formula_model
@@ -93,7 +93,7 @@ fit_SDMs <- function(TaxonName=NULL,
     possibleError <- tryCatch(withTimeout(model1 <- gam(formula_model, family=family_model, data=fit_data, method = "REML"),
                                           timeout = 300),  # set maximum time to 5 minutes each
                               error=function(e) e)
-    
+
     if(!inherits(possibleError, "error")){ # check if gam fit worked
       
       ## apply model on test block for cross-validation
@@ -103,29 +103,24 @@ fit_SDMs <- function(TaxonName=NULL,
       colnames(project_suit) <- paste("pred",data_single_run$PAblock,data_single_run$RndSub,sep=".")
       eval.data.auc <- cbind(test_data[,c("ID","Praesenz")],project_suit)
       
-      ## Performance measures
       AUC <- round(auc(eval.data.auc,st.dev=FALSE,na.rm=T),4) # computes AUC; requires 1. ID, 2. presence/absence, 3. predicted suitability
-      PCC <- round(pcc(cmx(eval.data.auc),st.dev=FALSE),4)
-      sens <- sensitivity(cmx(eval.data.auc), st.dev = FALSE)
-      spec <- specificity(cmx(eval.data.auc), st.dev = FALSE)
-      TSS <- sens + spec - 1
       
       ## output
-      return(list(run=i,PAblock=data_single_run$PAblock,RndSub=data_single_run$RndSub,AUC=AUC,mod=model1, PCC=PCC, TSS=TSS))
-      
+      return(list(run=i,PAblock=data_single_run$PAblock,RndSub=data_single_run$RndSub,AUC=AUC,mod=model1))
+      # modelruns <-     list(run=i,PAblock=data_single_run$PAblock,RndSub=data_single_run$RndSub,AUC=AUC,mod=model1)
     } else {
-      
-      return()
+
+    return()
     }
   } # end of parallelised loop
 
   ## stop cluster  
   stopCluster(cl)
-  
+
   ## no results
   if (is.null(unlist(modelruns))){
     cat("\n Warnung: Fitten der Modelle abgebrochen, da die maximale Zeit ueberschritten wurde. Keine Modellergebenisse.")
-    
+
     ## write status to log file
     status_species$Status[ind_species] <- "Keine Habitatmodellierung, da keine Modelle gefittet werden konnten."
     
@@ -146,17 +141,14 @@ fit_SDMs <- function(TaxonName=NULL,
     dat <- modelruns[[i]]
     if (!is.null(dat)){
       x <- x + 1
-      out_eval[[x]] <- c(dat$PAblock,dat$RndSub,dat$AUC,summary(dat$mod)$r.sq, dat$PCC, dat$TSS)
+      out_eval[[x]] <- c(dat$PAblock,dat$RndSub,dat$AUC,summary(dat$mod)$r.sq)
     }
   }
   out_eval <- as.data.frame(do.call("rbind",out_eval),stringsAsFactors=F)
-  colnames(out_eval) <- c("PAblock", "RndSub", "AUC", "R2", "PCC", "TSS")
   
   cat(paste(" Anzahl an Modellläufen:",x,"\n"))
-  cat(paste(" Mittelwert AUC:",round(mean(out_eval$AUC,na.rm=T),2),"\n"))
-  cat(paste(" Mittelwert R2:",round(mean(out_eval$R2,na.rm=T),2),"\n"))
-  cat(paste(" Mittelwert PCC:",round(mean(out_eval$PCC,na.rm=T),2),"\n"))
-  cat(paste(" Mittelwert TSS:",round(mean(out_eval$TSS,na.rm=T),2),"\n"))
+  cat(paste(" Mittelwert AUC:",round(mean(out_eval$V3,na.rm=T),2),"\n"))
+  cat(paste(" Mittelwert R2:",round(mean(out_eval$V4,na.rm=T),2),"\n"))
   
   # output
   return(modelruns)
