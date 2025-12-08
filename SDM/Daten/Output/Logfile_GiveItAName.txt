@@ -1,0 +1,822 @@
+********************************************** 2025-12-08 16:33:56.94404 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+[1] FALSE FALSE FALSE FALSE FALSE FALSE
+********************************************** 2025-12-08 16:40:51.984242 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle Verzeichnisse sind bereits vorhanden.
+********************************************** 2025-12-08 16:41:37.622006 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+> cat(paste0("********************************************** ", Sys.time(), " ********************************************** \n"))
+********************************************** 2025-12-08 16:41:57.904249 ********************************************** 
+
+> cat(paste0("Name des Durchlaufs: ", identifier," \n"))
+Name des Durchlaufs: _GiveItAName 
+
+> cat(paste0("Name der Artenliste: ", Name_Artenliste," \n"))
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+> cat(paste0("\nParameter:"," \n"))
+
+Parameter: 
+
+> cat(paste0(" Min_Anzahl_GBIF: ", Min_Anzahl_GBIF," \n"))
+ Min_Anzahl_GBIF: 50 
+
+> cat(paste0(" Max_Anzahl_GBIF: ", Max_Anzahl_GBIF," \n"))
+ Max_Anzahl_GBIF: 10000 
+
+> cat(paste0(c(" Bioklimatische Variablen: ", Klima_var," \n")))
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+
+> cat(paste0(c(" Landbeckungs-Variablen:", Landbedeck_var," \n")))
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+
+> cat(paste0(c(" Koordinaten fuer Ausschnitt zum Modellfit: ", Ausschnitt_ModellFit," \n")))
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+
+> cat(paste0(c(" Koordinaten fuer Ausschnitt zur Extrapolation: ", Ausschnitt_Extrapolation," \n")))
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+
+> cat(paste0(" Anzahl Absenzdatensaetze: ", n_AbsenzDaten," \n"))
+ Anzahl Absenzdatensaetze: 5 
+
+> cat(paste0(" Modellaeufe zur Evaluierung: ", n_Modelllaeufe," \n"))
+ Modellaeufe zur Evaluierung: 5 
+
+> ###########################################################################################################
+> ## Ueberpruefe Datensaetze (Artenliste .... [TRUNCATED] 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+> ###########################################################################################################
+> ## Lade Artenliste ################### .... [TRUNCATED] 
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+> ###########################################################################################################
+> ## Generiere Tabelle zum Stand der Mod .... [TRUNCATED] 
+
+> cat(paste0("********************************************** ", Sys.time(), " ********************************************** \n"))
+********************************************** 2025-12-08 16:42:24.008913 ********************************************** 
+
+> cat(paste0("Name des Durchlaufs: ", identifier," \n"))
+Name des Durchlaufs: _GiveItAName 
+
+> cat(paste0("Name der Artenliste: ", Name_Artenliste," \n"))
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+> cat(paste0("\nParameter:"," \n"))
+
+Parameter: 
+
+> cat(paste0(" Min_Anzahl_GBIF: ", Min_Anzahl_GBIF," \n"))
+ Min_Anzahl_GBIF: 50 
+
+> cat(paste0(" Max_Anzahl_GBIF: ", Max_Anzahl_GBIF," \n"))
+ Max_Anzahl_GBIF: 10000 
+
+> cat(paste0(c(" Bioklimatische Variablen: ", Klima_var," \n")))
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+
+> cat(paste0(c(" Landbeckungs-Variablen:", Landbedeck_var," \n")))
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+
+> cat(paste0(c(" Koordinaten fuer Ausschnitt zum Modellfit: ", Ausschnitt_ModellFit," \n")))
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+
+> cat(paste0(c(" Koordinaten fuer Ausschnitt zur Extrapolation: ", Ausschnitt_Extrapolation," \n")))
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+
+> cat(paste0(" Anzahl Absenzdatensaetze: ", n_AbsenzDaten," \n"))
+ Anzahl Absenzdatensaetze: 5 
+
+> cat(paste0(" Modellaeufe zur Evaluierung: ", n_Modelllaeufe," \n"))
+ Modellaeufe zur Evaluierung: 5 
+
+> ###########################################################################################################
+> ## Ueberpruefe Datensaetze (Artenliste .... [TRUNCATED] 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+> ###########################################################################################################
+> ## Lade Artenliste ################### .... [TRUNCATED] 
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+> ###########################################################################################################
+> ## Generiere Tabelle zum Stand der Mod .... [TRUNCATED] 
+[1] "_GiveItAName"
+********************************************** 2025-12-08 16:44:27.110679 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+[1] 1
+********************************************** 2025-12-08 16:50:32.472428 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+*** Ermittle Vorkommensdaten für Abutilon theophrasti *** 
+
+ Der Download von Daten kann einige Minuten in Anspruch nehmen.
+
+** Bearbeitung von GBIF ******************
+
+ Anzahl der verfügbaren Einträge in GBIF (n=15665) überschreitet Limit (n=10000). Vorkommensdaten sollten mit alternativen Weg mit 'SDM_bezieheHoheDatenmengen.R' oder Daten direkt von Webseite heruntergeladen werden.
+ Download wird auf n=10000 Vorkommensdaten begrenzt.  Abutilon theophrasti in GBIF gefunden als Abutilon theophrasti Medik. 
+
+ Maximum Limit von Einträgen fuer GBIF Anfrage erreicht. Entweder Limit (max_limit) erhöhen oder Daten direkt von der GBIF Webseite laden.
+  9023 Einträge von Abutilon theophrasti von GBIF bezogen.
+
+** Bearbeitung von iNaturalist ****************** 
+2 
+3 
+4 
+5 
+6 
+7 
+8 
+9 
+10 
+11 
+  2157 Eintraege von Abutilon theophrasti in iNaturalist gefunden.
+
+** Bearbeitung von OBIS ****************** 
+ Keine Eintraege in OBIS fuer Abutilon theophrasti 
+
+ Bereinigen der Vorkommensdaten...
+
+ Vorkommensdaten wurden als 'Vorkommen_Abutilon theophrasti.csv' im Verzeichnis 'Daten/Input' gespeichert.
+
+*** Ermittle Umweltdaten für Abutilon theophrasti ***
+
+ Erstelle Rasterdatensatz der Umweltvariablen: SDM/Daten/Input/WorldClim/UmweltdatenRaster_GiveItAName.tif 
+|---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|==============                                          [1] TRUE
+********************************************** 2025-12-08 17:12:21.052242 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+Called from: ueberpruefeDatensaetze(Klima_var = Klima_var, Landbedeck_var = Landbedeck_var, 
+    Name_Artenliste = Name_Artenliste)
+********************************************** 2025-12-08 17:18:20.082154 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+********************************************** 2025-12-08 17:18:53.127415 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+********************************************** 2025-12-08 17:19:11.560942 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+ Datei zum Status der Modellierung existiert bereits.
+ Da ueberschreiben=FALSE wird Datei zum Status der Modellierung nicht ueberschrieben.
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+************* Bearbeitung von Abutilon theophrasti bereits durchgeführt ***** 
+************* Status: Ausreichend Daten zur Habitatmodellierung vorhanden. ***** 
+
+
+************* Bearbeitung von Acacia mearnsii ************* 
+
+*** Ermittle Vorkommensdaten für Acacia mearnsii *** 
+
+ Der Download von Daten kann einige Minuten in Anspruch nehmen.
+
+** Bearbeitung von GBIF ******************
+  Acacia mearnsii in GBIF gefunden als Acacia mearnsii De Wild. 
+  1446 Einträge von Acacia mearnsii von GBIF bezogen.
+
+** Bearbeitung von iNaturalist ****************** 
+2 
+3 
+4 
+5 
+6 
+  1009 Eintraege von Acacia mearnsii in iNaturalist gefunden.
+
+** Bearbeitung von OBIS ****************** 
+ Keine Eintraege in OBIS fuer Acacia mearnsii 
+
+ Bereinigen der Vorkommensdaten...
+
+ Vorkommensdaten wurden als 'Vorkommen_Acacia mearnsii.csv' im Verzeichnis 'Daten/Input' gespeichert.
+
+*** Ermittle Umweltdaten für Acacia mearnsii ***
+|---------|---------|---------|---------|==========                                                                        Taxon Eintraege_GBIF_DE Eintraege_GBIF_Europa
+1          Acrochaetium catenulatum                 0                    25
+2             Aglaothamnion halliae                 0                     6
+3   Antithamnionella spirographidis                 5                   466
+4       Antithamnionella ternifolia                 5                   518
+5            Bonnemaisonia hamifera                57                  6066
+6          Callithamnion tetragonum                16                  1534
+7                Ceramium cimbricum                21                   403
+8               Ceramium circinatum                 0                   251
+9                   Chara connivens                13                  2120
+10                   Codium fragile                33                  5578
+11           Codium fragile fragile                 0                     0
+12            Compsopogon caeruleus                 2                    75
+13            Compsopogon coeruleus                 0                     6
+14               Dasya baillouviana                 3                   685
+15            Dasysiphonia japonica                 0                  2212
+16            Devaleraea ramentacea                 0                   931
+17              Gracilaria gracilis                59                  3246
+18       Gracilaria vermiculophylla                55                   485
+19              Halurus flosculosus                 0                  3395
+20            Mastocarpus stellatus                63                 14170
+21            Melanothamnus harveyi                 1                   506
+22        Protomonostroma undulatum                54                   234
+23                Pyropia yezoensis                 0                    15
+24                   Ulva australis                 6                   191
+25                 Ulva californica                 4                    54
+26                    Ulva gigantea                 9                    80
+27             Umbraulva dangeardii                 2                   231
+28              Ambystoma mexicanum                 4                    88
+29               Bombina orientalis                 2                    11
+30              Cynops pyrrhogaster                 1                     6
+31  Eleutherodactylus martinicensis                 0                     0
+32                Hyla meridionalis                 3                 71585
+33          Lithobates catesbeianus               148                 24684
+34             Pelophylax bedriagae                 0                   616
+35               Pseudacris regilla                 0                     0
+36                  Rhinella marina                 2                     8
+37                Triturus carnifex                25                  5539
+38              Triturus marmoratus                 9                 40661
+39                   Xenopus laevis                 8                   731
+40                    Acartia tonsa              2292                  3730
+41         Ameira divagans divagans                 1                     1
+42                  Ameira divagans                 0                     0
+43          Amphibalanus amphitrite                 0                   413
+44          Amphibalanus improvisus              1049                 76379
+45              Amphitomeus attemsi                26                   106
+46            Anchiphiloscia balssi                 2                     2
+47             Androniscus dentiger                83                  4400
+48          Arcitalitrus sylvaticus                 0                     4
+49                Argulus japonicus                 0                     7
+50            Armadillidium nasatum              1046                  7580
+51            Armadillo officinalis                 1                  1654
+52           Atyaephyra desmarestii                35                  1370
+53          Brachychaeteuma bradeae                60                   213
+54             Brachydesmus superus               477                  4485
+55          Brachynotus sexdentatus                 1                  1484
+56         Brevitalitrus hortulanus                 0                     3
+57        Buddelundiella cataractae                 3                    75
+58                Caligus lacustris                 0                    51
+59              Callinectes sapidus                 8                  2754
+60                  Caprella mutica                27                  1660
+61                Cercopagis pengoi                11                  2077
+62           Chaetogammarus ischnus                49                   335
+63        Chaetogammarus trichiatus                22                   119
+64       Chelicorophium curvispinum               320                  9231
+65          Chelicorophium robustum                65                   565
+66         Chelicorophium sowinskyi                 1                    85
+67                Cherax destructor                 0                     7
+68           Cherax quadricarinatus                 0                    13
+69                Cherax tenuimanus                 0                     0
+70              Choneiulus palmatus               148                   996
+71           Cordioniscus stebbingi                 3                    56
+72               Corophium sextonae                 2                    28
+73         Crangonyx pseudogracilis                23                 77508
+74               Cryptops anomalans                39                   507
+75          Cryptorchestia cavimana                39                   812
+76        Cylindroiulus britannicus                98                  2279
+77         Cylindroiulus parisiorum                 5                   176
+78          Cylindroiulus truncorum                61                   216
+79                 Cypretta dubiosa                 0                     0
+80                 Cypretta globula                 0                     0
+81                 Cypretta turgida                 0                     0
+82                  Daphnia ambigua                44                   240
+83                  Daphnia parvula                30                    39
+84               Desoria trispinata                67                   838
+85          Diaphanosoma chankensis                 0                     0
+86           Diaphanosoma orghidani                 1                   115
+87        Dikerogammarus bispinosus                 6                    30
+88       Dikerogammarus haemobaphes               160                  4029
+89          Dikerogammarus villosus               473                  3891
+90         Echinogammarus berilloni               220                  1909
+91               Eriocheir sinensis               862                 23791
+92            Eurytemora carolleeae                 1                   110
+93                    Evadne anonyx                 1                   895
+94                 Faxonius immunis                62                    89
+95                 Faxonius limosus              1564                 56150
+96                Faxonius rusticus                 0                     2
+97                 Faxonius virilis                 1                  1355
+98                Gammarus roeselii              3262                  5404
+99                Gammarus tigrinus               328                 24117
+100           Gammarus varsoviensis                 9                    31
+101             Goneplax rhomboides                87                  2216
+102         Grandidierella japonica                59                   491
+103    Hanseniella oligomacrochaeta                 1                     1
+104          Hanseniella orientalis                 0                     0
+105          Haplophthalmus danicus               274                  3215
+106        Hemigrapsus penicillatus                 0                   162
+107          Hemigrapsus sanguineus               373                  4510
+108             Hemigrapsus takanoi               658                  3289
+109               Hemimysis anomala                21                   725
+110              Homarus americanus                 0                    98
+111                Idotea metallica                16                   115
+112                     Jaera istri               227                  1183
+113                     Jaera sarsi                11                    45
+114                 Jassa marmorata               220                   848
+115         Katamysis warpachowskyi                58                   125
+116           Kryphioiulus occultus               189                   281
+117              Lamyctes africanus                 2                    27
+118            Lamyctes emarginatus               421                  1946
+119             Limnomysis benedeni               192                  3891
+120              Limulus polyphemus                 5                    10
+121           Macrobrachium dayanum                 0                     0
+122      Macrosternodesmus palicola                22                   799
+123      Mecistocephalus guildingii                 0                     6
+124     Mecistocephalus punctifrons                 0                     0
+125                   Melita nitida                36                   130
+126            Miktoniscus linearis                 2                     2
+127          Monocorophium sextonae                 8                  2303
+128             Monocorophium uenoi                 0                    10
+129         Mytilicola intestinalis                13                   107
+130           Mytilicola orientalis                 2                    12
+131              Neocaridina davidi                 4                    35
+132          Nippoleucon hinumensis                 1                   222
+133           Obesogammarus crassus                38                   449
+134            Obesogammarus obesus                 0                    81
+135                 Oithona davisae                10                   319
+136           Ophiodesmus albonanus                27                   553
+137                 Oxidus gracilis               216                  3572
+138        Pacifastacus leniusculus               879                103676
+139                Palaemon elegans               147                  7692
+140           Palaemon longirostris                38                  1917
+141          Palaemon macrodactylus               117                   355
+142             Paramysis lacustris                 0                   163
+143        Paraspirobolus lucifugus                34                    93
+144              Penilia avirostris               278                  3606
+145         Platorchestia platensis                36                   252
+146         Polydesmus denticulatus              2275                  6068
+147       Pontastacus leptodactylus                51                  2313
+148       Pontogammarus robustoides                79                   910
+149                Poratia digitata                15                    61
+150              Poratia obliterata                 1                     1
+151             Porcellio dilatatus                43                  1666
+152                Porcellio laevis                 9                  1188
+153        Porcellionides pruinosus               112                  3472
+154              Proasellus coxalis               693                  6158
+155           Proasellus meridianus                84                  9588
+156             Procambarus clarkii               342                 66513
+157            Procambarus cubensis                 1                     1
+158              Procambarus fallax                 5                     9
+159          Procambarus virginalis                74                   425
+160         Pseudodiaptomus marinus               853                   710
+161        Reductoniscus costulatus                 9                    77
+162        Rhithropanopeus harrisii               199                  4635
+163           Scutigera coleoptrata              1802                 14002
+164             Sinelobus stanfordi                 0                    22
+165            Sinelobus vanhaareni                 0                   579
+166        Skistodiaptomus pallidus                 7                     7
+167               Stenocypris major                 0                    10
+168         Stenocypris malcolmsoni                 0                     0
+169      Stigmatogaster subterranea               234                  3959
+170             Synidotea laticauda                18                    74
+171            Talitroides alluaudi                 6                    25
+172           Talitroides topitotum                 0                    42
+173           Trichoniscoides sarsi                 1                   330
+174                Verruca stroemia                15                  4665
+175                 Alitta succinea              2527                 19686
+176                   Alitta virens               336                 11749
+177             Allolobophora parva                 1                    26
+178                Amathia gracilis                17                   237
+179               Amathia imbricata                 2                  1013
+180          Amynthas heterochaetus                 0                     3
+181           Amynthas rodericensis                 2                    17
+182           Ancylostoma duodenale                 4                    10
+183            Anguillicola crassus                 5                   180
+184      Aphelenchoides ritzemabosi                 0                    15
+185            Aphelochaeta marioni               102                 16272
+186            Arachnidium lacourti                 0                     0
+187             Argonemertes dendyi                 0                    46
+188      Arthurdendyus triangulatus                 0                  4941
+189              Asterias amurensis                 0                     7
+190                Barbronia weberi                 4                    21
+191        Baruscapillaria ransomia                 0                     0
+192         Baylisascaris procyonis                 3                     8
+193                Bimastos rubidus               271                  3149
+194                Bipalium kewense                44                   580
+195           Blackfordia virginica                 3                    74
+196           Boccardia proboscidea                 2                    60
+197           Boccardiella ligerica                45                  1785
+198        Bougainvillia macloviana                 0                     0
+199            Bowerbankia gracilis                 9                    66
+200             Branchiura sowerbyi                93                  1836
+201          Bucephalus polymorphus                 1                    29
+202                 Bugula neritina                 0                  1161
+203            Bugulina stolonifera                10                   195
+204      Bursaphelenchus xylophilus                 0                     3
+205           Calyptospadix cerulea                10                    49
+206        Cambarincola mesochoreus                 0                     6
+207           Caspiobdella fadejewi                45                   162
+208             Cereus pedunculatus                53                  7281
+209            Chalinula loosanoffi                 0                    29
+210       Choanotaenia infundibulum                 2                    11
+211             Clonorchis sinensis                 0                     2
+212             Cordylophora caspia               295                  6158
+213          Craspedacusta sowerbii               112                   954
+214           Dendrobaena hortensis                 1                   204
+215              Dendrobaena veneta                 4                   376
+216    Dendrocoelum romanodanubiale                13                   114
+217                Diadumene cincta                 2                   689
+218               Diadumene lineata                11                   452
+219          Ditylenchus destructor                 0                     3
+220           Dolichoplana fieldeni                 0                     0
+221            Eisenia carolinensis                 0                     0
+222                  Eisenia fetida               102                  1644
+223                Eisenia japonica                 0                     0
+224                Eunapius carteri                21                    39
+225            Fenestrulina delicia                 1                    34
+226         Ficopomatus enigmaticus                 3                  1139
+227                Girardia tigrina               259                  2695
+228               Globodera pallida                 0                     0
+229         Globodera rostochiensis                 0                    30
+230              Gonionemus vertens                 0                   354
+231        Gyrodactylus luciopercae                 0                     3
+232                  Haliclona xena                 2                   272
+233              Haliclystus tenuis                 3                     3
+234             Helobdella europaea                 0                    10
+235      Helobdella punctatolineata                 0                     0
+236               Hydroides elegans                 1                   230
+237                Hypania invalida                82                  1819
+238                 Khawia sinensis                 1                    15
+239               Laonome xeprovala                 1                   944
+240                  Lecane bifurca                 0                     5
+241              Lepadella triptera                 0                    38
+242      Leptonemertes chalicophora                 0                    80
+243            Limnias ceratophylli                 1                    17
+244               Limnias melicerta                 2                    18
+245          Marenzelleria neglecta               592                  4921
+246           Marenzelleria viridis              1950                  9218
+247           Meloidogyne chitwoodi                 0                     1
+248              Meloidogyne fallax                 0                     4
+249          Microphthalmus similis                 4                   183
+250              Microscolex dubius                 0                    57
+251         Microscolex phosphoreus                 0                    68
+252               Mnemiopsis leidyi               209                  6949
+253            Moerisia inkermanica                 0                    21
+254                 Nemopsis bachei                 6                   212
+255      Neodexiospira brasiliensis                 0                    75
+256                   Obama nungara                19                  3232
+257          Opisthorchis viverrini                 0                     0
+258           Pachycordyle michaeli                 1                    13
+259         Pacificincola perforata                 0                    27
+260             Paranais botniensis                 1                    31
+261        Paratenuisentis ambiguus                 0                     7
+262          Pectinatella magnifica                20                  2493
+263              Perichaeta morrisi                 0                     1
+264             Perichaeta sinensis                 0                     0
+265          Pileolaria berkeleyana                 0                    54
+266            Pileolaria militaris                 0                    18
+267               Piscicola haranti                 2                    52
+268            Platydemus manokwari                 0                     6
+269             Plumatella casmiana                 1                     7
+270               Polydora websteri                 8                    36
+271           Potamothrix bavaricus                85                   700
+272        Potamothrix hammoniensis               310                 11205
+273        Potamothrix moldaviensis               134                  1845
+274          Potamothrix vejdovskyi                 1                   289
+275         Promesostoma bilineatum                 0                     3
+276       Prosthogonimus pellucidus                 2                    10
+277              Prostoma graecense                 1                    88
+278    Pseudodactylogyrus anguillae                 0                    15
+279         Pseudodactylogyrus bini                 0                     2
+280         Pseudomonocelis cetinae                 0                     1
+281 Quinqueserialis quinqueserialis                 1                     1
+282         Rhynchodemus sylvaticus                59                   357
+283       Schizobrachiella verrilli                 0                     0
+284          Schizoporella japonica                 0                   205
+285      Schyzocotyle acheilognathi                 0                    10
+286            Smittoidea prolifica                 1                    15
+287           Streblospio benedicti               706                  3836
+288         Strongyloides myopotami                 0                     1
+289             Tharyx killariensis              2633                 16818
+290           Tricellaria inopinata                 6                   611
+291                 Trichuris opaca                 0                     0
+292             Trocheta cylindrica                 2                     5
+293      Tubificoides heterochaetus               297                   978
+294               Victorella pavida                31                   103
+295         Watersipora subtorquata                 0                    64
+296        Xironogiton victoriensis                 3                   241
+297         Acheilognathus asmussii                 0                     0
+298                Acipenser baerii                16                   312
+299       Acipenser gueldenstaedtii                13                   360
+300             Acipenser stellatus                 2                   182
+301         Acipenser transmontanus                 0                     2
+302               Alosa sapidissima                 0                     0
+303                  Ameiurus melas               227                 31088
+304              Ameiurus nebulosus               438                  6213
+305               Apistogramma arua                 0                     0
+306                   Ballerus sapa                60                  1125
+307               Carassius auratus              2420                 15373
+308                    Channa argus                 0                     0
+309           Coregonus maraenoides                 8                     9
+310         Ctenopharyngodon idella               565                  5607
+311               Culaea inconstans                 0                    10
+312           Fundulus heteroclitus                 0                  1733
+313                Gambusia affinis                 1                  7528
+314              Gambusia holbrooki                13                 10725
+315                  Gobiosoma bosc                15                    38
+316     Hypophthalmichthys molitrix               258                  1428
+317                 Lepomis auritus                 1                     2
+318                Lepomis gibbosus              1346                143898
+319         Malapterurus electricus                 1                     1
+320            Micropterus dolomieu                 3                    46
+321           Micropterus salmoides                11                  7097
+322      Misgurnus anguillicaudatus                26                   339
+323               Misgurnus mohoity                 7                   281
+324                Morone americana                 0                     0
+325           Neogobius fluviatilis                49                  5874
+326          Neogobius melanostomus              3482                 53996
+327               Oncorhynchus keta                 0                     5
+328             Oncorhynchus mykiss              3642                 36984
+329           Oncorhynchus rhodurus                 0                     0
+330               Perccottus glenii                51                  2060
+331             Pimephales promelas                19                   265
+332               Plotosus lineatus                 0                     1
+333             Poecilia reticulata               121                   216
+ [ reached 'max' / getOption("max.print") -- omitted 1906 rows ]
+********************************************** 2025-12-08 17:26:43.755121 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+ Datei zum Status der Modellierung existiert bereits.
+ Da ueberschreiben=FALSE wird Datei zum Status der Modellierung nicht ueberschrieben.
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+ Vorkommensdaten werden aus Vorkommen_Abutilon theophrasti_GiveItAName.csv im Verzeichnis 'Daten/Input' genommen.
+
+*** Ermittle Umweltdaten für Abutilon theophrasti ***
+|---------|---------|---------|---------|==========                                          ********************************************** 2025-12-08 17:30:11.856866 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+ Datei zum Status der Modellierung existiert bereits.
+ Da ueberschreiben=FALSE wird Datei zum Status der Modellierung nicht ueberschrieben.
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+ Vorkommensdaten werden aus Vorkommen_Abutilon theophrasti_GiveItAName.csv im Verzeichnis 'Daten/Input' genommen.
+
+*** Ermittle Umweltdaten für Abutilon theophrasti ***
+|---------|---------|---------|---------|==============                                          
+ Anzahl Vorkommen werden zur Modellierung für Abutilon theophrasti auf 7918 Einträge ausgedünnt. 
+
+*** Generiere 5 Absenzdatensaetze für Abutilon theophrasti ***
+
+ Absenzdatensatz  1  generiert.
+ Absenzdatensatz  2  generiert.
+ Absenzdatensatz  3  generiert.
+ Absenzdatensatz  4  generiert.
+ Absenzdatensatz  5  generiert.
+
+*** Fit Modell für Abutilon theophrasti ***
+
+Das Fitten des Modells an Daten kann einige Minuten dauern.
+********************************************** 2025-12-08 18:02:53.915651 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+ Datei zum Status der Modellierung existiert bereits.
+ Da ueberschreiben=FALSE wird Datei zum Status der Modellierung nicht ueberschrieben.
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+ Vorkommensdaten werden aus Vorkommen_Abutilon theophrasti_GiveItAName.csv im Verzeichnis 'Daten/Input' genommen.
+
+*** Ermittle Umweltdaten für Abutilon theophrasti ***
+|---------|---------|---------|---------|==============                                          
+ Anzahl Vorkommen werden zur Modellierung für Abutilon theophrasti auf 7918 Einträge ausgedünnt. 
+
+*** Generiere 5 Absenzdatensaetze für Abutilon theophrasti ***
+
+********************************************** 2025-12-08 18:03:27.982122 ********************************************** 
+Name des Durchlaufs: _GiveItAName 
+Name der Artenliste: ListeGebietsfremderArten_gesamt_standardisiert.xlsx 
+
+Parameter: 
+ Min_Anzahl_GBIF: 50 
+ Max_Anzahl_GBIF: 10000 
+ Bioklimatische Variablen:  bio1 bio12 bio4 bio8 bio15 bio19  
+ Landbeckungs-Variablen: LC2 LC3 LC12 LC18 LC23 LC24 LC25 LC40 LC41  
+ Koordinaten fuer Ausschnitt zum Modellfit:  -30 25 40 78  
+ Koordinaten fuer Ausschnitt zur Extrapolation:  5 47 16 55.5  
+ Anzahl Absenzdatensaetze: 5 
+ Modellaeufe zur Evaluierung: 5 
+
+ Alle notwendingen Datensaetze vorhanden.
+
+ Einige Arten haben sehr viele Eintraege. Die Vorkommen dieser Arten 
+        sollten mit SDM_bezieheHoheDatenmengen.R herunter geladen und anschließend 
+        run_SDM_workflow.R ausgeführt werden. Diese Arten werden unter 
+        Arten_mit_vielen_Eintraegen.csv gespeichert.
+
+ Datei zum Status der Modellierung existiert bereits.
+ Da ueberschreiben=FALSE wird Datei zum Status der Modellierung nicht ueberschrieben.
+
+************* Bearbeitung von Abutilon theophrasti ************* 
+
+ Vorkommensdaten werden aus Vorkommen_Abutilon theophrasti_GiveItAName.csv im Verzeichnis 'Daten/Input' genommen.
+
+*** Ermittle Umweltdaten für Abutilon theophrasti ***
+|---------|---------|---------|---------|==============                                          
+ Anzahl Vorkommen werden zur Modellierung für Abutilon theophrasti auf 7918 Einträge ausgedünnt. 
+
+*** Generiere 5 Absenzdatensaetze für Abutilon theophrasti ***
