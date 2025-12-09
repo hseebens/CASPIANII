@@ -45,12 +45,20 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
   
       if (file.exists(file.path("SDM","Daten","Input","WorldClim","WorldClim2.1_RasterStackEurope_bio_30s.tif"))){
         
-        envstack <- rast(file.path("SDM","Daten","Input","WorldClim","WorldClim2.1_RasterStackEurope_bio_30s.tif")) 
+        envstack_all <- rast(file.path("SDM","Daten","Input","WorldClim","WorldClim2.1_RasterStackEurope_bio_30s.tif")) 
         
+        Klima_var_orig <- paste0("bio_", gsub("bio", "", Klima_var))
+        
+        envstack <- list()
+        for (i in 1:length(Klima_var_orig)){
+          ind <- grep(paste0(Klima_var_orig[i],"$"), names(envstack_all))
+          envstack <- c(envstack, envstack_all[[ind]])
+        }
+
         ## crop to extent
-        envstack  <- crop(envstack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
+        envstack  <- crop(rast(envstack), ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
         
-        predictor_stack <- c(predictor_stack,envstack)
+        predictor_stack <- c(predictor_stack, envstack)
         
       } else {
         
@@ -91,7 +99,7 @@ ermittleUmweltdaten <- function(TaxonName=NULL,
       ## crop to extent
       LCStack <- crop(LCStack, ext_stack) # crop the climate data to the extent of the land cover data (needed because the climate data has a global extent and the land cover data has an European extent)
       
-      predictor_stack <- c(predictor_stack,LCStack)
+      predictor_stack <- c(predictor_stack, LCStack)
       
       # (Note: cropping not 100% precise)
     }

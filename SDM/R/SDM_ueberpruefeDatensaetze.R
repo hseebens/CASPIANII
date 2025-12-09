@@ -34,32 +34,32 @@ ueberpruefeDatensaetze <- function(Klima_var=NULL,
   if (!is.null(Landbedeck_var)){
     if (any(file.exists(file.path("SDM","Daten","Input","CorineLandcover","LandCover_Corine_allclasses.tif"))==FALSE)){
       ind <- which(file.exists(file.path("SDM","Daten","Input","CorineLandcover","LandCover_Corine_allclasses.tif"))==FALSE)
-      stop(paste0("\n Datensatz ",LC_files[ind]," fehlt im Verzeichnis",file.path("SDM","Daten","Input","CorineLandcover"),". Bitte ergaenzen.\n"))
+      stop(paste0("\n Datensatz ",LC_files[ind]," fehlt im Verzeichnis ",file.path("SDM","Daten","Input","CorineLandcover"),". Bitte ergaenzen.\n"))
       x <- 1
     }
   }
   
   ## check availability of species list
-  if (any(file.exists(file.path("SDM","Daten","Input",Name_Artenliste))==FALSE)){
-    stop(paste0("\n Datensatz ",Name_Artenliste," fehlt im Verzeichnis",file.path("SDM","Daten","Input")))
+  if (any(file.exists(file.path("SDM", "Daten", "Input", Name_Artenliste))==FALSE)){
+    stop(paste0("\n Datensatz ",Name_Artenliste," fehlt im Verzeichnis ",file.path("SDM","Daten","Input")))
     x <- 1
   }
 
   ## check availability of country borders
   if (any(file.exists(file.path("SDM","Daten","Input","Shapefiles","ne_50m_land.shp"))==FALSE)){
-    stop(paste0("\n Datensatz ne_50m_land.shp fehlt im Verzeichnis",file.path("SDM","Daten","Input","Shapefiles")))
+    stop(paste0("\n Datensatz ne_50m_land.shp fehlt im Verzeichnis ",file.path("SDM","Daten","Input","Shapefiles")))
     x <- 1
   }
   
   ## check availability of borders of federal states
   if (any(file.exists(file.path("SDM","Daten","Input","Shapefiles","gadm41_DEU_1.shp"))==FALSE)){
-    stop(paste0("\n Datensatz gadm41_DEU_1.shp fehlt im Verzeichnis",file.path("SDM","Daten","Input","Shapefiles")))
+    stop(paste0("\n Datensatz gadm41_DEU_1.shp fehlt im Verzeichnis ",file.path("SDM","Daten","Input","Shapefiles")))
     x <- 1
   }
   
   ## check availability of borders of municipalities
   if (any(file.exists(file.path("SDM","Daten","Input","Shapefiles","gadm41_DEU_3.shp"))==FALSE)){
-    stop(paste0("\n Datensatz gadm41_DEU_3 fehlt im Verzeichnis",file.path("SDM","Daten","Input","Shapefiles")))
+    stop(paste0("\n Datensatz gadm41_DEU_3 fehlt im Verzeichnis ",file.path("SDM","Daten","Input","Shapefiles")))
     x <- 1
   }
   

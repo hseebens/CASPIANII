@@ -13,9 +13,10 @@
 
 
 fitSDMs <- function(TaxonName=NULL,
-                     VorkommenUmweltPA=NULL,
-                     n_Modelllaeufe=5,
-                     identifier=NULL) { ## start of main function
+                    VorkommenUmweltPA=NULL,
+                    n_Modelllaeufe=5,
+                    identifier=NULL,
+                    timeout = 1200) { ## start of main function
   
   # load(file=file.path("SDM","Daten","Input", paste0("PAlist_",TaxonName,identifier,".RData")))
   # VorkommenUmweltPA <- PAlist
@@ -42,7 +43,7 @@ fitSDMs <- function(TaxonName=NULL,
   
   ## create formula for GAMs; k defines the number of basic functions and thus the degree of allowed smoothing in s()
   formula_model <- as.formula(paste("Praesenz ~ ",paste(sapply(preds,function(x,...) paste0("s(",x,", k=7",")")),collapse="+",sep=" ")))
-  
+
   ## distribution family of the residuals; binomial because the dependent variable is presence absence data (0/1)
   family_model <- "binomial" 
   
@@ -92,7 +93,7 @@ fitSDMs <- function(TaxonName=NULL,
 
     ## fit model to training block
     possibleError <- tryCatch(withTimeout(model1 <- gam(formula_model, family=family_model, data=fit_data, method = "REML", select=TRUE),
-                                          timeout = 1200),  # set maximum time to 20 minutes each
+                                          timeout = timeout),  # set maximum time to 20 minutes each
                               error=function(e) e)
     
     if(!inherits(possibleError, "error")){ # check if gam fit worked

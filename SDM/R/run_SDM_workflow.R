@@ -200,7 +200,7 @@ for (i in 1:length(Artenliste)){ #
 
     Vorkommen <- fread(file.path("SDM","Daten","Input",paste0("Vorkommen_",TaxonName,identifier,".csv")))
 
-    cat(paste0("\n Vorkommensdaten werden aus ",paste0("Vorkommen_",TaxonName,identifier,".csv")," im Verzeichnis 'Daten/Input' genommen.\n") ) # notification for the user
+    cat(paste0("\n", nrow(Vorkommen)," Vorkommensdaten werden aus ",paste0("Vorkommen_",TaxonName,identifier,".csv")," im Verzeichnis 'Daten/Input' genommen.\n") ) # notification for the user
 
   } else {
 

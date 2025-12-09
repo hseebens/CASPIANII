@@ -29,7 +29,7 @@ rm(list=ls())
 ## Bestimme Arbeitsverzeichnis (working directory) #############################
 
 # Pfad zum Arbeitsverzeichnis, welches den Ordner "ListeNeobiota" enthaelt.
-setwd(file.path("C:", "Hanno", "Bioinvasion", "CASPIANII", "CASPIANII"))
+# setwd(file.path("Path", "To", "Folder"))
 
 # Alternativ: Oeffne CASPIANII.Rproj im Verzeichnis CASPIANII, wodurch das 
 # Arbeitsverzeichnis automatisch gesetzt wird. In diesem Fall ist "setwd()" 

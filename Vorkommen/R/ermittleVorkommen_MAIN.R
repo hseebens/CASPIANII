@@ -43,7 +43,7 @@ TaxonName <- "Crassostrea gigas"
 # TaxonName <- "Impatiens glandulifera"
 
 ## Verzeichnis der sMon Datensaetze (optional)
-sMon_Verzeichnis <- "C:/Hanno/Storage_large/Species/sMon"
+sMon_Verzeichnis <- file.path("Path", "To", "sMon", "Folder")
 
 ## Berechnete Wahrscheinlichkeit des Auftretens der Art (0 (sehr unwahrscheinlich) - 1 (sehr wahrscheinlich))
 sMon_Wahrscheinlichkeit <- 0.5
