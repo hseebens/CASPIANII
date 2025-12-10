@@ -5,6 +5,7 @@ CASPIANII/SDM/Grafiken/
 *.odt
 *.xlsx
 *.csv
+*.gz
 *.shp
 *.prj
 *.shx
