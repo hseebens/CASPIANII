@@ -32,11 +32,6 @@ ueberpruefe_Datenverzeichnisse <- function (){
     cat("\n Verzeichnis 'ListeNeobiota/Daten/Output' erstellt.\n") # notification for the user
     x <- 1
   }
-  if (!file.exists(file.path("ListeNeobiota","Daten","Shapefiles"))){
-    dir.create(file.path("ListeNeobiota","Daten","Shapefiles"))
-    cat("\n Verzeichnis 'ListeNeobiota/Daten/Shapefiles' erstellt.\n") # notification for the user
-    x <- 1
-  }
 
   if (x==0){
     cat("\n Alle Verzeichnisse sind bereits vorhanden.\n") # notification for the user

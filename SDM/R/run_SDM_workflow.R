@@ -28,6 +28,8 @@ rm(list=ls())
 ## Konfiguration der Habitatmodellierung #################################################################
 ##########################################################################################################
 
+## Setzen des Arbeitsverzeichnis ###############################################
+## (geschieht automatisch beim Öffnen des Rstudio Projekts mit "CASPIANII.Rproj")
 # setwd(file.path("C:","Users","3DScanner1","Desktop","Hanno","CASPIAN SDM"))
 
 ##########################################################################################################
