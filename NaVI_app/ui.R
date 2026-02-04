@@ -6,7 +6,7 @@
 # liefert damit das Layout der Oberflaeche, die fuer den Nutzer zu sehen und zu 
 # bedienen ist.
 #
-# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 11.11.25
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 04.02.26
 ################################################################################
 
 
