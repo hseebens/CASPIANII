@@ -8,130 +8,113 @@
 # Die Daten, die in der Shiny App zur Verfügung gestellt werden, werden mit der 
 # Funktion 'DataPreparationShiny.R' aufbereitet.
 #
-# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 10.12.25
+# Author: Hanno Seebens, Senckenberg Gesellschaft für Naturforschung, 04.02.26
 ################################################################################
 
 
 
 
-server <- function(input, output){
+server <- function(input, output, session){
   
   ## prepare data and maps depending on selections #############################
 
-  ## select data depending on the selection of species lists and taxon group
-  
-  filtered_data <- reactive({
+  ## function to subset species groups
+  filter_species <- function(data, artlisten, artengruppe) {
     
-    if (input$Artlisten=="Unionsliste"){
-      
-      data_sub <- subset(all_reg_data, EU_Anliegen=="x")
-      
-      if (input$Artengruppe=="Alle Taxa"){
-        data_out <- data_sub
-      } else {
-        data_out <- subset(data_sub, Artengruppe %in% input$Artengruppe)
-      }
-      
-    } else {
-      
-      data_sub <- all_reg_data
-      
-      if (input$Artlisten=="Alle Neobiota" & input$Artengruppe=="Alle Taxa"){
-        data_out <- data_sub
-      } else if (input$Artlisten=="Alle Neobiota" & input$Artengruppe!="Alle Taxa"){
-        data_out <- subset(data_sub, Artengruppe %in% input$Artengruppe)
-      } else if (input$Artlisten!="Alle Neobiota" & input$Artengruppe=="Alle Taxa") {
-        data_out <- subset(data_sub, BfNlisten %in% input$Artlisten)
-      } else {
-        data_out <- subset(data_sub, BfNlisten %in% input$Artlisten & Artengruppe %in% input$Artengruppe)
-      }
+    if (artlisten == "Unionsliste") {
+      data <- data[EU_Anliegen == "x"]
+    } else if (artlisten != "Alle Neobiota") {
+      data <- data[BfNlisten %in% artlisten]
     }
-    data_out
-  })
+    
+    if (artengruppe != "Alle Taxa") {
+      data <- data[Artengruppe %in% artengruppe]
+    }
+    data
+  }
   
-  
-  ## create download
-  output$download_reg_list <- downloadHandler(
-    filename = function() {
-      paste0("Liste_Neobiota_", input$Kreise_Daten, "_",input$Artlisten, "_", input$Artengruppe, ".csv")
-    },
-    content = function(file) {
-      write.table(filtered_data(), file)
+  ## apply species function after input
+  filtered_data <- eventReactive(
+    list(input$Artlisten, input$Artengruppe),
+    {
+      filter_species(all_reg_data, input$Artlisten, input$Artengruppe)
     }
   )
   
-  
-  ## select map depending on the selection of species lists and taxon group
-  
+  ## create filtered map 
   filtered_map <- reactive({
-    
-    if (input$Artlisten=="Unionsliste"){ # 'Unionsliste' has to treated differently as it is a different column than other lists
-      
-      data_sub <- subset(all_reg_data, EU_Anliegen=="x")
-      
-      if (input$Artengruppe=="Alle Taxa"){
-        data_out <- data_sub
-      } else {
-        data_out <- subset(data_sub, Artengruppe %in% input$Artengruppe)
-      }
-      
-    } else {
-      
-      data_sub <- all_reg_data
-      
-      if (input$Artlisten=="Alle Neobiota" & input$Artengruppe=="Alle Taxa"){
-        data_out <- data_sub
-      } else if (input$Artlisten=="Alle Neobiota" & input$Artengruppe!="Alle Taxa"){
-        data_out <- subset(data_sub, Artengruppe %in% input$Artengruppe)
-      } else if (input$Artlisten!="Alle Neobiota" & input$Artengruppe=="Alle Taxa") {
-        data_out <- subset(data_sub, BfNlisten %in% input$Artlisten)
-      } else {
-        data_out <- subset(data_sub, BfNlisten %in% input$Artlisten & Artengruppe %in% input$Artengruppe)
-      }
-    }
-    data_out <- subset(data_out, Status=="Ist")
+    data_out <- filter_species(all_reg_data, input$Artlisten, input$Artengruppe)
+    data_out <- data_out[Status == "Ist"]
     
     nSpec_reg <- data_out[, .N, by=CC_2]
     nSpec_reg$CC_2 <- as.integer(nSpec_reg$CC_2)
     
     spatial_out <- merge(regions, nSpec_reg, by="CC_2", all=T)
-
+    
     if (input$Kreise_Daten!="Alle Kreise"){
-      
       spatial_out <- spatial_out[which(spatial_out$RegionName == input$Kreise_Daten), ]
-      
     }
     spatial_out
   })
   
-
   
-    
-  ## prepare (render) the output table to make them interactive ###########
+  ## function to subset regions
+  filter_region <- function(data, region) {
+    if (region == "Alle Kreise") {
+      data
+    } else {
+      data[RegionName == region]
+    }
+  }
   
-  ## for potentially establishing species
-  # make table reactive that user can select from the table directly the map points
-  pot_spec_tab <- reactive({
-    region_list_sub <- filtered_data()[RegionName %in% input$Kreise_Daten & 
-                                        Taxon %in% subset(all_reg_data, Status=="Pot" & 
-                                        RegionName==input$Kreise_Daten)$Taxon, 
-                                       c("Taxon", "Deutscher Artname", "Artengruppe", "Invasionspotenzial")]
-    region_list_sub <- region_list_sub[order(region_list_sub$Invasionspotenzial, decreasing=TRUE)]
+  ## load data points depending on species selection only to improve performance
+  observe({
+    updateSelectizeInput(
+      session,
+      inputId = "Art_Daten",
+      choices = sort(unique(all_reg_data$Taxon)),
+      server = TRUE
+    )
   })
   
-  output$table <- renderDT({ # render DT table from reactive object
+
+  ## prepare (render) the output table to make them interactive ###########
+  
+  ## for potentially establishing species ##########
+  
+  # make table reactive that user can select from the table directly the map points
+  pot_spec_tab <- reactive({
+    reg_data <- filter_region(filtered_data(), input$Kreise_Daten)
+    
+    pot_taxa <- all_reg_data[
+      Status == "Pot" & RegionName == input$Kreise_Daten,
+      unique(Taxon)
+    ]
+    
+    out <- reg_data[Taxon %in% pot_taxa,
+                    c("Taxon","Deutscher Artname","Artengruppe","Invasionspotenzial")]
+    
+    out[order(Invasionspotenzial, decreasing = TRUE)]
+  })
+  
+  ## render DT table from reactive object
+  output$table <- renderDT({ 
     df <- pot_spec_tab()
     DT::datatable(df)
   }) 
   
-  ## for actually occurring species
+  ## for actually occurring species #############
+  
   # make table reactive that user can select from the table directly the map points
   occ_spec_tab <- reactive({
-    filtered_data()[RegionName%in%input$Kreise_Daten & Status=="Ist", 
-                    c("Taxon","Deutscher Artname", "Artengruppe")]
+    filter_region(filtered_data(), input$Kreise_Daten)[
+      Status == "Ist",
+      c("Taxon","Deutscher Artname","Artengruppe")
+    ]
   })
   
-  output$ListeNeobiota <- renderDT({ # render DT table from reactive object
+  ## render DT table from reactive object
+  output$ListeNeobiota <- renderDT({ 
     df <- occ_spec_tab()
     DT::datatable(df)
   })
@@ -141,9 +124,10 @@ server <- function(input, output){
   
   # make reactive that the table can be modified when making a selection
   data_regs <- reactive({
-    filtered_data()[RegionName%in%input$Kreise_Daten & 
-                           Status=="Ist", c("RegionName", "Taxon", "Deutscher Artname", 
-                                       "Artengruppe")]
+    filter_region(filtered_data(), input$Kreise_Daten)[
+      Status == "Ist",
+      c("RegionName","Taxon","Deutscher Artname","Artengruppe")
+    ]
   })
   
   ## for all species
@@ -177,7 +161,8 @@ server <- function(input, output){
   
   ## prepare occurrence data for species download #########################################
   
-  data_spec <- reactive({ # make reactive
+  ## make point dataset reactive
+  data_spec <- reactive({ 
     subset(point_data, Taxon==input$Art_Daten)
   })
 
@@ -204,13 +189,22 @@ server <- function(input, output){
     if (input$Kreise_Daten == "Alle Kreise"){ # if no region is selected
       
       ## create colours for legend
-      pal_nSpec <- colorBin("YlOrRd", domain = filtered_map()$N, bins = 7)
+      pal_nSpec <- colorBin("OrRd", domain = filtered_map()$N, bins = 5, right=TRUE, reverse=FALSE)
       
       labels <- sprintf("%s: %s", filtered_map()$RegionName, filtered_map()$N) %>% 
         lapply(htmltools::HTML)
       
       leaflet(filtered_map()) %>%
-        addTiles() %>%
+        addWMSTiles(
+          baseUrl = "https://sgx.geodatenzentrum.de/wms_topplus_open?",
+          layers = "web", group = "TopPlusOpen",
+          options = WMSTileOptions(format = "image/png",
+                                   transparent = TRUE),
+          attribution = paste0("BKG (", strftime(Sys.Date(), "%Y"),
+                               "), <a href=\"https://sgx.geodatenzentrum",
+                               ".de/web_public/gdz/datenquellen/Datenque",
+                               "llen_TopPlusOpen.html\">",
+                               "data source"), "</a>") %>%
         addPolygons( # polygons of species numbers 
           fillColor = ~ pal_nSpec(filtered_map()$N),
           stroke=TRUE,
@@ -222,12 +216,21 @@ server <- function(input, output){
         leaflet::addLegend(
           pal = pal_nSpec, 
           values = ~N,
-          opacity = 0.7, 
+          opacity = 1, 
           title = "Anzahl Arten",
           na.label="Keine Arten")
     } else { # if a region has been selected
       leaflet(filtered_map()) %>%
-        addTiles() %>%
+        addWMSTiles(
+          baseUrl = "https://sgx.geodatenzentrum.de/wms_topplus_open?",
+          layers = "web", group = "TopPlusOpen",
+          options = WMSTileOptions(format = "image/png",
+                                   transparent = TRUE),
+          attribution = paste0("BKG (", strftime(Sys.Date(), "%Y"),
+                               "), <a href=\"https://sgx.geodatenzentrum",
+                               ".de/web_public/gdz/datenquellen/Datenque",
+                               "llen_TopPlusOpen.html\">",
+                               "data source"), "</a>") %>%
         addPolygons(
           fillColor = "orange",
           color = "darkgrey",
@@ -238,130 +241,55 @@ server <- function(input, output){
   })
   
   
-  ## add points of species occurrences depending on dropdown menu #################
-  
-  observeEvent(input$Art_Daten, { # observe whether a species has been selected
-    
-    spfiltered <- point_data[which(point_data$Taxon == input$Art_Daten), ] # subset to focal species
- 
-    ## select subset of records to increase performance
-    if(input$Kreise_Daten == "Alle Kreise"){ # for Germany-wide presentation
-      if (nrow(spfiltered)>10000){ # select only a random set of 10000 records
-        
-        spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
-        
-        ## produce a warning that not all records are shown
-        NotID <- showNotification("Warnung: Grosser Datensatz. Nicht alle Daten werden angezeigt.", 
-                                  duration=15)
-      }
-    } else { # for selections of individual regions select only records within a buffer distance of dist_buff
-      
-      map_sub <- regions[which(regions$RegionName == input$Kreise_Daten), ] # subset to focal region
-      ext <- st_bbox(st_buffer(map_sub,dist_buff)) # identify box around the focal region
-      spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
-                             Laengengrad>ext$xmin & Breitengrad<ext$ymax & 
-                             Breitengrad>ext$ymin) # subset to records in the vicinity
-    }
-    
-    ## add the point records to the map
-    leafletProxy("map", data = spfiltered) %>%
-      clearMarkers() %>%
-      clearGroup(group="occurrences") %>%
-      # clearControls() %>%
-      addCircleMarkers(
-        lat = spfiltered$Breitengrad,
-        lng = spfiltered$Laengengrad,
-        group="occurrences",
-        fillOpacity = 0.5,
-        fillColor = NA,
-        weight = 1,
-        radius = 5
-      ) 
-  })
-  
-  ## add occurrences of species depending on table selection #################
-  ## observe input to table of existing neobiota and plot records of selected 
-  ## species on map
-  
-  observe({
-    
-    selRow <- occ_spec_tab()[input$ListeNeobiota_rows_selected,] # keep row of selection
-    # print(selRow$Taxon)
-    
-    if (is.null(selRow)) return()  # nothing selected yet
-    
-    spfiltered <- point_data[which(point_data$Taxon == selRow$Taxon), ] # subset records to focal species
-    
+  ### add points of species occurrences depending on dropdown menu #################
 
-    ## subset to records in vicinity to increase performance
-    map_sub <- regions[which(regions$RegionName == input$Kreise_Daten), ] # subset to region
-    ext <- st_bbox(st_buffer(map_sub ,dist_buff))
-    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
-                           Laengengrad>ext$xmin & 
-                           Breitengrad<ext$ymax & 
-                           Breitengrad>ext$ymin)
+  ## basic function for plotting
+  plot_species_points <- function(taxon) {
     
-    ## if still too many points select randomly
-    if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
-      spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
-      NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
+    ## return nothing if no taxon and no region seleted
+    if (is.null(taxon) || all(taxon == "Keine") || input$Kreise_Daten=="Alle Kreise") return(NULL)
+    
+    spfiltered <- point_data[Taxon %in% taxon]
+    
+    if (input$Kreise_Daten != "Alle Kreise") {
+      map_sub <- subset(regions, RegionName == input$Kreise_Daten) 
+      ext <- st_bbox(st_buffer(map_sub, dist_buff))
+      spfiltered <- spfiltered[
+        Laengengrad > ext$xmin & Laengengrad < ext$xmax &
+          Breitengrad  > ext$ymin & Breitengrad  < ext$ymax
+      ]
     }
     
-    ## add the point records to the map
-    leafletProxy("map", data = spfiltered) %>%
-      clearMarkers() %>%
-      clearGroup(group="occurrences") %>%
-      # clearControls() %>%
+    if (nrow(spfiltered) > 10000) {
+      spfiltered <- spfiltered[sample(.N, 10000)]
+      showNotification("Warnung: Großer Datensatz.", duration = 15)
+    }
+    
+    leafletProxy("map") %>%
+      clearGroup("occurrences") %>%
       addCircleMarkers(
-        lat = spfiltered$Breitengrad,
-        lng = spfiltered$Laengengrad,
-        group="occurrences",
-        fillOpacity = 0.5,
-        fillColor = NA,
-        weight = 1,
-        radius = 5
+        data = spfiltered,
+        lng = ~Laengengrad,
+        lat = ~Breitengrad,
+        group = "occurrences",
+        radius = 5,
+        fillOpacity = 0.5
       )
+  }
+  
+  ## define points to add to plot
+  observeEvent(input$Art_Daten, {
+    req(input$Art_Daten != "Keine")
+    plot_species_points(input$Art_Daten)
   })
   
+  observeEvent(input$ListeNeobiota_rows_selected, {
+    sel <- occ_spec_tab()[input$ListeNeobiota_rows_selected]
+    plot_species_points(sel$Taxon)
+  })
   
-  ## add potential occurrences of species depending on table selection #################
-  ## observe input to table of existing neobiota and plot records of selected 
-  ## species on map
-  
-  observe({
-    
-    selRow <- pot_spec_tab()[input$table_rows_selected,] # keep row of selection
-    # print(selRow$Taxon)
-    
-    spfiltered <- point_data[which(point_data$Taxon == selRow$Taxon), ] # subset records to focal species
-    
-    ## subset to records in vicinity
-    map_sub <- regions[which(regions$RegionName == input$Kreise_Daten), ]
-    ext <- st_bbox(st_buffer(map_sub, dist_buff))
-    spfiltered <- subset(spfiltered, Laengengrad<ext$xmax & 
-                           Laengengrad>ext$xmin & 
-                           Breitengrad<ext$ymax & 
-                           Breitengrad>ext$ymin)
-    
-    ## if still too many points select randomly and spill out warning message
-    if (nrow(spfiltered)>10000){ # select only a random set of 1000 records
-      spfiltered <- spfiltered[sample(1:nrow(spfiltered),10000)]
-      NotID <- showNotification("Warnung: Großer Datensatz. Nicht alle Daten werden angezeigt.", duration=15)
-    }
-    
-    ## add point records to map
-    leafletProxy("map", data = spfiltered) %>%
-      clearMarkers() %>%
-      clearGroup(group="occurrences") %>%
-      # clearControls() %>%
-      addCircleMarkers(
-        lat = spfiltered$Breitengrad,
-        lng = spfiltered$Laengengrad,
-        group="occurrences",
-        fillOpacity = 0.5,
-        fillColor = NA,
-        weight = 1,
-        radius = 5
-      ) 
+  observeEvent(input$table_rows_selected, {
+    sel <- pot_spec_tab()[input$table_rows_selected]
+    plot_species_points(sel$Taxon)
   })
 }

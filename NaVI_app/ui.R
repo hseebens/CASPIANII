@@ -13,11 +13,24 @@
 
 ui <- fluidPage(
   
-  ### General stuff
-  add_busy_bar(centered=TRUE, color = "#FF0000"),
-  tags$head(tags$style(HTML("hr {border-top: 1px solid #000000;}"))),
-  titlePanel(div(h1("NaVI - Neobiota an Verkehrswegen Informationssystem"),
-                 align="left",style="color:darkgreen")),
+  ### Busy bar & allgemeines Styling
+  add_busy_bar(centered = TRUE, color = "#FF0000"),
+  tags$head(
+    tags$style(HTML("
+      hr {border-top: 1px solid #000000;}
+      #main-title {
+        color: darkgreen;
+        text-align: left;
+        font-size: 32px;
+        font-weight: bold;
+      }
+    ")),
+    tags$title("NaVI - Neobiota an Verkehrswegen Informationssystem")
+  ),
+  
+
+  ### Title
+  h1("NaVI - Neobiota an Verkehrswegen Informationssystem", id = "main-title"),
   hr(),
   
   ### Layout #########################
@@ -25,27 +38,26 @@ ui <- fluidPage(
     
     ## Sidebar panel 
     sidebarPanel(
-      
       tabsetPanel(
         tabPanel(
           "Landkreis",
           br(),
           
-          # select Kreise #######################
+          # select Kreise
           selectizeInput(
             inputId = "Kreise_Daten",
             label = "Landkreis",
-            choices = c("Alle Kreise", sort(unique(all_reg_data$RegionName)))
+            choices = c("Alle Kreise", sort(unique(all_reg_data$RegionName))),
+            selected = "Alle Kreise"
           ),
-          # download button
+          
+          # Download Buttons
           h5("Download Liste vorkommende Neobiota"),
           downloadButton("download_ist", "Download .csv"),
-
-          # download button
           h5("Download Liste potenzielle Neobiota"),
-          downloadButton("download_pot", "Download .csv"),
-          
+          downloadButton("download_pot", "Download .csv")
         ),
+        
         tabPanel(
           "Artengruppe",
           br(),
@@ -64,43 +76,38 @@ ui <- fluidPage(
             selected = "Alle Taxa"
           ),
           
-          # download button
           h5("Download der Arten"),
-          downloadButton("download_reg_list", "Download .csv"),
-          
+          downloadButton("download_reg_list", "Download .csv")
         ),
+        
         tabPanel(
           "Art",
           br(),
           selectizeInput(
             inputId = "Art_Daten",
-            label = "Wissenschaftlicher Name",
-            choices = c("Keine", sort(unique(all_reg_data$Taxon)))
+            label = "Art auswählen",
+            choices = NULL,
+            selected = "Keine",
+            options = list(
+              placeholder = "Artname eingeben…",
+              maxOptions = 20
+            )
           ),
           
-          # download button
           h5("Download der Vorkommen dieser Art in Deutschland"),
-          downloadButton("download_spec", "Download .csv"),
-          
-        ),
+          downloadButton("download_spec", "Download .csv")
+        )
       )
     ),
     
     ## Main panel ####################################
-    
     mainPanel(
       tabsetPanel(
         tabPanel("Karte",
-                 
-                 # interactive map
                  leafletOutput(outputId = "map"),
-                 
-                 # output table 1
                  hr(),
                  h4("Neobiota im Landkreis"),
                  DTOutput(outputId = "ListeNeobiota"),
-                 
-                 # output table 2
                  br(),
                  hr(),
                  h4("Neobiota mit hohem Potenzial zur Etablierung im Landkreis"),
@@ -108,10 +115,14 @@ ui <- fluidPage(
         ),
         
         tabPanel("über NaVI", includeMarkdown("Hintergrunddetails.md"))
-
-        # tabPanel("über NaVI", includeMarkdown("details.md"))
-        # tabPanel("über NaVI", htmlOutput("about", height = 600, width = 600))
       )
     )
+  ),
+  navbarPage(
+    title = "NaVI - Neobiota an Verkehrswegen Informationssystem",
+    footer = tags$div(
+      style = "text-align:right; font-size:12px;",
+      HTML('Made with <a href="https://cran.r-project.org/package=shiny" target="_blank">Shiny</a>')
+    ),
   )
 )

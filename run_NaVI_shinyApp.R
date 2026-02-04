@@ -45,4 +45,4 @@ source("ui.R")
 shinyApp(ui = ui, server = server)
 
 
-# shiny::runGitHub(repo="CASPIANII", subdir="CASPIANII/NaVI_app",username= "hseebens")
+# shiny::runGitHub(repo="CASPIANII", subdir="NaVI_app",username= "hseebens")
