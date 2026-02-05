@@ -189,7 +189,7 @@ server <- function(input, output, session){
     if (input$Kreise_Daten == "Alle Kreise"){ # if no region is selected
       
       ## create colours for legend
-      pal_nSpec <- colorBin("OrRd", domain = filtered_map()$N, bins = 5, right=TRUE, reverse=FALSE)
+      pal_nSpec <- colorBin("Spectral", domain = filtered_map()$N, bins = 5, right=TRUE, reverse=TRUE)
       
       labels <- sprintf("%s: %s", filtered_map()$RegionName, filtered_map()$N) %>% 
         lapply(htmltools::HTML)
@@ -197,7 +197,7 @@ server <- function(input, output, session){
       leaflet(filtered_map()) %>%
         addWMSTiles(
           baseUrl = "https://sgx.geodatenzentrum.de/wms_topplus_open?",
-          layers = "web", group = "TopPlusOpen",
+          layers = "web_light", group = "TopPlusOpen",
           options = WMSTileOptions(format = "image/png",
                                    transparent = TRUE),
           attribution = paste0("BKG (", strftime(Sys.Date(), "%Y"),
@@ -223,7 +223,7 @@ server <- function(input, output, session){
       leaflet(filtered_map()) %>%
         addWMSTiles(
           baseUrl = "https://sgx.geodatenzentrum.de/wms_topplus_open?",
-          layers = "web", group = "TopPlusOpen",
+          layers = "web_light", group = "TopPlusOpen",
           options = WMSTileOptions(format = "image/png",
                                    transparent = TRUE),
           attribution = paste0("BKG (", strftime(Sys.Date(), "%Y"),
